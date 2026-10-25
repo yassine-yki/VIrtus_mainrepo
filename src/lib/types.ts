@@ -107,6 +107,5 @@ export interface SearchResult {
   }[];
   checked_at: string | null;
   mode: "supabase" | "snapshot" | "unconfigured";
-  review?: boolean;
   error?: string;
 }

@@ -2,7 +2,7 @@
 
 Checked **2026-10-25**, using the repository's existing SmartRecruiters, Greenhouse and Lever collectors against public employer ATS endpoints. This audit covers **20 additional employers**, excluding the six existing employer groups. Counts are a dated observation, not a promise of current vacancies.
 
-**Result: 9 qualifying private feeds, 183 records and 183 distinct URL-based `group_key` values.** The other 11 feeds returned no eligible Morocco jobs and remain disabled for later rechecking. All 20 selected endpoints completed the relevant collection successfully. **None of these employer sources is approved for public republication.**
+**Initial audit: 9 qualifying feeds, 183 records and 183 distinct URL-based `group_key` values.** The other 11 feeds returned no eligible Morocco jobs and remain disabled for later rechecking. All 20 selected endpoints completed the relevant collection successfully. No separate licence to republish full advertisement text was established. The owner subsequently selected a public metadata-and-links catalog; full descriptions are operator-only and the live database records that visibility decision. Private-collection labels below describe the historical audit stage.
 
 The machine-readable evidence and registry defaults are in `src/lib/audited-employers.json`. The secret-free local snapshot is `data/audited-catalog.json` (ignored by Git). Each JSON entry records the precise endpoint, check timestamp, counts, pagination result, careers page, reuse status, and error field.
 

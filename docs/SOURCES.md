@@ -1,4 +1,12 @@
-# Source coverage and publication status
+# Source audit history and current publication
+
+## Current owner decision: one public metadata catalog
+
+After the initial staging described below, the owner explicitly selected public job facts and original links on 2026-10-25. All 17 active feeds are now published: 583 employer jobs and 188 competitions at the verified import. Full advertisement descriptions are excluded from public API responses and direct public database column access. There is no private website or review-key login. Operational publication is not a claim of a separate full-text republication licence. See [current operations](OPERATIONS.md).
+
+The following pending/private statuses document the earlier audit stage, not current live visibility. New sources still register as pending until an operator explicitly activates them; collectors cannot change that decision.
+
+## Historical staged source audit
 
 Technical access and permission to republish are separate. No source is automatically approved because a GET endpoint is readable. Counts change; the live collection performed during implementation returned 400 records before duplicate grouping. That is a dated review snapshot, not a market-coverage claim.
 

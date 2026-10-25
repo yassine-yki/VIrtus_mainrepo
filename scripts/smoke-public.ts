@@ -5,7 +5,6 @@ const api = await fetch(`${base}/api/jobs?kind=competition`);
 assert.equal(api.status, 200);
 const data = await api.json();
 assert.equal(data.mode, "supabase");
-assert.equal(data.review, false);
 assert.ok(data.total > 0);
 assert.ok(
   data.jobs.every(
@@ -14,12 +13,20 @@ assert.ok(
       new URL(job.attribution_url).hostname === "www.wadifa-info.com",
   ),
 );
-assert.deepEqual(
-  data.sources.map((source: { id: string }) => source.id),
-  ["wadifa"],
+assert.ok(
+  data.sources.every(
+    (source: { publication_status: string }) =>
+      source.publication_status === "approved",
+  ),
+);
+assert.ok(
+  data.jobs.every((job: { description: string }) => job.description === ""),
 );
 const employer = await (await fetch(`${base}/api/jobs?kind=job`)).json();
-assert.equal(employer.total, 0);
+assert.ok(employer.total > 0);
+assert.ok(
+  employer.jobs.every((job: { description: string }) => job.description === ""),
+);
 const html = await (await fetch(`${base}/?kind=competition`)).text(),
   $ = load(html);
 const attribution = $("a.attribution");
@@ -44,11 +51,22 @@ assert.equal(
   data.jobs[0].attribution_url,
 );
 const sources = load(await (await fetch(`${base}/sources`)).text());
-assert.equal(sources(".source-cards article").length, 1);
-assert.ok(!sources(".source-cards").text().includes("ALTEN"));
-const pendingId = process.env.SMOKE_PENDING_JOB_ID;
-if (pendingId)
-  assert.equal((await fetch(`${base}/offres/${pendingId}`)).status, 404);
+assert.equal(sources(".source-cards article").length, data.sources.length);
+const employerPage = await fetch(
+  `${base}/offres/${employer.jobs[0].group_key}`,
+);
+assert.equal(employerPage.status, 200);
+const employerDetail = load(await employerPage.text());
+assert.ok(
+  employerDetail(".description").text().includes("description complète"),
+);
+assert.equal(
+  employerDetail(".apply-panel a.search-button").attr("href"),
+  employer.jobs[0].url,
+);
+const access = await fetch(`${base}/access`, { redirect: "manual" });
+assert.ok([307, 308].includes(access.status));
+assert.equal(new URL(access.headers.get("location")!, base).pathname, "/");
 console.log(
   JSON.stringify({
     publicApi: api.status,
@@ -56,7 +74,7 @@ console.log(
     employerJobs: employer.total,
     attribution: "verified",
     details: "official notice and deadline verified",
-    sources: "approved only",
+    sources: "all active published feeds; metadata only",
     robots: $("meta[name=robots]").attr("content"),
   }),
 );

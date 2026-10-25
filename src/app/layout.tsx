@@ -10,10 +10,10 @@ export const metadata: Metadata = {
     "Explorez une sélection d’offres d’emploi au Maroc réunies depuis les sites des employeurs. Recherchez par métier, ville et contrat, puis postulez à la source.",
   robots: {
     index:
-      process.env.CATALOG_AUDIENCE === "public" &&
+      process.env.VERCEL_ENV !== "preview" &&
       process.env.PUBLIC_INDEXING_ENABLED === "true",
     follow:
-      process.env.CATALOG_AUDIENCE === "public" &&
+      process.env.VERCEL_ENV !== "preview" &&
       process.env.PUBLIC_INDEXING_ENABLED === "true",
   },
 };

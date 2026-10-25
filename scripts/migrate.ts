@@ -19,6 +19,7 @@ try {
     "202610250001_catalog",
     "202610250002_private_review",
     "202610250003_competitions",
+    "202610250004_public_metadata",
   ]) {
     const { rowCount } = await client.query(
       "select 1 from public.virtus_migrations where name=$1",

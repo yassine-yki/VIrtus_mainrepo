@@ -1,102 +1,76 @@
 # Virtus — emploi au Maroc
 
-A French-first, mobile-friendly job aggregator built with Next.js, TypeScript and Supabase PostgreSQL, prepared for Vercel. Visitors search the entire indexed catalog and apply on the original employer website. No candidate account, résumé upload or automated application is required.
+French-first public job-link aggregator using Next.js, TypeScript and Supabase, deployed on Vercel. Visitors see job facts and original application links. No candidate account, résumé upload or private website version.
 
-## What is implemented
+## Implemented
 
-- Keyword search, city/contract/workplace/source/date filters, relevance/date sorting, shareable URLs and pagination.
-- Job details, original application links, explicit publication/discovery dates and a sources/methodology page.
-- SmartRecruiters, Greenhouse and Lever collectors; seven initial employer feeds plus nine qualifying feeds from an audit of 20 additional employers.
-- Licensed Wadifa Info public-competition metadata, visible attribution, official notices, position counts and Casablanca-date deadline expiry.
-- Morocco-only normalization, accent-insensitive search, exact-link duplicate grouping and multiple cities.
-- Atomic per-source database updates, failure preservation, suspicious-drop detection and conservative expiry.
-- Public RLS policies and a separate key-protected owner preview. Pending sources cannot appear through the public API.
-- CI checks and an opt-in six-hour collection matrix, isolated per source with at most two concurrent jobs.
+- Keyword, city, contract, workplace, source, date and opportunity-type filters; sorting and pagination across the indexed catalog.
+- SmartRecruiters, Greenhouse, Lever and the licensed Wadifa Info competition API.
+- Seven original employer feeds plus nine additional qualifying feeds from a [20-employer audit](docs/EMPLOYER-AUDIT.md); eleven zero-result candidates stay disabled.
+- Public competition deadlines, position counts, original notices and visible Wadifa attribution.
+- Metadata-only public responses: title, company, location, contract and links. Imported full ad descriptions stay operator-only and are excluded from public search.
+- One public catalog. The old review key, access form and private RPC permissions are retired; /access redirects home.
+- Atomic source synchronization, failure preservation, suspicious-drop protection, source suspension and conservative expiry.
+- Six-hour collection matrix with at most two concurrent source jobs.
 
-Wadifa Info uses its documented JSON API. Other Moroccan job-board scrapers and LinkedIn are **not** active integrations. See [source status](docs/SOURCES.md), the [20-employer audit](docs/EMPLOYER-AUDIT.md), and [launch checklist](docs/LAUNCH.md).
+Other Moroccan-board scrapers and LinkedIn are not connected. See [sources](docs/SOURCES.md), [operations](docs/OPERATIONS.md), and [release evidence](docs/LAUNCH.md).
 
-## Local development
+## Develop
 
-Use Node.js 24 and the pnpm version pinned in `package.json`.
+Use Node.js 24 and the pnpm version pinned in package.json:
 
 ```sh
 pnpm install --frozen-lockfile
-# Copy .env.example to .env.local and configure the values you need.
+# Configure .env.local from .env.example; never commit it.
 pnpm collect --snapshot
 pnpm dev
 ```
 
-Open the Local URL printed by Next.js. Snapshot collection needs no database credentials. It reads real public employer feeds, writes `data/catalog.json` (ignored by Git), and clearly labels the local interface as a working preview. Local snapshots are never served in production. The 72-hour freshness cutoff applies to snapshots too; recollect when necessary.
+Local snapshots are ignored by Git, clearly labelled as development data, and never used in production. The local server also displays metadata only.
 
 ## Supabase
 
-1. Create a dedicated Supabase project and configure `DATABASE_URL` in `.env.local` using its direct or session-pooler connection.
-2. Run `pnpm db:migrate`, or apply the tracked SQL migrations using the Supabase migration tools. The local ledger prevents applying them twice.
-3. Configure `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` for website reads.
-4. Configure `SUPABASE_SECRET_KEY` **only in the collector environment**, then run `pnpm collect`.
+Migrations in supabase/migrations are additive and tracked by a local ledger. Configure DATABASE_URL only for the operator migration command, then run `pnpm db:migrate`; alternatively use the connected migration tool.
 
-The website does not need a database secret key. `SUPABASE_SECRET_KEY` bypasses RLS and must never be placed in a browser bundle or committed. No secret is included in this repository.
+The website needs SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY. It must not receive a Supabase secret key. RLS restricts public rows to enabled, published, active, recent sources and unexpired competition deadlines. Column permissions prevent direct public reads of full descriptions; security-invoker views return an empty description field for API compatibility.
 
-### Public versus private review
-
-All initial sources default to `pending`. After establishing a source's applicable reuse agreement, an administrator can set `sources.publication_status = 'approved'` and record the evidence in `permission_note`. Collectors cannot approve sources or reset an existing approval. `blocked` sources never appear, including in owner review queries.
-
-With `CATALOG_AUDIENCE=public`, only approved sources are visible. An empty public catalog while approval is pending is intentional.
-
-For a hosted **private preview**, set `CATALOG_AUDIENCE=internal` and a random 64-character hex `VIRTUS_REVIEW_TOKEN` in the **Preview** environment only. Store its MD5 hash in the single row of `virtus_private.review_access`. The token is a random 256-bit capability, not a user-chosen password; the stored hash is for matching, not password stretching. Visit `/access` and enter the token. The app uses an HttpOnly/Secure/SameSite cookie, and private database RPCs validate the token independently. The capability grants reads only; it cannot collect, modify listings, or approve sources. Keep Vercel Deployment Protection enabled as an additional layer.
-
-Generate the value locally with Node's `crypto.randomBytes(32).toString('hex')`, without putting it in shell history or source. The token and its hash must be configured through an authorized secret-management path. Neither is committed. Do not enable a production internal preview without separately authorizing that configuration.
+Publication status is an operator visibility switch, not a claim of third-party permission. Current employer metadata was made public at the owner's explicit request on 2026-10-25. New source registration defaults to pending; collectors cannot approve, unblock or re-enable sources. Blocked sources are excluded everywhere.
 
 ## Vercel
 
-Import this repository, select the Next.js preset, Node.js 24, and the repository root. Use `pnpm install --frozen-lockfile` and `pnpm build`. Builds do not require Supabase credentials; configured runtime reads do.
+Use the Next.js preset, Node.js 24, repository root, `pnpm install --frozen-lockfile` and `pnpm build`. Production tracks main.
 
-| Environment     | Variables                                                                   |
-| --------------- | --------------------------------------------------------------------------- |
-| Production      | `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `CATALOG_AUDIENCE=public`       |
-| Private preview | Same read configuration, `CATALOG_AUDIENCE=internal`, `VIRTUS_REVIEW_TOKEN` |
-| Collector only  | `SUPABASE_URL`, `SUPABASE_SECRET_KEY`                                       |
+Configure the website's two publishable read values for Production and Preview. Set PUBLIC_INDEXING_ENABLED=true only in Production after public smoke passes, and false in Preview. Preview deployments use the same public catalog; Vercel's platform deployment protection remains enabled for nonproduction/deployment URLs. There is no app-level private catalog or review-key login.
 
-If using `vercel env pull`, link to the intended project first and pull to a new ignored file: do not overwrite an existing `.env.local` containing custom local values. Vercel does not return all stored secrets through env pulls.
+The former CATALOG_AUDIENCE and VIRTUS_REVIEW_TOKEN values are unused; the hosted preview token was cleared. No custom domain is needed.
 
-Set `PUBLIC_INDEXING_ENABLED=true` in Production only after the anonymous public smoke check passes. Internal previews and the access page always stay `noindex`. No custom domain is configured.
+## Collection
 
-## Scheduled collection
+The GitHub collection environment permits main branches only. Set its variable SUPABASE_URL and secret SUPABASE_SECRET_KEY directly in GitHub. Never paste the key in chat, commit it or place it in Vercel.
 
-The `Refresh job catalog` workflow runs from `main` every six hours when repository variable `COLLECTION_ENABLED=true`. Manual dispatch is available before schedule activation. Configure environment variable `SUPABASE_URL` and environment secret `SUPABASE_SECRET_KEY` inside the GitHub `collection` environment, with deployment policy permitting the `main` branch only. The matrix generator receives no database credentials. Source jobs receive the environment's values, run one source each, and never upload data or credentials as artifacts. Protect/review the branch before giving a workflow database credentials. Workflow schedules are best effort, not exact-time guarantees.
+Manual dispatch of Refresh job catalog works before schedule activation. After a complete successful manual run, set repository variable COLLECTION_ENABLED=true. The regular schedule is 00:17, 06:17, 12:17 and 18:17 UTC; GitHub may delay scheduled events. The matrix generator has no database credentials; source jobs receive them only after main-only environment checks.
 
 ```sh
-pnpm collect                         # All enabled, non-blocked employer feeds
-pnpm collect --only=alten,sqli        # A source subset
-pnpm collect --snapshot              # Local review only
+pnpm collect --only=wadifa
+pnpm collect --only=inetum
+pnpm collect --snapshot
 ```
 
-Failed fetches and partial pagination never reconcile or expire a source. A drop below half of a source's prior active count (when it had at least ten jobs) requires investigation. A missing job closes only after two successful complete misses and at least 24 hours since last seen. Public reads exclude records not seen for 72 hours. See [operations](docs/OPERATIONS.md).
+Failed/partial collections never reconcile. A suspicious drop below half of a prior source count (when previously at least ten) fails safely. Missing jobs close after two complete successful misses and at least 24 hours since last seen. Reads exclude records not seen for 72 hours.
 
-Competitions additionally disappear after their deadline day ends in `Africa/Casablanca`, even if later collection fails. Missing employers/deadlines are quarantined with an explicit collection warning; impossible dates and malformed records fail the run. No location is inferred from an employer's name. Wadifa collection uses one feed request per run, retries no sooner than 61 seconds, and rejects the undocumented 2,000-item truncation boundary.
+Competitions additionally disappear after their deadline day ends in Africa/Casablanca, independently of collection success. The official notice determines any earlier closing hour. Missing employer/deadline records are quarantined with explicit warnings; malformed dates fail the run. Wadifa uses one feed read per run, retries no sooner than 61 seconds and rejects the undocumented 2,000-item truncation boundary.
 
-The search API accepts optional `kind=job|competition`; omitting it searches both. Listing responses add `kind`, `deadline` (YYYY-MM-DD), `positions`, `official_notice_url` and `attribution_url`. Existing URLs and filters remain compatible.
+## API and checks
 
-## Checks
+GET /api/jobs accepts q, city, contract, workplace, source, days, page, sort and optional kind=job|competition. Omitting kind searches both. Responses include kind, deadline (YYYY-MM-DD), positions, official_notice_url and attribution_url when available. The description field remains present but empty.
 
 ```sh
 pnpm typecheck
 pnpm test
 pnpm build
 git diff --check
+pnpm exec tsx --env-file=.env.local scripts/smoke-db.ts
+pnpm exec tsx scripts/smoke-public.ts https://virtus-jobs.vercel.app
 ```
 
-The tests exercise actual PostgreSQL migrations with PGlite, public RLS, read-only preview capabilities, search beyond the first result page, French accents, source filtering, unsafe HTML, duplicate evidence and expiry/failure behavior. Test fixtures are synthetic and never mixed into the job catalog.
-
-## Structure
-
-```text
-src/app/               Website, job detail and search API routes
-src/components/        Shared server-rendered interface
-src/lib/               Normalization, search, catalog access, source registry
-src/collectors/        Reusable provider connectors and bounded HTTP client
-scripts/               Collection and migration commands
-supabase/migrations/   Versioned database schema and access rules
-tests/                 Connector, search and real PostgreSQL tests
-docs/                  Source status and operational handoff
-```
+Tests exercise actual PostgreSQL migrations/RLS, public metadata permissions, retired review endpoints, accent handling, full-catalog search, deadline timezone boundaries, source suspension, parser failures, attribution and expiry. Fixtures are synthetic and kept out of the real catalog.

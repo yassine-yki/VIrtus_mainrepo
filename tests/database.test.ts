@@ -341,6 +341,59 @@ test("Postgres migrations, full catalog search, RLS and safe reconciliation", as
         expected,
       );
     }
+    await db.exec(
+      await readFile(
+        new URL(
+          "../supabase/migrations/202610250004_public_metadata.sql",
+          import.meta.url,
+        ),
+        "utf8",
+      ),
+    );
+    await db.query(
+      "update public.sources set enabled=true,publication_status='approved' where id=$1",
+      [source.id],
+    );
+    await db.query(
+      "update public.listings set description='confidentialadvertisementtext' where id=$1",
+      [jobs[0].id],
+    );
+    await db.exec("set role anon");
+    await assert.rejects(
+      db.query("select public.search_catalog_review(p_token=>$1)", [
+        reviewToken,
+      ]),
+      /permission denied/,
+    );
+    await assert.rejects(
+      db.query("select public.get_catalog_job_review($1,$2)", [
+        reviewToken,
+        jobs[0].group_key,
+      ]),
+      /permission denied/,
+    );
+    await assert.rejects(
+      db.query("select description from public.listings"),
+      /permission denied/,
+    );
+    assert.equal(
+      (
+        await db.query<{ data: { description: string } }>(
+          "select public.get_catalog_job($1) as data",
+          [jobs[0].group_key],
+        )
+      ).rows[0].data.description,
+      "",
+    );
+    assert.equal(
+      (
+        await db.query<{ data: { total: number } }>(
+          "select public.search_catalog(p_query=>'confidentialadvertisementtext') as data",
+        )
+      ).rows[0].data.total,
+      0,
+    );
+    await db.exec("reset role");
   } finally {
     await db.close();
   }

@@ -59,15 +59,13 @@ for (const source of sources.filter(
       });
       if (error) throw new Error(`Source registration failed (${error.code})`);
       if (!permitted) {
-        const { error: logError } = await supabase
-          .from("sync_runs")
-          .insert({
-            source_id: source.id,
-            status: "skipped",
-            count: 0,
-            started_at: startedAt,
-            error: "Source disabled or blocked",
-          });
+        const { error: logError } = await supabase.from("sync_runs").insert({
+          source_id: source.id,
+          status: "skipped",
+          count: 0,
+          started_at: startedAt,
+          error: "Source disabled or blocked",
+        });
         if (logError)
           throw new Error(`Skip log unavailable (${logError.code})`);
         console.log("  Skipped: source disabled or blocked in database");

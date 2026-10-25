@@ -190,13 +190,12 @@ export default async function Home({
             </div>
             <span className="catalog-edition">MAROC / ÉDITION 01</span>
           </div>
-          {(result.mode === "snapshot" || result.review) && (
+          {result.mode === "snapshot" && (
             <div className="notice">
               <Layers3 size={18} />
               <p>
-                <strong>Aperçu privé · données réelles.</strong> Collecte du{" "}
-                {shortDate(result.checked_at)}. La diffusion des sources est en
-                cours de validation ; cet aperçu n’est pas un catalogue public.
+                <strong>Données locales de développement.</strong> Collecte du{" "}
+                {shortDate(result.checked_at)}.
               </p>
             </div>
           )}

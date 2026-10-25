@@ -56,11 +56,7 @@ export default async function SourcesPage() {
           </article>
         </div>
         <div className="section-title">
-          <h2>
-            {result.review || result.mode === "snapshot"
-              ? "Sources de cet aperçu"
-              : "Sources du catalogue public"}
-          </h2>
+          <h2>Sources du catalogue public</h2>
           <span>
             {providers.size} INTÉGRATION{providers.size === 1 ? "" : "S"} ·{" "}
             {result.sources.length} FLUX
@@ -72,9 +68,9 @@ export default async function SourcesPage() {
           </p>
         )}
         <p className="section-description">
-          {result.review || result.mode === "snapshot"
-            ? "Cet aperçu comprend des sources en évaluation. Elles restent invisibles dans le catalogue public tant que leur diffusion n’est pas approuvée."
-            : "Seules les sources approuvées et activées figurent ici. Les sources à l’étude ne sont pas comptées comme couverture publique."}
+          Retrouvez les informations essentielles et les liens des sources
+          connectées. Les descriptions intégrales et les modalités de
+          candidature restent sur le site d’origine.
         </p>
         <div className="source-cards">
           {result.sources.map((source) => (
@@ -85,7 +81,7 @@ export default async function SourcesPage() {
                 </span>
                 <span className="status-tag">
                   {source.publication_status === "approved"
-                    ? "Diffusion validée"
+                    ? "Publié"
                     : "En évaluation"}
                 </span>
               </div>
@@ -94,7 +90,11 @@ export default async function SourcesPage() {
                 {source.count} opportunité{source.count === 1 ? "" : "s"}{" "}
                 actuellement visible{source.count === 1 ? "" : "s"}.
               </p>
-              <p>{source.permission_note}</p>
+              <p>
+                {source.id === "wadifa"
+                  ? "Métadonnées sous licence CC BY 4.0 avec attribution et lien vers chaque avis."
+                  : "Offres du site de recrutement de l’employeur. Description complète à consulter à la source."}
+              </p>
               <p>Dernière collecte réussie : {shortDate(source.checked_at)}.</p>
               {source.website && (
                 <a

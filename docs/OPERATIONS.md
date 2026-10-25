@@ -1,66 +1,56 @@
-# Operations and handoff
+# Virtus operations
 
-## Created infrastructure
+## Infrastructure
 
-- Supabase project: `virtus-jobs`, ref `bynzprawodlkldfslzxg`, region `eu-west-1`.
-- Vercel project: `virtus-jobs`, ID `prj_xtFGAt47gRKFACnurPIZIZWyAJuE`.
-- Git repository: `https://github.com/yassine-yki/VIrtus_mainrepo`.
+- Supabase virtus-jobs: bynzprawodlkldfslzxg, eu-west-1.
+- Vercel virtus-jobs: prj_xtFGAt47gRKFACnurPIZIZWyAJuE.
+- Repository: yassine-yki/VIrtus_mainrepo; production branch main.
+- Public domain: https://virtus-jobs.vercel.app.
 
-These identifiers are configuration metadata, not credentials. Existing projects were not modified. Project creation on Supabase was quoted at $0/month on the connected free organization; future usage and billing remain subject to the provider's account limits.
+## Public data model
 
-## Refresh diagnosis
+The owner chose one public metadata/link catalog on 2026-10-25. Active employer feeds and Wadifa competitions are publicly listed. Full imported advertisement text stays operator-only; public table column permissions reject description reads and the security-invoker catalog view returns an empty description. Public keyword search therefore uses titles and companies, not private advertisement bodies.
 
-1. Check the latest `sync_runs` rows per source and `sources.last_success_at`.
-2. On HTTP failures, preserve existing records and retry within the collector's bounded budget. Never convert a failure to an empty successful run.
-3. On a suspicious count drop, inspect the original source and parser before permitting reconciliation.
-4. On an outdated sync rejection, check for overlapping runners. The workflow prevents overlap and the database rejects older runs.
-5. Check the 72-hour freshness cutoff before assuming an empty result means the jobs disappeared.
+sources.publication_status is a visibility control. Approved means enabled for publication by the owner, not a separately verified licence. Employer source notes record this distinction. Wadifa's CC BY 4.0 metadata licence and mandatory visible per-item attribution are recorded separately. The collector never overwrites publication approval, blocking, enablement or evidence notes.
 
-`sources.last_success_at` records source-level freshness. Listing-level `last_seen_at` records the most recent complete sync in which that listing appeared. Search date filters use `published_at`, never first-seen as a substitute.
+The former app-level review gate was removed. /access redirects home; migration 004 revokes anon/authenticated execution on old review RPCs. Historical tables/functions remain as inert migration history, with RLS and no public policies. No website uses their capability. The old Vercel preview token is cleared.
 
-## Database security
+## Scheduling and failures
 
-- Public table reads use RLS and only expose active, recent listings from approved sources.
-- The catalog view uses `security_invoker=true`; public query RPCs use caller permissions.
-- Collector reconciliation is restricted to `service_role` and uses a per-source transaction lock.
-- `sync_runs`, migration history and preview token hashes deliberately have RLS with **no public policies**. They are server/operator-only, not forgotten public-read tables.
-- The two preview RPCs are intentionally `SECURITY DEFINER` and callable with a separate unguessable token checked in their bodies. Supabase advisors flag these entry points because they are anonymous-callable; this is a documented read-only capability design, not blanket public access. Tests verify missing/wrong tokens are rejected and pending sources stay hidden through normal reads. Revoke these functions and remove the preview token when owner review is no longer needed.
-- No employer account, candidate profile, résumé or application is collected.
+GitHub's collection environment is restricted to main branches, excluding tags. Its variable SUPABASE_URL identifies this project; its secret SUPABASE_SECRET_KEY is used only by source jobs. The site does not have this write credential.
 
-## Initial review import
+The Refresh job catalog workflow uses one job per enabled source, at most two concurrently, and prevents overlapping workflow runs. The matrix generator receives no credential. Every source has a 25-minute timeout. A source failure does not cancel others.
 
-`scripts/export-review-batch.ts` exports bounded JSON batches from the ignored local snapshot for an operator-assisted initial import through the connected SQL tool. It never reads `.env` or exports credentials. The imported source rows remain pending. This is a one-time bootstrap path, not the recurring collector; subsequent imports should use `pnpm collect` and the atomic reconciliation RPC.
+Manual dispatch is allowed before activating repository variable COLLECTION_ENABLED=true. After manual success, verify the first actual schedule event separately. The cron is 17 _/6 _ \* \* UTC. Scheduled runs may be delayed.
 
-## Deployment readiness
+Check sync_runs rows and sources.last_success_at for each source. Failed collections preserve prior listings; incomplete pagination, changed totals, duplicate source IDs and suspicious drops fail before reconciliation. A source drop below half its prior active count, when previously at least ten, requires investigation. Two successful misses and 24 hours since last seen are needed to close a missing job. Reads exclude observations older than 72 hours.
 
-- Website build and tests can run without secrets.
-- A real-data hosted review requires the private-preview token configured through an authorized path. Keep it out of Git and the Production environment.
-- The recurring workflow is prepared but requires collector credentials and explicit activation. A configured YAML file alone is not proof that scheduled refreshes are running.
-- Public launch also requires source publication approval. Pending-source data must not be exposed just to populate a demo.
-- Fonts currently load from Google Fonts, with system fallbacks. Self-host them if deployment privacy requirements require eliminating that request.
+Registration happens before fetching so first-run failures can be logged. It inserts pending sources without overriding existing operator state. The commit function checks source state again with a row lock. A source disabled or blocked while fetching cannot commit.
 
-## Recovery
+Suspend one source with `update public.sources set enabled=false where id='source-id'`. Set publication_status='blocked' to immediately hide it. Resume only after investigation. To stop scheduled collection globally, set repository variable COLLECTION_ENABLED=false.
 
-Restore a known application commit or redeploy its Vercel build. The initial schema is additive; do not drop tables as a rollback. Stop collection with the repository variable or `COLLECTION_ENABLED=false`, retain the last valid data, and inspect the cause. Changing the preview token requires updating both its database hash and the Preview environment value, then redeploying; old access cookies become invalid.
+## Credentials and recovery
 
-## Expanded collection and credentials
+Replace the GitHub environment secret with a new Supabase secret key, complete a manual collection, then revoke the old key in Supabase. Do not rotate unrelated keys. Never put a write key in Vercel or source control.
 
-- `collection` is a GitHub environment restricted to `main` branches (no tags). Its variable `SUPABASE_URL` identifies this project; its secret `SUPABASE_SECRET_KEY` is used only by source jobs. Do not store this key in Vercel or `.env.local` for deployment.
-- Run the `Refresh job catalog` workflow manually on `main` with the schedule disabled. After all source jobs succeed, enable repository variable `COLLECTION_ENABLED=true`. Confirm the first actual `schedule` event separately; a successful manual run is not scheduled-run evidence.
-- The six-hour UTC schedule is `17 */6 * * *`. Two source jobs run concurrently at most; other sources keep running if one fails. The workflow prevents overlapping catalog runs. GitHub may delay scheduled events.
-- Each source calls `register_source` before network access and checks its result. Registration inserts new rows as pending and never overwrites approval or operator enablement. `commit_source_sync` checks the database state again with a row lock; disabling or blocking a source during fetching prevents its commit.
-- Suspend one source with `update public.sources set enabled=false where id='source-id'`. Set publication status to `blocked` to remove its listings from public and private reads. Resume only after investigation. The registry is a technical default, not a permission override.
-- For key rotation, replace the GitHub environment secret with a new Supabase secret key, complete a manual collection, then revoke the old key in Supabase. Do not rotate unrelated project keys.
-- Enable GitHub Actions failure notifications through the owner's account settings if desired. Inspect `sync_runs` and `sources.last_success_at` for freshness; no new email/Slack notification service is configured.
+main requires the verify check; force pushes and deletion are disabled. Environment branch policy permits main only. Owner/admin bypass remains available for repository recovery.
 
-## Competition handling
+Restore a known application commit through a reviewed branch or redeploy a compatible Vercel build. Keep schema/data intact. Migration 004 intentionally restricts older clients that expected full-description table reads or private preview RPC access. Do not undo those permissions to restore the retired private website.
 
-The `competition_open` SQL predicate enforces deadline visibility for table RLS and the public/private catalog view. It compares calendar dates in `Africa/Casablanca`, not a fixed UTC offset. Dates stay visible until the end of that local day; the source's official notice determines any earlier hour. The TypeScript snapshot uses the same timezone rule.
+## Competitions
 
-Wadifa's per-minute limit is enforced inside the HTTP client (61 seconds between attempts); a Retry-After longer than two minutes fails the run. A 2,000-item response is treated as potentially truncated. Missing employer/deadline rows are quarantined with item ID warnings. Other malformed values fail collection so a broken parser cannot reconcile a partial feed.
+Deadline visibility is evaluated in table RLS and the catalog view using the current calendar date in Africa/Casablanca. There is no fixed UTC offset assumption. The official notice determines an earlier precise hour. The local snapshot uses the same timezone rule.
 
-Public smoke: `pnpm exec tsx scripts/smoke-public.ts https://virtus-jobs.vercel.app`. It verifies anonymous Supabase search, competition metadata, official notices, attribution without nofollow, filters and source visibility. Set `SMOKE_PENDING_JOB_ID` to a known pending group key to additionally assert a public 404. Its current employer-zero assertion is a launch check for this first licensed public source; update it deliberately when approving further sources.
+Wadifa's HTTP client waits at least 61 seconds between attempts. A Retry-After over two minutes fails the run. Exactly 2,000 feed items is considered potentially truncated. Missing employer/deadline rows are quarantined with item-ID warnings; impossible dates and other malformed metadata fail collection.
 
-Keep `PUBLIC_INDEXING_ENABLED=false` until public production smoke passes. Then set it true in Production and redeploy. Preview's `CATALOG_AUDIENCE=internal` always disables indexing, even if the indexing flag is inherited accidentally. Vercel Standard Protection should protect preview/deployment URLs while the production domain remains publicly accessible.
+Every displayed competition links visibly to its Wadifa source item without nofollow and to the official Emploi-public notice. Metadata adaptation and the CC BY 4.0 licence are identified on details. No PDF extraction, salary feed or applicant data is collected.
 
-Migration 003 adds optional metadata and replaces the search RPC signature with a final defaulted `p_kind` argument, preserving callers that omit it. The older application can read migrated records, but use the new application for attribution-compliant public competition display. Roll back the app only after blocking the competition source if the old build lacks attribution. Prefer retaining schema/data rather than destructive reverse migrations.
+## Verification and indexing
+
+`pnpm exec tsx scripts/smoke-public.ts https://virtus-jobs.vercel.app` verifies public API filtering, both opportunity types, official application links, visible attribution, audience-correct source counts, empty description fields and /access redirecting home. `scripts/smoke-db.ts` additionally checks direct full-description reads and old review endpoints are denied.
+
+Production indexing is enabled after public smoke passes. Preview keeps PUBLIC_INDEXING_ENABLED=false; VERCEL_ENV=preview also prevents indexing. Vercel Standard Protection protects deployment/preview URLs while the production domain is public.
+
+The local browser is disabled in this session's Work settings. HTTP/SSR checks verify server behaviour; a fresh interactive visual/keyboard walkthrough remains unverified. Fonts use Google Fonts with system fallbacks.
+
+Supabase security advisors previously warned about anonymous review SECURITY DEFINER RPCs; migration 004 revokes those public entrypoints. RLS-with-no-policy notices on operator-only tables are intentional deny-by-default.

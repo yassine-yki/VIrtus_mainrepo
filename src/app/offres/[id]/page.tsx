@@ -12,7 +12,6 @@ import { Header, Footer } from "@/components/brand";
 import { CompanyMark } from "@/components/job-card";
 import { getJob } from "@/lib/catalog";
 import { shortDate, workplaceLabels, deadlineLabel } from "@/lib/format";
-import { plainText } from "@/lib/normalize";
 
 export const dynamic = "force-dynamic";
 export default async function JobPage({
@@ -20,7 +19,7 @@ export default async function JobPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const { job, internal } = await getJob((await params).id);
+  const { job } = await getJob((await params).id);
   if (!job) notFound();
   return (
     <>
@@ -29,11 +28,6 @@ export default async function JobPage({
         <Link className="back-link" href="/#offres">
           <ArrowLeft size={15} /> Toutes les offres
         </Link>
-        {internal && (
-          <p className="notice">
-            Aperçu privé de travail · source en cours de validation.
-          </p>
-        )}
         <div className="detail-grid">
           <article className="detail-main">
             <div className="detail-company">
@@ -75,15 +69,11 @@ export default async function JobPage({
             </div>
             <div className="description">
               <h2>À propos de cette opportunité</h2>
-              {job.description ? (
-                <p dir="auto">{plainText(job.description)}</p>
-              ) : (
-                <p>
-                  Les conditions complètes sont disponibles dans l’avis
-                  d’origine. Vérifiez les modalités et l’heure limite exacte
-                  auprès de l’organisme recruteur.
-                </p>
-              )}
+              <p>
+                Virtus rassemble les informations essentielles et le lien vers
+                l’annonce. Consultez le site d’origine pour la description
+                complète, les conditions et les modalités de candidature.
+              </p>
             </div>
           </article>
           <aside className="apply-panel">

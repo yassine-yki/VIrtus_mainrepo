@@ -2,27 +2,11 @@ import "server-only";
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { createClient } from "@supabase/supabase-js";
-import { searchSnapshot, PAGE_SIZE } from "./search";
+import { searchSnapshot, PAGE_SIZE, groupListings } from "./search";
+import { deadlineOpen } from "./deadline";
 import type { CatalogSnapshot, Filters, Job, SearchResult } from "./types";
-import { cookies } from "next/headers";
-import { equalSecret, reviewCookieValue, reviewEnabled } from "./review-auth";
 
-export function isLocalReview(): boolean {
-  return (
-    process.env.NODE_ENV !== "production" &&
-    process.env.CATALOG_AUDIENCE !== "public"
-  );
-}
-async function authorizedReview(): Promise<boolean> {
-  if (!reviewEnabled()) return false;
-  if (process.env.NODE_ENV !== "production") return true;
-  const value = (await cookies()).get("virtus_review")?.value ?? "";
-  return equalSecret(
-    value,
-    reviewCookieValue(process.env.VIRTUS_REVIEW_TOKEN!),
-  );
-}
-const empty = (filters: Filters, error?: string): SearchResult => ({
+const empty = (error?: string): SearchResult => ({
   jobs: [],
   total: 0,
   page: 1,
@@ -34,19 +18,17 @@ const empty = (filters: Filters, error?: string): SearchResult => ({
   mode: "unconfigured",
   error,
 });
-
 function client() {
-  const url = process.env.SUPABASE_URL;
-  const apiKey = process.env.SUPABASE_PUBLISHABLE_KEY;
-  return url && apiKey
-    ? createClient(url, apiKey, {
+  const url = process.env.SUPABASE_URL,
+    key = process.env.SUPABASE_PUBLISHABLE_KEY;
+  return url && key
+    ? createClient(url, key, {
         auth: { persistSession: false, autoRefreshToken: false },
       })
     : null;
 }
-
 async function snapshot(): Promise<CatalogSnapshot | null> {
-  if (!isLocalReview()) return null;
+  if (process.env.NODE_ENV === "production") return null;
   try {
     const data = JSON.parse(
       await readFile(
@@ -64,38 +46,36 @@ async function snapshot(): Promise<CatalogSnapshot | null> {
     return null;
   }
 }
-
 export async function searchCatalog(filters: Filters): Promise<SearchResult> {
   const local = await snapshot();
-  if (local) return searchSnapshot(local, filters, true);
+  if (local) {
+    const result = searchSnapshot(local, filters, true);
+    return {
+      ...result,
+      jobs: result.jobs.map((job) => ({ ...job, description: "" })),
+    };
+  }
   const supabase = client();
-  if (!supabase) return empty(filters);
-  const review = await authorizedReview();
-  const { data, error } = await supabase.rpc(
-    review ? "search_catalog_review" : "search_catalog",
-    {
-      ...(review ? { p_token: process.env.VIRTUS_REVIEW_TOKEN } : {}),
-      p_query: filters.q,
-      p_city: filters.city,
-      p_contract: filters.contract,
-      p_workplace: filters.workplace,
-      p_source: filters.source,
-      p_days: filters.days,
-      p_page: filters.page,
-      p_sort: filters.sort,
-      p_kind: filters.kind ?? "",
-    },
-  );
+  if (!supabase) return empty();
+  const { data, error } = await supabase.rpc("search_catalog", {
+    p_query: filters.q,
+    p_city: filters.city,
+    p_contract: filters.contract,
+    p_workplace: filters.workplace,
+    p_source: filters.source,
+    p_days: filters.days,
+    p_page: filters.page,
+    p_sort: filters.sort,
+    p_kind: filters.kind ?? "",
+  });
   if (error) {
     console.error("Catalog search failed", { code: error.code });
     return empty(
-      filters,
       "La recherche est momentanément indisponible. Réessayez dans quelques instants.",
     );
   }
-  return { ...data, mode: "supabase", review } as SearchResult;
+  return { ...data, mode: "supabase" } as SearchResult;
 }
-
 export async function catalogSources() {
   return searchCatalog({
     q: "",
@@ -109,61 +89,30 @@ export async function catalogSources() {
     kind: "",
   });
 }
-
-export async function getJob(
-  id: string,
-): Promise<{ job: Job | null; internal: boolean }> {
-  if (!/^[a-f0-9]{32}$/.test(id)) return { job: null, internal: false };
+export async function getJob(id: string): Promise<{ job: Job | null }> {
+  if (!/^[a-f0-9]{32}$/.test(id)) return { job: null };
   const local = await snapshot();
   if (local) {
-    const result = searchSnapshot(
-      local,
-      {
-        q: "",
-        city: "",
-        contract: "",
-        workplace: "",
-        source: "",
-        days: 0,
-        page: 1,
-        sort: "recent",
-      },
-      true,
+    const permitted = local.sources.filter(
+      (source) => source.enabled && source.publicationStatus !== "blocked",
     );
-    // Details must search the full catalog, not only the first page.
-    for (
-      let page = 1;
-      page <= Math.max(1, Math.ceil(result.total / PAGE_SIZE));
-      page++
-    ) {
-      const found = searchSnapshot(
-        local,
-        {
-          q: "",
-          city: "",
-          contract: "",
-          workplace: "",
-          source: "",
-          days: 0,
-          page,
-          sort: "recent",
-        },
-        true,
-      ).jobs.find((job) => job.group_key === id);
-      if (found) return { job: found, internal: true };
-    }
-    return { job: null, internal: true };
+    const ids = new Set(permitted.map((source) => source.id));
+    const jobs = groupListings(
+      local.listings.filter(
+        (job) =>
+          job.active &&
+          ids.has(job.source_id) &&
+          deadlineOpen(job.deadline) &&
+          Date.parse(job.last_seen_at) > Date.now() - 72 * 3600000,
+      ),
+      new Map(permitted.map((source) => [source.id, source.name])),
+    );
+    const job = jobs.find((job) => job.group_key === id);
+    return { job: job ? { ...job, description: "" } : null };
   }
   const supabase = client();
-  if (!supabase) return { job: null, internal: false };
-  const review = await authorizedReview();
-  const { data, error } = await supabase.rpc(
-    review ? "get_catalog_job_review" : "get_catalog_job",
-    {
-      p_id: id,
-      ...(review ? { p_token: process.env.VIRTUS_REVIEW_TOKEN } : {}),
-    },
-  );
+  if (!supabase) return { job: null };
+  const { data, error } = await supabase.rpc("get_catalog_job", { p_id: id });
   if (error) console.error("Job lookup failed", { code: error.code });
-  return { job: error ? null : (data as Job | null), internal: review };
+  return { job: error ? null : (data as Job | null) };
 }
