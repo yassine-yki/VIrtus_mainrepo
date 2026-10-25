@@ -47,14 +47,21 @@ export function hash(value: string): string {
 
 export function plainText(html: unknown): string {
   if (typeof html !== "string") return "";
-  const $ = load(html.slice(0, 500_000));
-  $("script,style,iframe,object,svg").remove();
-  $("br").replaceWith("\n");
-  $("p,div,li,h1,h2,h3,h4,section").each((_, element) => {
-    $(element).append("\n");
-  });
-  return $.root()
-    .text()
+  let text = html.slice(0, 500_000);
+  // Some feeds entity-encode an entire HTML document. Decode bounded layers,
+  // removing executable elements on every pass before returning plain text.
+  for (let pass = 0; pass < 3; pass++) {
+    const $ = load(text);
+    $("script,style,iframe,object,svg").remove();
+    $("br").replaceWith("\n");
+    $("p,div,li,h1,h2,h3,h4,section").each((_, element) => {
+      $(element).append("\n");
+    });
+    const decoded = $.root().text();
+    if (decoded === text) break;
+    text = decoded;
+  }
+  return text
     .replace(/\u00a0/g, " ")
     .replace(/[ \t]+/g, " ")
     .replace(/ *\n */g, "\n")

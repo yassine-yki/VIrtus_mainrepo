@@ -52,6 +52,14 @@ test("extracts only plain text from hostile source HTML", () => {
   assert.match(text, /Bonjour\nMaroc/);
   assert.doesNotMatch(text, /steal|iframe|<p>/);
 });
+test("decodes entity-encoded feed HTML without showing tags or script content", () => {
+  const text = plainText(
+    "&lt;div&gt;&lt;p&gt;Java &amp;amp; Spring&lt;/p&gt;&lt;script&gt;steal()&lt;/script&gt;&lt;p&gt;Casablanca&lt;/p&gt;&lt;/div&gt;",
+  );
+  assert.match(text, /Java & Spring\nCasablanca/);
+  assert.doesNotMatch(text, /steal|<\/?(?:p|div|script)>|&lt;/);
+  assert.equal(plainText(text), text);
+});
 test("similar titles at distinct employer URLs are not merged", () => {
   const a = normalizeListing(source, {
     externalId: "1",
@@ -75,7 +83,7 @@ test("Greenhouse filters locations and does not label updated_at as published_at
         title: "Comptable",
         location: { name: "Casablanca" },
         absolute_url: "https://example.com/1",
-        content: "<p>Mission</p>",
+        content: "&lt;p&gt;Mission&lt;/p&gt;",
         updated_at: "2026-10-21T00:00:00Z",
       },
       {

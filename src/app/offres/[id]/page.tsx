@@ -12,6 +12,7 @@ import { Header, Footer } from "@/components/brand";
 import { CompanyMark } from "@/components/job-card";
 import { getJob } from "@/lib/catalog";
 import { shortDate, workplaceLabels } from "@/lib/format";
+import { plainText } from "@/lib/normalize";
 
 export const dynamic = "force-dynamic";
 export default async function JobPage({
@@ -30,7 +31,7 @@ export default async function JobPage({
         </Link>
         {internal && (
           <p className="notice">
-            Aperçu local de travail · source en cours de validation.
+            Aperçu privé de travail · source en cours de validation.
           </p>
         )}
         <div className="detail-grid">
@@ -66,7 +67,7 @@ export default async function JobPage({
             <div className="description">
               <h2>À propos de cette opportunité</h2>
               {job.description ? (
-                <p dir="auto">{job.description}</p>
+                <p dir="auto">{plainText(job.description)}</p>
               ) : (
                 <p>
                   La description complète est disponible sur le site d’origine.
