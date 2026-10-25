@@ -30,6 +30,7 @@ export default async function Home({
     filters.workplace,
     filters.source,
     filters.days,
+    filters.kind,
   ].filter(Boolean).length;
   return (
     <>
@@ -118,16 +119,24 @@ export default async function Home({
                 ))}
               </select>
             </label>
-            {(["contract", "workplace", "source", "days", "sort"] as const).map(
-              (name) =>
-                filters[name] ? (
-                  <input
-                    key={name}
-                    type="hidden"
-                    name={name}
-                    value={filters[name]}
-                  />
-                ) : null,
+            {(
+              [
+                "contract",
+                "workplace",
+                "source",
+                "days",
+                "sort",
+                "kind",
+              ] as const
+            ).map((name) =>
+              filters[name] ? (
+                <input
+                  key={name}
+                  type="hidden"
+                  name={name}
+                  value={filters[name]}
+                />
+              ) : null,
             )}
             <button className="search-button" type="submit">
               Explorer les offres <ArrowRight size={18} />
@@ -147,16 +156,18 @@ export default async function Home({
             <span>
               DIRECTEMENT DEPUIS
               <br />
-              <strong>LES SITES EMPLOYEURS</strong>
+              <strong>LES SOURCES CONNECTÉES</strong>
             </span>
             <div>
-              <span>ALTEN</span>
-              <span className="wordmark-accor">Accor</span>
-              <span className="wordmark-sqli">
-                SQLI<span>_</span>
-              </span>
-              <span className="wordmark-devoteam">devoteam</span>
-              <span className="wordmark-nuitee">nuitée</span>
+              {result.sources
+                .filter((source) => source.count > 0)
+                .slice(0, 5)
+                .map((source) => (
+                  <span key={source.id}>{source.name}</span>
+                ))}
+              {!result.sources.some((source) => source.count > 0) && (
+                <span>Une sélection en préparation</span>
+              )}
             </div>
             <Link href="/sources" aria-label="Comprendre les sources affichées">
               <ArrowUpRight size={20} />
@@ -208,6 +219,18 @@ export default async function Home({
                 <form action="/#offres">
                   <input type="hidden" name="q" value={filters.q} />
                   <input type="hidden" name="sort" value={filters.sort} />
+                  <label>
+                    Type d’opportunité
+                    <select
+                      name="kind"
+                      aria-label="Type d’opportunité"
+                      defaultValue={filters.kind ?? ""}
+                    >
+                      <option value="">Toutes les opportunités</option>
+                      <option value="job">Emplois employeurs</option>
+                      <option value="competition">Concours publics</option>
+                    </select>
+                  </label>
                   <label>
                     Ville
                     <select

@@ -29,6 +29,15 @@ test("Postgres migrations, full catalog search, RLS and safe reconciliation", as
       ),
     );
     const reviewToken = "a".repeat(64);
+    await db.exec(
+      await readFile(
+        new URL(
+          "../supabase/migrations/202610250003_competitions.sql",
+          import.meta.url,
+        ),
+        "utf8",
+      ),
+    );
     await db.query(
       "insert into virtus_private.review_access(token_hash) values(md5($1))",
       [reviewToken],
@@ -158,6 +167,180 @@ test("Postgres migrations, full catalog search, RLS and safe reconciliation", as
       "approved",
       "sync never overwrites publication permission",
     );
+    await db.query(
+      "update public.sources set enabled=false,last_success_at=now()-interval '2 hours' where id=$1",
+      [source.id],
+    );
+    assert.equal(
+      (
+        await db.query<{ ok: boolean }>(
+          "select public.register_source($1::jsonb) as ok",
+          [JSON.stringify(source)],
+        )
+      ).rows[0].ok,
+      false,
+    );
+    await assert.rejects(sync(jobs), /disabled or blocked/);
+    await db.query(
+      "update public.sources set enabled=true,publication_status='blocked' where id=$1",
+      [source.id],
+    );
+    await assert.rejects(sync(jobs), /disabled or blocked/);
+    await db.exec("set role anon");
+    assert.equal(
+      (
+        await db.query<{ data: { total: number } }>(
+          "select public.search_catalog_review(p_token=>$1) as data",
+          [reviewToken],
+        )
+      ).rows[0].data.total,
+      0,
+    );
+    await assert.rejects(
+      db.query("select public.register_source($1::jsonb)", [
+        JSON.stringify(source),
+      ]),
+      /permission denied/,
+    );
+    await db.exec("reset role");
+    const board = sources.find((source) => source.id === "wadifa")!;
+    await db.query("select public.register_source($1::jsonb)", [
+      JSON.stringify(board),
+    ]);
+    await db.query(
+      "insert into public.sync_runs(source_id,status,count,started_at,error) values($1,'failed',0,now(),'HTTP 503')",
+      [board.id],
+    );
+    assert.equal(
+      (
+        await db.query<{ n: number }>(
+          "select count(*)::integer as n from public.sync_runs where source_id=$1 and status='failed'",
+          [board.id],
+        )
+      ).rows[0].n,
+      1,
+    );
+    const competition = {
+      ...makeJob(80),
+      id: "c".repeat(32),
+      group_key: "c".repeat(32),
+      source_id: board.id,
+      external_id: "concours-1",
+      kind: "competition",
+      title: "Administrateur",
+      company: "Organisme public",
+      locations: ["Maroc"],
+      city_keys: [],
+      contract: "Non précisé",
+      deadline: new Date(Date.now() + 14 * 86400000).toISOString().slice(0, 10),
+      positions: 3,
+      official_notice_url: "https://www.emploi-public.ma/fr/concours/1",
+      attribution_url: "https://www.wadifa-info.com/fr/1",
+      url: "https://www.emploi-public.ma/fr/concours/1",
+    };
+    await db.query(
+      "select public.commit_source_sync($1::jsonb,$2::jsonb,now())",
+      [
+        JSON.stringify({ ...board, publicationStatus: "approved" }),
+        JSON.stringify([competition]),
+      ],
+    );
+    assert.equal(
+      (
+        await db.query<{ s: string }>(
+          "select publication_status as s from public.sources where id=$1",
+          [board.id],
+        )
+      ).rows[0].s,
+      "pending",
+      "collector cannot approve new sources",
+    );
+    await db.query(
+      "update public.sources set publication_status='approved' where id=$1",
+      [board.id],
+    );
+    await db.exec("set role anon");
+    const visible = await db.query<{
+      data: {
+        total: number;
+        jobs: { positions: number }[];
+        sources: { id: string }[];
+      };
+    }>("select public.search_catalog(p_kind=>'competition') as data");
+    assert.equal(visible.rows[0].data.total, 1);
+    assert.equal(visible.rows[0].data.jobs[0].positions, 3);
+    assert.deepEqual(
+      visible.rows[0].data.sources.map((source) => source.id),
+      [board.id],
+    );
+    assert.equal(
+      (
+        await db.query<{ data: { total: number } }>(
+          "select public.search_catalog(p_kind=>'job') as data",
+        )
+      ).rows[0].data.total,
+      0,
+    );
+    assert.equal(
+      (
+        await db.query<{ data: { total: number } }>(
+          "select public.search_catalog(p_city=>'rabat') as data",
+        )
+      ).rows[0].data.total,
+      0,
+    );
+    await db.exec(
+      "reset role; update public.listings set deadline=(now() at time zone 'Africa/Casablanca')::date-1 where kind='competition';",
+    );
+    await db.query(
+      "insert into public.sync_runs(source_id,status,count,started_at,error) values($1,'failed',0,now(),'HTTP 503')",
+      [board.id],
+    );
+    await db.exec("set role anon");
+    assert.equal(
+      (
+        await db.query<{ data: { total: number } }>(
+          "select public.search_catalog() as data",
+        )
+      ).rows[0].data.total,
+      0,
+      "deadline expires even when collection failed",
+    );
+    assert.equal(
+      (
+        await db.query<{ data: unknown }>(
+          "select public.get_catalog_job($1) as data",
+          [competition.group_key],
+        )
+      ).rows[0].data,
+      null,
+    );
+    assert.equal(
+      (
+        await db.query<{ n: number }>(
+          "select count(*)::integer as n from public.listings",
+        )
+      ).rows[0].n,
+      0,
+      "direct table RLS respects deadline",
+    );
+    await db.exec("reset role");
+    for (const [deadline, now, expected] of [
+      ["2026-01-10", "2026-01-10T22:59:59Z", true],
+      ["2026-01-10", "2026-01-10T23:00:00Z", false],
+      ["2026-03-10", "2026-03-10T23:59:59Z", true],
+      ["2026-03-10", "2026-03-11T00:00:00Z", false],
+    ] as const) {
+      assert.equal(
+        (
+          await db.query<{ open: boolean }>(
+            "select public.competition_open($1::date,$2::timestamptz) as open",
+            [deadline, now],
+          )
+        ).rows[0].open,
+        expected,
+      );
+    }
   } finally {
     await db.close();
   }

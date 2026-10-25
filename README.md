@@ -6,13 +6,14 @@ A French-first, mobile-friendly job aggregator built with Next.js, TypeScript an
 
 - Keyword search, city/contract/workplace/source/date filters, relevance/date sorting, shareable URLs and pagination.
 - Job details, original application links, explicit publication/discovery dates and a sources/methodology page.
-- SmartRecruiters, Greenhouse and Lever collectors; seven initial employer feeds.
+- SmartRecruiters, Greenhouse and Lever collectors; seven initial employer feeds plus nine qualifying feeds from an audit of 20 additional employers.
+- Licensed Wadifa Info public-competition metadata, visible attribution, official notices, position counts and Casablanca-date deadline expiry.
 - Morocco-only normalization, accent-insensitive search, exact-link duplicate grouping and multiple cities.
 - Atomic per-source database updates, failure preservation, suspicious-drop detection and conservative expiry.
 - Public RLS policies and a separate key-protected owner preview. Pending sources cannot appear through the public API.
-- CI checks and an opt-in scheduled collection workflow.
+- CI checks and an opt-in six-hour collection matrix, isolated per source with at most two concurrent jobs.
 
-This is the first implementation milestone. Moroccan job-board scrapers and LinkedIn are **not** active integrations. See [source status](docs/SOURCES.md).
+Wadifa Info uses its documented JSON API. Other Moroccan job-board scrapers and LinkedIn are **not** active integrations. See [source status](docs/SOURCES.md), the [20-employer audit](docs/EMPLOYER-AUDIT.md), and [launch checklist](docs/LAUNCH.md).
 
 ## Local development
 
@@ -58,11 +59,11 @@ Import this repository, select the Next.js preset, Node.js 24, and the repositor
 
 If using `vercel env pull`, link to the intended project first and pull to a new ignored file: do not overwrite an existing `.env.local` containing custom local values. Vercel does not return all stored secrets through env pulls.
 
-The app is `noindex` during review. Enabling public indexing is a separate launch decision. No custom domain or public launch is configured by the application code.
+Set `PUBLIC_INDEXING_ENABLED=true` in Production only after the anonymous public smoke check passes. Internal previews and the access page always stay `noindex`. No custom domain is configured.
 
 ## Scheduled collection
 
-The `Refresh job catalog` workflow can run every six hours and by manual dispatch. It is **disabled by default**. On the default branch, configure repository secrets `SUPABASE_URL` and `SUPABASE_SECRET_KEY`, and set repository variable `COLLECTION_ENABLED=true` to activate it. Protect/review the branch before giving a workflow database credentials. Workflow schedules are best effort, not exact-time guarantees.
+The `Refresh job catalog` workflow runs from `main` every six hours when repository variable `COLLECTION_ENABLED=true`. Manual dispatch is available before schedule activation. Configure environment variable `SUPABASE_URL` and environment secret `SUPABASE_SECRET_KEY` inside the GitHub `collection` environment, with deployment policy permitting the `main` branch only. The matrix generator receives no database credentials. Source jobs receive the environment's values, run one source each, and never upload data or credentials as artifacts. Protect/review the branch before giving a workflow database credentials. Workflow schedules are best effort, not exact-time guarantees.
 
 ```sh
 pnpm collect                         # All enabled, non-blocked employer feeds
@@ -71,6 +72,10 @@ pnpm collect --snapshot              # Local review only
 ```
 
 Failed fetches and partial pagination never reconcile or expire a source. A drop below half of a source's prior active count (when it had at least ten jobs) requires investigation. A missing job closes only after two successful complete misses and at least 24 hours since last seen. Public reads exclude records not seen for 72 hours. See [operations](docs/OPERATIONS.md).
+
+Competitions additionally disappear after their deadline day ends in `Africa/Casablanca`, even if later collection fails. Missing employers/deadlines are quarantined with an explicit collection warning; impossible dates and malformed records fail the run. No location is inferred from an employer's name. Wadifa collection uses one feed request per run, retries no sooner than 61 seconds, and rejects the undocumented 2,000-item truncation boundary.
+
+The search API accepts optional `kind=job|competition`; omitting it searches both. Listing responses add `kind`, `deadline` (YYYY-MM-DD), `positions`, `official_notice_url` and `attribution_url`. Existing URLs and filters remain compatible.
 
 ## Checks
 

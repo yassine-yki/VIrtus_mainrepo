@@ -1,4 +1,5 @@
 import type { Source } from "./types";
+import auditedEmployers from "./audited-employers.json";
 
 // Public endpoint availability is technical evidence, not a republication licence.
 // Approve sources individually only after documenting the applicable agreement.
@@ -82,6 +83,31 @@ export const sources: Source[] = [
     publicationStatus: "pending",
     permissionNote: pending,
   },
+  {
+    id: "wadifa",
+    name: "Wadifa Info",
+    company: "Wadifa Info",
+    provider: "wadifa",
+    identifier: "concours",
+    website: "https://www.wadifa-info.com/developpeurs",
+    enabled: true,
+    publicationStatus: "pending",
+    permissionNote:
+      "CC BY 4.0, usage commercial autorisé. Source : Wadifa Info et lien par élément obligatoires. Licence vérifiée le 25/10/2026 : https://www.wadifa-info.com/developpeurs. Approbation opérateur en base requise.",
+  },
+  ...auditedEmployers.map(
+    (entry): Source => ({
+      id: entry.id,
+      name: entry.name,
+      company: entry.company,
+      provider: entry.provider as Source["provider"],
+      identifier: entry.identifier,
+      website: entry.website,
+      enabled: entry.enabled,
+      publicationStatus: "pending",
+      permissionNote: entry.permissionNote,
+    }),
+  ),
 ];
 
 export const candidateSources = [

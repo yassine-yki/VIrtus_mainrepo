@@ -1,4 +1,10 @@
-export type Provider = "smartrecruiters" | "greenhouse" | "lever" | "html";
+export type Provider =
+  | "smartrecruiters"
+  | "greenhouse"
+  | "lever"
+  | "wadifa"
+  | "html";
+export type OpportunityKind = "job" | "competition";
 export type Workplace = "onsite" | "hybrid" | "remote" | "unknown";
 export type Contract =
   | "CDI"
@@ -22,6 +28,11 @@ export interface Source {
 }
 
 export interface Listing {
+  kind?: OpportunityKind;
+  deadline?: string | null;
+  positions?: number | null;
+  official_notice_url?: string | null;
+  attribution_url?: string | null;
   id: string;
   group_key: string;
   source_id: string;
@@ -66,6 +77,7 @@ export interface CatalogSnapshot {
 }
 
 export interface Filters {
+  kind?: OpportunityKind | "";
   q: string;
   city: string;
   contract: string;
@@ -88,6 +100,10 @@ export interface SearchResult {
     name: string;
     count: number;
     checked_at: string | null;
+    website?: string;
+    provider?: Provider;
+    publication_status?: PublicationStatus;
+    permission_note?: string;
   }[];
   checked_at: string | null;
   mode: "supabase" | "snapshot" | "unconfigured";

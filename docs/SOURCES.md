@@ -39,3 +39,11 @@ ReKrute and Emploi.ma have restrictive published terms; do not enable scraping w
 An administrator should record the applicable licence, permission or agreement, permitted fields, attribution/link requirements, refresh limits and evidence date. Update only the corresponding database source row to `approved`; keep the evidence in `permission_note`. Use `blocked` to stop display immediately. Do not edit RLS to make pending records public.
 
 Coverage currently leans toward engineering, IT and hospitality. It is not representative of the whole Moroccan labor market.
+
+## Expansion on 2026-10-25
+
+The [additional employer audit](EMPLOYER-AUDIT.md) records 20 tested feeds. Nine passed complete collection with 183 Morocco records / 183 distinct job groups and are enabled for private collection. Eleven zero-result feeds remain disabled. All new employer feeds remain pending public publication approval.
+
+Wadifa Info is a separate `wadifa` integration for public-sector competitions, not an HTML scraper. Its [developer terms](https://www.wadifa-info.com/developpeurs), checked 2026-10-25, explicitly offer metadata under CC BY 4.0 including commercial reuse. Cards and details retain a visible clickable `Source : Wadifa Info` link to each source item without `nofollow`; details also identify the licence and adapted metadata. The main action opens the official Emploi-public notice. We do not copy PDFs, salaries or applicant data.
+
+The direct feed check returned 189 items; 188 have usable metadata. Item 96340 lacks an employer and deadline and is excluded with a collection warning. This is a dated observation. Feed counts describe announcements, not the number of open positions, and reads independently remove closed deadlines. Missing city data remains `Maroc` with no city filter key. The operator approval is recorded in Supabase; a collector cannot approve itself.

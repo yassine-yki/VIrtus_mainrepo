@@ -1,6 +1,7 @@
 import { normalizeListing } from "../lib/normalize";
 import type { Listing, Source } from "../lib/types";
 import { fetchJson, record, str, type FetchJson } from "./http";
+import { dateOnly } from "../lib/deadline";
 
 export async function collectSmartRecruiters(
   source: Source,
@@ -175,7 +176,74 @@ export function collectSource(
     return collectSmartRecruiters(source, get);
   if (source.provider === "greenhouse") return collectGreenhouse(source, get);
   if (source.provider === "lever") return collectLever(source, get);
+  if (source.provider === "wadifa") return collectWadifa(source, get);
   throw new Error(
     "HTML source requires an individually reviewed collector; no scraper is enabled",
   );
+}
+
+export async function collectWadifa(
+  source: Source,
+  get: FetchJson = fetchJson,
+): Promise<Listing[]> {
+  const data = record(
+    await get("https://www.wadifa-info.com/api/v1/concours?lang=fr&limit=2000"),
+  );
+  if (!Array.isArray(data.items) || data.count !== data.items.length)
+    throw new Error("Invalid Wadifa response or incomplete item count");
+  if (data.items.length >= 2000)
+    throw new Error(
+      "Potentially truncated Wadifa feed; reconciliation refused",
+    );
+  if (record(data.attribution).license !== "CC-BY-4.0")
+    throw new Error("Wadifa licence changed; review before collection");
+  const jobs = data.items.map((raw) => {
+    const item = record(raw);
+    if (!str(item.employer).trim() || item.deadline == null) {
+      console.warn(
+        `Wadifa item ${String(item.id)} excluded: missing employer or deadline`,
+      );
+      return null;
+    }
+    const deadline = dateOnly(item.deadline),
+      published = dateOnly(item.published);
+    if (
+      !Number.isSafeInteger(item.id) ||
+      Number(item.id) <= 0 ||
+      !deadline ||
+      !published ||
+      !str(item.grade).trim() ||
+      !str(item.employer).trim() ||
+      !Number.isSafeInteger(item.posts) ||
+      Number(item.posts) <= 0
+    )
+      throw new Error("Incomplete Wadifa competition");
+    const attribution = new URL(str(item.url));
+    const official = new URL(str(item.official_notice));
+    if (
+      attribution.protocol !== "https:" ||
+      attribution.hostname !== "www.wadifa-info.com" ||
+      official.protocol !== "https:" ||
+      official.hostname !== "www.emploi-public.ma"
+    )
+      throw new Error("Unexpected competition link host");
+    return normalizeListing(source, {
+      externalId: String(item.id),
+      title: str(item.grade),
+      company: str(item.employer),
+      location: "Maroc",
+      country: "MA",
+      kind: "competition",
+      deadline,
+      positions: Number(item.posts),
+      url: official.href,
+      officialNoticeUrl: official.href,
+      attributionUrl: attribution.href,
+      publishedAt: `${published}T00:00:00Z`,
+    })!;
+  });
+  const eligible = jobs.filter((job): job is Listing => job !== null);
+  if (data.items.length && !eligible.length)
+    throw new Error("No publishable metadata in non-empty Wadifa feed");
+  return uniqueIds(eligible);
 }

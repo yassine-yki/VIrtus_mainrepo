@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowUpRight, MapPin, Clock3, BriefcaseBusiness } from "lucide-react";
-import { age, workplaceLabels } from "@/lib/format";
+import { age, workplaceLabels, deadlineLabel } from "@/lib/format";
 import type { Job } from "@/lib/types";
 
 const companyColors: Record<string, string> = {
@@ -52,6 +52,15 @@ export function JobCard({ job }: { job: Job }) {
         <h3>
           <Link href={`/offres/${job.group_key}`}>{job.title}</Link>
         </h3>
+        {job.kind === "competition" && (
+          <div className="competition-meta">
+            <strong className="competition-badge">Concours public</strong>
+            <span>
+              {job.positions} poste{job.positions === 1 ? "" : "s"} · Date
+              limite : {deadlineLabel(job.deadline)}
+            </span>
+          </div>
+        )}
         <div className="job-meta">
           <span>
             <MapPin size={14} />
@@ -70,6 +79,16 @@ export function JobCard({ job }: { job: Job }) {
           )}
         </div>
         {job.salary && <p className="salary">{job.salary}</p>}
+        {job.attribution_url && (
+          <a
+            className="attribution"
+            href={job.attribution_url}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Source : Wadifa Info
+          </a>
+        )}
       </div>
       <div className="job-action">
         <span className="job-age">

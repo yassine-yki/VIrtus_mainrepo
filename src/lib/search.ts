@@ -1,4 +1,5 @@
 import { fold, key } from "./normalize";
+import { deadlineOpen } from "./deadline";
 import type {
   CatalogSnapshot,
   Filters,
@@ -17,6 +18,9 @@ export function parseFilters(
       : (params[name] ?? "")
     ).trim();
   return {
+    kind: ["job", "competition"].includes(single("kind"))
+      ? (single("kind") as "job" | "competition")
+      : "",
     q: single("q").slice(0, 120),
     city: single("city").slice(0, 60),
     contract: [
@@ -103,6 +107,7 @@ export function searchSnapshot(
     snapshot.listings.filter(
       (job) =>
         job.active &&
+        deadlineOpen(job.deadline, now) &&
         ids.has(job.source_id) &&
         new Date(job.last_seen_at).getTime() >= now - 72 * 3600_000,
     ),
@@ -121,6 +126,7 @@ export function searchSnapshot(
     const text = fold(`${job.title} ${job.company} ${job.description}`);
     return (
       terms.every((term) => text.includes(term)) &&
+      (!filters.kind || (job.kind ?? "job") === filters.kind) &&
       (!filters.city || job.city_keys.includes(filters.city)) &&
       (!filters.contract || job.contract === filters.contract) &&
       (!filters.workplace || job.workplace === filters.workplace) &&
@@ -180,6 +186,10 @@ export function searchSnapshot(
         snapshot.runs.find(
           (run) => run.source_id === source.id && run.status === "success",
         )?.finished_at ?? null,
+      website: source.website,
+      provider: source.provider,
+      publication_status: source.publicationStatus,
+      permission_note: source.permissionNote,
     })),
     checked_at: snapshot.collected_at,
     mode: "snapshot",

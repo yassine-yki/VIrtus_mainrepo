@@ -28,6 +28,9 @@ const supabase =
     ? createClient(url, secret, { auth: { persistSession: false } })
     : null;
 const path = resolve(process.env.LOCAL_CATALOG_PATH || "data/catalog.json");
+if (process.env.CI && (!selected || selected.length !== 1))
+  throw new Error("CI collection requires exactly one --only source");
+const writeSnapshot = !process.env.CI;
 let previous: CatalogSnapshot | null = null;
 try {
   previous = JSON.parse(await readFile(path, "utf8"));
@@ -50,6 +53,27 @@ for (const source of sources.filter(
   const startedAt = new Date().toISOString();
   console.log(`Collecting ${source.name}…`);
   try {
+    if (supabase) {
+      const { data: permitted, error } = await supabase.rpc("register_source", {
+        p_source: source,
+      });
+      if (error) throw new Error(`Source registration failed (${error.code})`);
+      if (!permitted) {
+        const { error: logError } = await supabase
+          .from("sync_runs")
+          .insert({
+            source_id: source.id,
+            status: "skipped",
+            count: 0,
+            started_at: startedAt,
+            error: "Source disabled or blocked",
+          });
+        if (logError)
+          throw new Error(`Skip log unavailable (${logError.code})`);
+        console.log("  Skipped: source disabled or blocked in database");
+        continue;
+      }
+    }
     const jobs = await collectSource(source);
     const old = [...listings.values()].filter(
       (job) => job.source_id === source.id && job.active,
@@ -119,10 +143,12 @@ const snapshot: CatalogSnapshot = {
   listings: [...listings.values()],
   runs: [...reports.values()],
 };
-await mkdir(dirname(path), { recursive: true });
-await writeFile(`${path}.tmp`, JSON.stringify(snapshot), "utf8");
-await rename(`${path}.tmp`, path);
+if (writeSnapshot) {
+  await mkdir(dirname(path), { recursive: true });
+  await writeFile(`${path}.tmp`, JSON.stringify(snapshot), "utf8");
+  await rename(`${path}.tmp`, path);
+}
 console.log(
-  `Saved ${snapshot.listings.length} listings; ${failures} source failures.`,
+  `Processed ${snapshot.listings.length} listings; ${failures} source failures.`,
 );
 if (failures) process.exitCode = 1;

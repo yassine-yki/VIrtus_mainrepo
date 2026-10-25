@@ -7,6 +7,7 @@ import {
 } from "@/lib/review-auth";
 import { Brand } from "@/components/brand";
 export const dynamic = "force-dynamic";
+export const metadata = { robots: { index: false, follow: false } };
 async function unlock(formData: FormData) {
   "use server";
   const token = process.env.VIRTUS_REVIEW_TOKEN ?? "";

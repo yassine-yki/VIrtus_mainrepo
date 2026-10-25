@@ -15,7 +15,11 @@ try {
   await client.query(
     "alter table public.virtus_migrations enable row level security; revoke all on public.virtus_migrations from public,anon,authenticated",
   );
-  for (const name of ["202610250001_catalog", "202610250002_private_review"]) {
+  for (const name of [
+    "202610250001_catalog",
+    "202610250002_private_review",
+    "202610250003_competitions",
+  ]) {
     const { rowCount } = await client.query(
       "select 1 from public.virtus_migrations where name=$1",
       [name],

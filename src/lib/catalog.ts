@@ -83,6 +83,7 @@ export async function searchCatalog(filters: Filters): Promise<SearchResult> {
       p_days: filters.days,
       p_page: filters.page,
       p_sort: filters.sort,
+      p_kind: filters.kind ?? "",
     },
   );
   if (error) {
@@ -93,6 +94,20 @@ export async function searchCatalog(filters: Filters): Promise<SearchResult> {
     );
   }
   return { ...data, mode: "supabase", review } as SearchResult;
+}
+
+export async function catalogSources() {
+  return searchCatalog({
+    q: "",
+    city: "",
+    contract: "",
+    workplace: "",
+    source: "",
+    days: 0,
+    page: 1,
+    sort: "recent",
+    kind: "",
+  });
 }
 
 export async function getJob(

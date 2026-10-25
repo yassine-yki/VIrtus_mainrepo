@@ -11,7 +11,7 @@ import {
 import { Header, Footer } from "@/components/brand";
 import { CompanyMark } from "@/components/job-card";
 import { getJob } from "@/lib/catalog";
-import { shortDate, workplaceLabels } from "@/lib/format";
+import { shortDate, workplaceLabels, deadlineLabel } from "@/lib/format";
 import { plainText } from "@/lib/normalize";
 
 export const dynamic = "force-dynamic";
@@ -44,6 +44,15 @@ export default async function JobPage({
               </div>
             </div>
             <h1>{job.title}</h1>
+            {job.kind === "competition" && (
+              <div className="competition-meta">
+                <strong className="competition-badge">Concours public</strong>
+                <p>
+                  {job.positions} poste{job.positions === 1 ? "" : "s"} · Date
+                  limite : {deadlineLabel(job.deadline)} (heure du Maroc)
+                </p>
+              </div>
+            )}
             <div className="detail-facts">
               <span>
                 <MapPin size={17} />
@@ -70,7 +79,9 @@ export default async function JobPage({
                 <p dir="auto">{plainText(job.description)}</p>
               ) : (
                 <p>
-                  La description complète est disponible sur le site d’origine.
+                  Les conditions complètes sont disponibles dans l’avis
+                  d’origine. Vérifiez les modalités et l’heure limite exacte
+                  auprès de l’organisme recruteur.
                 </p>
               )}
             </div>
@@ -92,7 +103,10 @@ export default async function JobPage({
               target="_blank"
               rel="noopener noreferrer"
             >
-              Voir l’offre originale <ArrowUpRight size={17} />
+              {job.kind === "competition"
+                ? "Voir l’avis officiel"
+                : "Voir l’offre originale"}{" "}
+              <ArrowUpRight size={17} />
             </a>
             <dl>
               <dt>Entreprise</dt>
@@ -102,6 +116,39 @@ export default async function JobPage({
               <dt>Dernière collecte</dt>
               <dd>{shortDate(job.last_seen_at)}</dd>
             </dl>
+            {job.attribution_url && (
+              <p>
+                <a
+                  className="attribution"
+                  href={job.attribution_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Source : Wadifa Info
+                </a>
+                <br />
+                <small>
+                  Métadonnées adaptées sous licence{" "}
+                  <a
+                    href="https://creativecommons.org/licenses/by/4.0/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    CC BY 4.0
+                  </a>
+                  . L’avis officiel fait foi.
+                </small>
+              </p>
+            )}
+            {job.official_notice_url && job.official_notice_url !== job.url && (
+              <a
+                href={job.official_notice_url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Avis officiel
+              </a>
+            )}
             <h3>Source{job.sources.length > 1 ? "s" : ""}</h3>
             {job.sources.map((source) => (
               <a

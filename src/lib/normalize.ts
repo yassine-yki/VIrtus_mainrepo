@@ -1,6 +1,12 @@
 import { createHash } from "node:crypto";
 import { load } from "cheerio";
-import type { Contract, Listing, Source, Workplace } from "./types";
+import type {
+  Contract,
+  Listing,
+  Source,
+  Workplace,
+  OpportunityKind,
+} from "./types";
 
 export const cityAliases: Record<string, string[]> = {
   Casablanca: [
@@ -133,6 +139,12 @@ export function dateOrNull(value: unknown): string | null {
 }
 
 interface Input {
+  company?: string;
+  kind?: OpportunityKind;
+  deadline?: string | null;
+  positions?: number | null;
+  officialNoticeUrl?: string | null;
+  attributionUrl?: string | null;
   externalId: string;
   title: string;
   location: string;
@@ -155,12 +167,23 @@ export function normalizeListing(
     throw new Error("Incomplete job record");
   const url = canonicalUrl(input.url);
   const cities = citiesFor(input.location);
+  const company = plainText(input.company ?? source.company).trim();
+  if (!company) throw new Error("Missing employer");
   return {
     id: hash(`${source.id}:${input.externalId}`),
-    group_key: hash(`${fold(source.company)}:${url}`),
+    group_key: hash(`${fold(company)}:${url}`),
     source_id: source.id,
     external_id: input.externalId,
-    company: source.company,
+    company,
+    kind: input.kind ?? "job",
+    deadline: input.deadline ?? null,
+    positions: input.positions ?? null,
+    official_notice_url: input.officialNoticeUrl
+      ? canonicalUrl(input.officialNoticeUrl)
+      : null,
+    attribution_url: input.attributionUrl
+      ? canonicalUrl(input.attributionUrl)
+      : null,
     title: plainText(input.title).slice(0, 300),
     description: plainText(input.description).slice(0, 30_000),
     locations: cities.names.length ? cities.names : [input.location.trim()],
