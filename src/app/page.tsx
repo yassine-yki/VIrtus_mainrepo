@@ -129,7 +129,7 @@ export default async function Home({
                 "kind",
               ] as const
             ).map((name) =>
-              filters[name] ? (
+              filters[name] || name === "days" ? (
                 <input
                   key={name}
                   type="hidden"
@@ -351,7 +351,8 @@ export default async function Home({
                   {Object.entries(filters)
                     .filter(
                       ([name, value]) =>
-                        !["page", "sort"].includes(name) && value,
+                        !["page", "sort"].includes(name) &&
+                        (name === "days" || value),
                     )
                     .map(([name, value]) => (
                       <input
@@ -398,7 +399,11 @@ export default async function Home({
                   </p>
                   <Link
                     className="text-link"
-                    href={filters.q || activeFilters ? "/#offres" : "/sources"}
+                    href={
+                      filters.q || activeFilters
+                        ? "/?days=0#offres"
+                        : "/sources"
+                    }
                   >
                     {filters.q || activeFilters
                       ? "Élargir ma recherche"
@@ -414,10 +419,17 @@ export default async function Home({
                 pageSize={result.pageSize}
               />
               <p className="results-note">
-                Recherche dans tout le catalogue indexé. Les offres peuvent
-                évoluer : vérifiez leur disponibilité auprès de l’employeur.
+                {filters.days
+                  ? `Publications des ${filters.days} derniers jours. Les dates non précisées sont exclues.`
+                  : "Toutes les dates, y compris les annonces anciennes encore présentes dans les flux."}{" "}
+                Les offres peuvent évoluer : vérifiez leur disponibilité auprès
+                de l’employeur.
                 {result.checked_at && (
-                  <> Dernière collecte : {shortDate(result.checked_at)}.</>
+                  <>
+                    {" "}
+                    Collecte la plus ancienne parmi les sources :{" "}
+                    {shortDate(result.checked_at)}.
+                  </>
                 )}
               </p>
             </div>

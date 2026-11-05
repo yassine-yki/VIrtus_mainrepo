@@ -41,9 +41,12 @@ export function parseFilters(
     source: single("source")
       .replace(/[^a-z0-9-]/g, "")
       .slice(0, 60),
-    days: [1, 7, 30].includes(Number(single("days")))
-      ? Number(single("days"))
-      : 0,
+    days:
+      single("days") === ""
+        ? 30
+        : [0, 1, 7, 30].includes(Number(single("days")))
+          ? Number(single("days"))
+          : 0,
     page: Math.min(10000, Math.max(1, Math.floor(Number(single("page")) || 1))),
     sort: single("sort") === "relevance" ? "relevance" : "recent",
   };
@@ -57,7 +60,7 @@ export function filtersUrl(
   const params = new URLSearchParams();
   for (const [name, value] of Object.entries(merged)) {
     if (
-      value &&
+      (name === "days" || value) &&
       !(name === "page" && value === 1) &&
       !(name === "sort" && value === "recent")
     )

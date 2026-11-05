@@ -73,6 +73,7 @@ test("Wadifa rejects malformed, changed licence, missing metadata, duplicate and
     { ...fixture, count: 2 },
     { ...fixture, attribution: { license: "changed" } },
     { ...fixture, items: [{ ...fixture.items[0], deadline: "2026-02-30" }] },
+    { ...fixture, items: [{ ...fixture.items[0], posts: 0 }] },
     { ...fixture, items: [{ ...fixture.items[0], posts: null }] },
     {
       ...fixture,
@@ -139,4 +140,21 @@ test("Wadifa retry timing never violates the one-request-per-minute policy", () 
     120000,
   );
   assert.equal(retryDelay("api.lever.co", 1, "120"), 120000);
+});
+
+test("missing optional Wadifa metadata is retained as unknown, malformed dates identify the record", async () => {
+  const jobs = await collectWadifa(board, async () => ({
+    ...fixture,
+    items: [{ ...fixture.items[0], published: null }],
+  }));
+  assert.equal(jobs.length, 1);
+  assert.equal(jobs[0].positions, 2);
+  assert.equal(jobs[0].published_at, null);
+  await assert.rejects(
+    collectWadifa(board, async () => ({
+      ...fixture,
+      items: [{ ...fixture.items[0], id: 96341, deadline: "2026-02-30" }],
+    })),
+    /Wadifa item 96341: invalid deadline/,
+  );
 });

@@ -21,6 +21,7 @@ export function shortDate(value: string | null): string {
   return new Intl.DateTimeFormat("fr-MA", {
     day: "numeric",
     month: "short",
+    year: "numeric",
     timeZone: "Africa/Casablanca",
   }).format(new Date(value));
 }
@@ -32,4 +33,25 @@ export function age(value: string | null, now = Date.now()): string {
     : days === 1
       ? "Hier"
       : `Il y a ${days} jours`;
+}
+
+export function publicationLabel(
+  value: string | null,
+  now = Date.now(),
+): string {
+  if (!value) return "Publication non datée";
+  return now - Date.parse(value) > 30 * 86_400_000
+    ? `Publiée le ${shortDate(value)}`
+    : `Publiée ${age(value, now).toLowerCase()}`;
+}
+
+export function sourceOverdue(
+  checkedAt: string | null,
+  now = Date.now(),
+): boolean {
+  return (
+    !checkedAt ||
+    !Number.isFinite(Date.parse(checkedAt)) ||
+    now - Date.parse(checkedAt) > 24 * 3600_000
+  );
 }

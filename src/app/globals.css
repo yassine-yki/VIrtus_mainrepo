@@ -1886,3 +1886,10 @@ summary:focus-visible {
   margin-top: 0.4rem;
   overflow-wrap: anywhere;
 }
+
+.job-checked {
+  margin: 8px 0 0;
+  color: #6c7662;
+  font-size: 10px;
+  line-height: 1.5;
+}

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowUpRight, ArrowRight } from "lucide-react";
 import { Header, Footer } from "@/components/brand";
 import { catalogSources } from "@/lib/catalog";
-import { shortDate } from "@/lib/format";
+import { shortDate, sourceOverdue } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Nos sources et notre méthode" };
@@ -96,6 +96,12 @@ export default async function SourcesPage() {
                   : "Offres du site de recrutement de l’employeur. Description complète à consulter à la source."}
               </p>
               <p>Dernière collecte réussie : {shortDate(source.checked_at)}.</p>
+              {sourceOverdue(source.checked_at) && (
+                <p role="status">
+                  Collecte en retard. Les annonces non revues depuis 72 heures
+                  sont masquées.
+                </p>
+              )}
               {source.website && (
                 <a
                   href={source.website}

@@ -205,19 +205,28 @@ export async function collectWadifa(
       );
       return null;
     }
-    const deadline = dateOnly(item.deadline),
-      published = dateOnly(item.published);
-    if (
-      !Number.isSafeInteger(item.id) ||
-      Number(item.id) <= 0 ||
-      !deadline ||
-      !published ||
-      !str(item.grade).trim() ||
-      !str(item.employer).trim() ||
-      !Number.isSafeInteger(item.posts) ||
-      Number(item.posts) <= 0
-    )
-      throw new Error("Incomplete Wadifa competition");
+    const deadline = dateOnly(item.deadline);
+    // Publication is optional metadata: a missing date stays unknown.
+    // Deadline and required notice metadata still fail closed when malformed.
+    const publishedMissing = item.published == null || item.published === "";
+    const published = publishedMissing ? null : dateOnly(item.published);
+    const invalidFields = [
+      ...(!Number.isSafeInteger(item.id) || Number(item.id) <= 0 ? ["id"] : []),
+      ...(!deadline ? ["deadline"] : []),
+      ...(!publishedMissing && !published ? ["published"] : []),
+      ...(!str(item.grade).trim() ? ["grade"] : []),
+      ...(!Number.isSafeInteger(item.posts) || Number(item.posts) <= 0
+        ? ["posts"]
+        : []),
+    ];
+    if (invalidFields.length)
+      throw new Error(
+        `Wadifa item ${String(item.id)}: invalid ${invalidFields.join(", ")}; reconciliation refused`,
+      );
+    if (publishedMissing)
+      console.warn(
+        `Wadifa item ${String(item.id)}: publication date unavailable`,
+      );
     const attribution = new URL(str(item.url));
     const official = new URL(str(item.official_notice));
     if (
@@ -239,7 +248,7 @@ export async function collectWadifa(
       url: official.href,
       officialNoticeUrl: official.href,
       attributionUrl: attribution.href,
-      publishedAt: `${published}T00:00:00Z`,
+      publishedAt: published ? `${published}T00:00:00Z` : undefined,
     })!;
   });
   const eligible = jobs.filter((job): job is Listing => job !== null);

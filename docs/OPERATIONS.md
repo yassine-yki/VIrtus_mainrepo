@@ -21,7 +21,7 @@ GitHub's collection environment is restricted to main branches, excluding tags. 
 
 The Refresh job catalog workflow uses one job per enabled source, at most two concurrently, and prevents overlapping workflow runs. The matrix generator receives no credential. Every source has a 25-minute timeout. A source failure does not cancel others.
 
-Manual dispatch is allowed before activating repository variable COLLECTION_ENABLED=true. After manual success, verify the first actual schedule event separately. The cron is 17 _/6 _ \* \* UTC. Scheduled runs may be delayed.
+Manual dispatch is allowed before activating repository variable `COLLECTION_ENABLED=true`. After manual success, verify the first actual schedule event separately. The cron is `17 */6 * * *` UTC. Scheduled runs may be delayed.
 
 Check sync_runs rows and sources.last_success_at for each source. Failed collections preserve prior listings; incomplete pagination, changed totals, duplicate source IDs and suspicious drops fail before reconciliation. A source drop below half its prior active count, when previously at least ten, requires investigation. Two successful misses and 24 hours since last seen are needed to close a missing job. Reads exclude observations older than 72 hours.
 
@@ -54,3 +54,11 @@ Production indexing is enabled after public smoke passes. Preview keeps PUBLIC_I
 The local browser is disabled in this session's Work settings. HTTP/SSR checks verify server behaviour; a fresh interactive visual/keyboard walkthrough remains unverified. Fonts use Google Fonts with system fallbacks.
 
 Supabase security advisors previously warned about anonymous review SECURITY DEFINER RPCs; migration 004 revokes those public entrypoints. RLS-with-no-policy notices on operator-only tables are intentional deny-by-default.
+
+## Older ads and refresh diagnosis
+
+Search defaults to publications from the last 30 days. The explicit days=0 parameter keeps all dates, including ads with unknown publication dates. The choice survives searches, sorting and pagination. This filter does not close employer listings that are still in a complete public feed. Cards separate publication age from the date the listing was last observed. Old publication dates include the year. The source page flags collections with no success for over 24 hours; records unobserved for 72 hours remain hidden.
+
+Vercel builds and GitHub collection runs are separate. For a red collection run, inspect the failed matrix source and its collect step before changing site configuration. On 2026-11-05, GitHub showed repeated Wadifa failures with the old generic message Incomplete Wadifa competition, while the other 16 sources succeeded in the latest checked run. The current public feed passed the parser with 256 eligible records, so the historical malformed field could not be reproduced. Validation now reports the record ID and invalid fields, and accepts missing publication dates as unknown. Invalid deadlines, required metadata, links, changed licences, truncation and suspicious drops still refuse reconciliation. Missing position counts still fail the existing database metadata constraint.
+
+After a source-side metadata correction or collector fix, dispatch the workflow on main and verify all source jobs plus each source's new successful observation time. Do not infer recovery from a green build. The global checked_at is the oldest successful source timestamp; it is not the latest employer refresh.

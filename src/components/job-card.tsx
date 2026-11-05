@@ -1,6 +1,11 @@
 import Link from "next/link";
 import { ArrowUpRight, MapPin, Clock3, BriefcaseBusiness } from "lucide-react";
-import { age, workplaceLabels, deadlineLabel } from "@/lib/format";
+import {
+  publicationLabel,
+  shortDate,
+  workplaceLabels,
+  deadlineLabel,
+} from "@/lib/format";
 import type { Job } from "@/lib/types";
 
 const companyColors: Record<string, string> = {
@@ -33,9 +38,7 @@ export function CompanyMark({
 }
 
 export function JobCard({ job }: { job: Job }) {
-  const date = job.published_at
-    ? age(job.published_at)
-    : `Repérée ${age(job.first_seen_at ?? job.last_seen_at).toLowerCase()}`;
+  const date = publicationLabel(job.published_at);
   return (
     <article className="job-card">
       <CompanyMark company={job.company} />
@@ -78,6 +81,9 @@ export function JobCard({ job }: { job: Job }) {
             </span>
           )}
         </div>
+        <p className="job-checked">
+          Présente dans le flux le {shortDate(job.last_seen_at)}.
+        </p>
         {job.salary && <p className="salary">{job.salary}</p>}
         {job.attribution_url && (
           <a

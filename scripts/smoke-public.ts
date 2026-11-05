@@ -78,3 +78,26 @@ console.log(
     robots: $("meta[name=robots]").attr("content"),
   }),
 );
+
+const recent = await (await fetch(`${base}/api/jobs`)).json();
+const allDates = await (await fetch(`${base}/api/jobs?days=0`)).json();
+assert.ok(allDates.total >= recent.total);
+assert.ok(
+  recent.jobs.every(
+    (job: { published_at: string | null }) =>
+      job.published_at &&
+      Date.parse(job.published_at) >= Date.now() - 30 * 86400_000 - 10_000,
+  ),
+);
+const allDatesPage = load(await (await fetch(`${base}/?days=0`)).text());
+assert.equal(allDatesPage("select[name=days]").val(), "0");
+assert.equal(allDatesPage(".search-form input[name=days]").val(), "0");
+assert.equal(allDatesPage(".sort-form input[name=days]").val(), "0");
+assert.ok(allDatesPage(".job-checked").length > 0);
+console.log(
+  JSON.stringify({
+    recentDefault: recent.total,
+    allDates: allDates.total,
+    preservedAllDates: true,
+  }),
+);

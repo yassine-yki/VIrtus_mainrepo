@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { normalizeListing } from "../src/lib/normalize";
 import { sources } from "../src/lib/sources";
-import { parseFilters, searchSnapshot } from "../src/lib/search";
+import { parseFilters, searchSnapshot, filtersUrl } from "../src/lib/search";
 import type { CatalogSnapshot, Listing } from "../src/lib/types";
 const now = new Date().toISOString();
 const source = { ...sources[2], publicationStatus: "approved" as const };
@@ -15,6 +15,7 @@ const job = (id: string, title = "Ingénieur développeur"): Listing =>
       location: "Rabat",
       url: `https://example.com/${id}`,
       contract: "Permanent",
+      publishedAt: now,
     },
     now,
   )!;
@@ -63,8 +64,11 @@ test("stale records excluded; unknown publication dates do not match recent filt
     0,
   );
   assert.equal(
-    searchSnapshot(snapshot([job("2")]), parseFilters({ days: "7" }), false)
-      .total,
+    searchSnapshot(
+      snapshot([{ ...job("2"), published_at: null }]),
+      parseFilters({ days: "7" }),
+      false,
+    ).total,
     0,
   );
 });
@@ -86,4 +90,25 @@ test("invalid parameters bounded and out-of-range pages clamp safely", () => {
   );
   assert.equal(result.page, 1);
   assert.equal(result.jobs.length, 1);
+});
+
+test("recent search is the default and explicit all dates survives navigation", () => {
+  assert.equal(parseFilters({}).days, 30);
+  const old = {
+    ...job("old"),
+    published_at: new Date(Date.now() - 100 * 86400_000).toISOString(),
+  };
+  const undated = { ...job("undated"), published_at: null };
+  const data = snapshot([old, undated, job("new")]);
+  assert.equal(searchSnapshot(data, parseFilters({}), false).total, 1);
+  assert.equal(
+    searchSnapshot(data, parseFilters({ days: "0" }), false).total,
+    3,
+  );
+  const url = new URL(
+    filtersUrl(parseFilters({ days: "0" }), { page: 2 }),
+    "https://virtus.test",
+  );
+  assert.equal(url.searchParams.get("days"), "0");
+  assert.equal(parseFilters(Object.fromEntries(url.searchParams)).days, 0);
 });
