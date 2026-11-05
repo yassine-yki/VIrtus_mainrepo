@@ -1,0 +1,114 @@
+[
+  {
+    "id": "scalian",
+    "name": "Scalian",
+    "company": "Scalian",
+    "provider": "smartrecruiters",
+    "identifier": "Scalian",
+    "website": "https://careers.smartrecruiters.com/Scalian",
+    "enabled": true,
+    "publicationStatus": "pending",
+    "permissionNote": "Owner-requested expansion of the public metadata/link catalog on 2026-11-05. Original ads and applications remain on employer sites. Public API access is technical evidence; no separate licence to redistribute full descriptions established.",
+    "evidenceUrls": [
+      "https://careers.smartrecruiters.com/Scalian",
+      "https://api.smartrecruiters.com/v1/companies/Scalian/postings?country=ma&destination=PUBLIC&limit=100&offset=0"
+    ],
+    "checkedAt": "2026-11-05T07:12:14.263Z",
+    "moroccoCount": 71,
+    "distinctJobs": 71,
+    "recentCount": 13,
+    "paginationComplete": true,
+    "apiRequests": 72,
+    "endpoint": "https://api.smartrecruiters.com/v1/companies/Scalian/postings?country=ma&destination=PUBLIC&limit=100&offset=0"
+  },
+  {
+    "id": "theodo",
+    "name": "Theodo",
+    "company": "Theodo",
+    "provider": "lever",
+    "identifier": "theodo",
+    "website": "https://jobs.lever.co/theodo",
+    "enabled": true,
+    "publicationStatus": "pending",
+    "permissionNote": "Owner-requested expansion of the public metadata/link catalog on 2026-11-05. Original ads and applications remain on employer sites. Public API access is technical evidence; no separate licence to redistribute full descriptions established.",
+    "evidenceUrls": [
+      "https://jobs.lever.co/theodo",
+      "https://api.lever.co/v0/postings/theodo?mode=json&limit=100&skip=0"
+    ],
+    "checkedAt": "2026-11-05T07:12:36.228Z",
+    "moroccoCount": 7,
+    "distinctJobs": 7,
+    "recentCount": 0,
+    "paginationComplete": true,
+    "apiRequests": 2,
+    "endpoint": "https://api.lever.co/v0/postings/theodo?mode=json&limit=100&skip=0"
+  },
+  {
+    "id": "alter-solutions",
+    "name": "Alter Solutions",
+    "company": "Alter Solutions",
+    "provider": "smartrecruiters",
+    "identifier": "AlterSolutions",
+    "website": "https://careers.smartrecruiters.com/AlterSolutions",
+    "enabled": true,
+    "publicationStatus": "pending",
+    "permissionNote": "Owner-requested expansion of the public metadata/link catalog on 2026-11-05. Original ads and applications remain on employer sites. Public API access is technical evidence; no separate licence to redistribute full descriptions established.",
+    "evidenceUrls": [
+      "https://careers.smartrecruiters.com/AlterSolutions",
+      "https://api.smartrecruiters.com/v1/companies/AlterSolutions/postings?country=ma&destination=PUBLIC&limit=100&offset=0"
+    ],
+    "checkedAt": "2026-11-05T07:12:39.854Z",
+    "moroccoCount": 20,
+    "distinctJobs": 20,
+    "recentCount": 0,
+    "paginationComplete": true,
+    "apiRequests": 21,
+    "endpoint": "https://api.smartrecruiters.com/v1/companies/AlterSolutions/postings?country=ma&destination=PUBLIC&limit=100&offset=0"
+  },
+  {
+    "id": "mindera",
+    "name": "Mindera",
+    "company": "Mindera",
+    "provider": "workable",
+    "identifier": "minderacraft",
+    "website": "https://apply.workable.com/minderacraft/",
+    "enabled": true,
+    "publicationStatus": "pending",
+    "permissionNote": "Owner-requested expansion of the public metadata/link catalog on 2026-11-05. Original ads and applications remain on employer sites. Public API access is technical evidence; no separate licence to redistribute full descriptions established.",
+    "evidenceUrls": [
+      "https://apply.workable.com/minderacraft/",
+      "https://apply.workable.com/api/v1/widget/accounts/minderacraft",
+      "https://help.workable.com/hc/en-us/articles/115012771647-Using-the-Workable-API-to-create-a-careers-page"
+    ],
+    "checkedAt": "2026-11-05T07:12:40.131Z",
+    "moroccoCount": 6,
+    "distinctJobs": 6,
+    "recentCount": 1,
+    "paginationComplete": true,
+    "apiRequests": 1,
+    "endpoint": "https://apply.workable.com/api/v1/widget/accounts/minderacraft"
+  },
+  {
+    "id": "infomineo",
+    "name": "Infomineo",
+    "company": "Infomineo",
+    "provider": "workable",
+    "identifier": "infomineo",
+    "website": "https://apply.workable.com/infomineo/",
+    "enabled": true,
+    "publicationStatus": "pending",
+    "permissionNote": "Owner-requested expansion of the public metadata/link catalog on 2026-11-05. Original ads and applications remain on employer sites. Public API access is technical evidence; no separate licence to redistribute full descriptions established.",
+    "evidenceUrls": [
+      "https://apply.workable.com/infomineo/",
+      "https://apply.workable.com/api/v1/widget/accounts/infomineo",
+      "https://help.workable.com/hc/en-us/articles/115012771647-Using-the-Workable-API-to-create-a-careers-page"
+    ],
+    "checkedAt": "2026-11-05T07:12:40.298Z",
+    "moroccoCount": 5,
+    "distinctJobs": 5,
+    "recentCount": 1,
+    "paginationComplete": true,
+    "apiRequests": 1,
+    "endpoint": "https://apply.workable.com/api/v1/widget/accounts/infomineo"
+  }
+]

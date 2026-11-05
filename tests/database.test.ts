@@ -394,6 +394,74 @@ test("Postgres migrations, full catalog search, RLS and safe reconciliation", as
       0,
     );
     await db.exec("reset role");
+    // Operator migrations may add sources but must preserve existing suspensions
+    // and publication decisions. Collector registration still cannot approve.
+    await db.exec(
+      "insert into public.sources(id,name,company,provider,website,publication_status) values('scalian','Scalian','Scalian','smartrecruiters','https://careers.smartrecruiters.com/Scalian','blocked')",
+    );
+    await db.exec(
+      "insert into public.sources(id,name,company,provider,website,enabled,publication_status) values('infomineo','Infomineo','Infomineo','html','https://apply.workable.com/infomineo/',false,'pending')",
+    );
+    await db.exec(
+      await readFile(
+        new URL(
+          "../supabase/migrations/20261105070631_tech_employer_feeds.sql",
+          import.meta.url,
+        ),
+        "utf8",
+      ),
+    );
+    const states = await db.query<{
+      id: string;
+      enabled: boolean;
+      publication_status: string;
+      provider: string;
+    }>(
+      "select id,enabled,publication_status,provider from public.sources where id in ('scalian','infomineo','mindera') order by id",
+    );
+    assert.equal(
+      states.rows.find((s) => s.id === "scalian")!.publication_status,
+      "blocked",
+    );
+    assert.equal(states.rows.find((s) => s.id === "infomineo")!.enabled, false);
+    assert.equal(
+      states.rows.find((s) => s.id === "infomineo")!.publication_status,
+      "pending",
+    );
+    assert.equal(
+      states.rows.find((s) => s.id === "mindera")!.provider,
+      "workable",
+    );
+    const mindera = sources.find((s) => s.id === "mindera")!;
+    const techJob = normalizeListing(mindera, {
+      externalId: "ABC123",
+      title: "Software engineer",
+      location: "Maroc",
+      country: "MA",
+      url: "https://apply.workable.com/j/ABC123",
+    })!;
+    await db.query(
+      "select public.commit_source_sync($1::jsonb,$2::jsonb,$3::timestamptz)",
+      [
+        JSON.stringify(mindera),
+        JSON.stringify([techJob]),
+        new Date().toISOString(),
+      ],
+    );
+    await db.query("select public.register_source($1::jsonb)", [
+      JSON.stringify({
+        ...sources.find((s) => s.id === "scalian")!,
+        publicationStatus: "approved",
+      }),
+    ]);
+    assert.equal(
+      (
+        await db.query<{ publication_status: string }>(
+          "select publication_status from public.sources where id='scalian'",
+        )
+      ).rows[0].publication_status,
+      "blocked",
+    );
   } finally {
     await db.close();
   }

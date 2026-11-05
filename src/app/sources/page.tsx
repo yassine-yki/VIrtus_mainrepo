@@ -14,6 +14,7 @@ export default async function SourcesPage() {
     greenhouse: "Greenhouse",
     lever: "Lever",
     wadifa: "API Wadifa Info",
+    workable: "Workable",
   };
   return (
     <>

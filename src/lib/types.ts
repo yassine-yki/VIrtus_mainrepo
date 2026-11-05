@@ -2,6 +2,7 @@ export type Provider =
   | "smartrecruiters"
   | "greenhouse"
   | "lever"
+  | "workable"
   | "wadifa"
   | "html";
 export type OpportunityKind = "job" | "competition";

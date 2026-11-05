@@ -1,8 +1,10 @@
 import type { Source } from "./types";
 import auditedEmployers from "./audited-employers.json";
+import techEmployers from "./tech-employers.json";
 
 // Public endpoint availability is technical evidence, not a republication licence.
-// Approve sources individually only after documenting the applicable agreement.
+// Publication is an operator decision recorded in the database. The collector
+// never approves sources or changes an existing suspension/publication decision.
 const pending =
   "Endpoint public testé. Conditions de republication à confirmer avant diffusion publique.";
 export const sources: Source[] = [
@@ -95,7 +97,7 @@ export const sources: Source[] = [
     permissionNote:
       "CC BY 4.0, usage commercial autorisé. Source : Wadifa Info et lien par élément obligatoires. Licence vérifiée le 25/10/2026 : https://www.wadifa-info.com/developpeurs. Approbation opérateur en base requise.",
   },
-  ...auditedEmployers.map(
+  ...[...auditedEmployers, ...techEmployers].map(
     (entry): Source => ({
       id: entry.id,
       name: entry.name,

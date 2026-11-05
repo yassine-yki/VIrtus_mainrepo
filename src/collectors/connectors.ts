@@ -1,4 +1,4 @@
-import { normalizeListing } from "../lib/normalize";
+import { normalizeListing, fold } from "../lib/normalize";
 import type { Listing, Source } from "../lib/types";
 import { fetchJson, record, str, type FetchJson } from "./http";
 import { dateOnly } from "../lib/deadline";
@@ -168,6 +168,120 @@ function uniqueIds(jobs: Listing[]): Listing[] {
   return jobs;
 }
 
+// Workable documents this public all-published-jobs widget feed. It has no
+// pagination contract; unexpected pagination/count metadata fails closed.
+export async function collectWorkable(
+  source: Source,
+  get: FetchJson = fetchJson,
+): Promise<Listing[]> {
+  const data = record(
+    await get(
+      `https://apply.workable.com/api/v1/widget/accounts/${encodeURIComponent(source.identifier)}`,
+    ),
+  );
+  if (
+    !Array.isArray(data.jobs) ||
+    !str(data.name).trim() ||
+    fold(str(data.name)) !== fold(source.company)
+  )
+    throw new Error("Invalid Workable feed or employer identity");
+  if (
+    data.jobs.length >= 1000 ||
+    data.next ||
+    data.next_page ||
+    data.has_more ||
+    data.paging ||
+    data.pagination ||
+    (data.total != null && data.total !== data.jobs.length)
+  )
+    throw new Error(
+      "Potentially incomplete Workable feed; reconciliation refused",
+    );
+  const seen = new Map<string, string>();
+  const jobs = new Map<string, Listing>();
+  for (const raw of data.jobs) {
+    const item = record(raw);
+    const id = str(item.shortcode);
+    if (!/^[A-Za-z0-9]+$/.test(id) || !str(item.title).trim())
+      throw new Error("Missing Workable ID/title");
+    // The documented widget repeats a posting for each published location.
+    // Merge those variants only when their non-location metadata agrees.
+    const signature = JSON.stringify([
+      item.title,
+      item.url,
+      item.published_on,
+      item.employment_type,
+      item.telecommuting,
+    ]);
+    if (seen.has(id) && seen.get(id) !== signature)
+      throw new Error(`Workable item ${id}: conflicting location variants`);
+    seen.set(id, signature);
+    const url = new URL(str(item.url));
+    if (
+      url.protocol !== "https:" ||
+      url.hostname !== "apply.workable.com" ||
+      url.username ||
+      url.password ||
+      url.pathname !== `/j/${id}`
+    )
+      throw new Error(`Workable item ${id}: unexpected original link`);
+    if (item.locations != null && !Array.isArray(item.locations))
+      throw new Error(`Workable item ${id}: invalid locations`);
+    const locations =
+      item.locations == null
+        ? [{ country: item.country, city: item.city, hidden: false }]
+        : item.locations.map(record);
+    const morocco = locations.filter((location: Record<string, unknown>) => {
+      if (location.hidden != null && typeof location.hidden !== "boolean")
+        throw new Error(`Workable item ${id}: invalid location visibility`);
+      const code = str(location.countryCode).toUpperCase();
+      return (
+        location.hidden !== true &&
+        (code
+          ? code === "MA"
+          : ["morocco", "maroc"].includes(fold(str(location.country))))
+      );
+    });
+    // Neither a remote flag nor EMEA/Worldwide is proof of Morocco eligibility.
+    if (!morocco.length) continue;
+    const published =
+      item.published_on == null || item.published_on === ""
+        ? null
+        : dateOnly(item.published_on);
+    if (item.published_on && !published)
+      throw new Error(`Workable item ${id}: invalid publication date`);
+    const cities = [
+      ...new Set(
+        morocco
+          .map((location: Record<string, unknown>) => str(location.city).trim())
+          .filter(Boolean),
+      ),
+    ];
+    const listing = normalizeListing(source, {
+      externalId: id,
+      title: str(item.title),
+      country: "MA",
+      location: cities.length ? cities.join("; ") : "Maroc",
+      url: url.href,
+      employment: str(item.employment_type),
+      workplace: item.telecommuting === true ? "remote" : "unknown",
+      publishedAt: published ? `${published}T00:00:00Z` : undefined,
+    });
+    if (listing) {
+      const existing = jobs.get(id);
+      if (existing) {
+        existing.locations = [
+          ...new Set([...existing.locations, ...listing.locations]),
+        ];
+        existing.city_keys = [
+          ...new Set([...existing.city_keys, ...listing.city_keys]),
+        ];
+      } else jobs.set(id, listing);
+    }
+  }
+  return uniqueIds([...jobs.values()]);
+}
+
 export function collectSource(
   source: Source,
   get: FetchJson = fetchJson,
@@ -176,6 +290,7 @@ export function collectSource(
     return collectSmartRecruiters(source, get);
   if (source.provider === "greenhouse") return collectGreenhouse(source, get);
   if (source.provider === "lever") return collectLever(source, get);
+  if (source.provider === "workable") return collectWorkable(source, get);
   if (source.provider === "wadifa") return collectWadifa(source, get);
   throw new Error(
     "HTML source requires an individually reviewed collector; no scraper is enabled",

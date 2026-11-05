@@ -3,6 +3,7 @@ const hosts = new Set([
   "boards-api.greenhouse.io",
   "api.lever.co",
   "www.wadifa-info.com",
+  "apply.workable.com",
 ]);
 
 export type FetchJson = (url: string) => Promise<unknown>;

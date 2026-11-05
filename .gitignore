@@ -9,3 +9,5 @@ data/*.json
 coverage/
 test-results/
 .local/
+
+supabase/.temp/
