@@ -411,6 +411,62 @@ test("Postgres migrations, full catalog search, RLS and safe reconciliation", as
         "utf8",
       ),
     );
+    await db.exec(
+      await readFile(
+        new URL(
+          "../supabase/migrations/202611090001_ashby.sql",
+          import.meta.url,
+        ),
+        "utf8",
+      ),
+    );
+    await db.query(
+      "insert into public.sources(id,name,company,provider,website,enabled) values('ashby-test','Test','Test','ashby','https://jobs.ashbyhq.com/test',false)",
+    );
+    await db.exec(
+      "insert into public.sources(id,name,company,provider,website,enabled,publication_status) values('arcsen','Arcsen','Arcsen','workable','https://apply.workable.com/arcsen/',false,'blocked')",
+    );
+    await db.exec(
+      await readFile(
+        new URL(
+          "../supabase/migrations/202611090002_technology_metadata_sources.sql",
+          import.meta.url,
+        ),
+        "utf8",
+      ),
+    );
+    const operator = await db.query<{
+      enabled: boolean;
+      publication_status: string;
+    }>(
+      "select enabled,publication_status from public.sources where id='arcsen'",
+    );
+    assert.equal(operator.rows[0].enabled, false);
+    assert.equal(operator.rows[0].publication_status, "blocked");
+    const ashbySource = sources.find((source) => source.id === "harmattan-ai")!;
+    const ashbyJob = normalizeListing(ashbySource, {
+      externalId: "ashby-test",
+      title: "Software Engineer",
+      location: "Rabat",
+      country: "MA",
+      url: "https://jobs.ashbyhq.com/harmattan-ai/test",
+    })!;
+    await db.query(
+      "select public.commit_source_sync($1::jsonb,$2::jsonb,now())",
+      [
+        JSON.stringify({ ...ashbySource, publicationStatus: "blocked" }),
+        JSON.stringify([ashbyJob]),
+      ],
+    );
+    assert.equal(
+      (
+        await db.query<{ publication_status: string }>(
+          "select publication_status from public.sources where id='harmattan-ai'",
+        )
+      ).rows[0].publication_status,
+      "approved",
+      "collectors cannot overwrite operator publication state",
+    );
     const states = await db.query<{
       id: string;
       enabled: boolean;

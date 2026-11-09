@@ -3,6 +3,7 @@ export type Provider =
   | "greenhouse"
   | "lever"
   | "workable"
+  | "ashby"
   | "wadifa"
   | "html";
 export type OpportunityKind = "job" | "competition";

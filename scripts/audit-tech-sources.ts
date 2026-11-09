@@ -5,9 +5,16 @@ import { sources } from "../src/lib/sources";
 import definitions from "../src/lib/tech-employers.json";
 
 // Manual evidence refresh, independent of database collection/publication.
-const records = [];
+const records: Array<{ id: string } & Record<string, unknown>> = [];
 const listings = [];
+const selected = process.argv
+  .find((arg) => arg.startsWith("--only="))
+  ?.slice(7)
+  .split(",");
+if (selected?.some((id) => !definitions.some((source) => source.id === id)))
+  throw new Error("Unknown audit source");
 for (const definition of definitions) {
+  if (selected && !selected.includes(definition.id)) continue;
   const source = sources.find((item) => item.id === definition.id)!;
   let requests = 0;
   const jobs = await collectSource(source, async (url) => {
@@ -42,7 +49,14 @@ for (const definition of definitions) {
 }
 await writeFile(
   new URL("../src/lib/tech-employers.json", import.meta.url),
-  JSON.stringify(records, null, 2) + "\n",
+  JSON.stringify(
+    definitions.map(
+      (definition) =>
+        records.find((record) => record.id === definition.id) ?? definition,
+    ),
+    null,
+    2,
+  ) + "\n",
 );
 await mkdir(new URL("../.local/", import.meta.url), { recursive: true });
 await writeFile(

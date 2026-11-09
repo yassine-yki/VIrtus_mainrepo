@@ -110,5 +110,120 @@
     "paginationComplete": true,
     "apiRequests": 1,
     "endpoint": "https://apply.workable.com/api/v1/widget/accounts/infomineo"
+  },
+  {
+    "id": "artefact",
+    "name": "Artefact",
+    "company": "Artefact",
+    "provider": "greenhouse",
+    "identifier": "artefactlinkedin",
+    "website": "https://job-boards.greenhouse.io/artefactlinkedin",
+    "enabled": true,
+    "publicationStatus": "pending",
+    "permissionNote": "Owner-requested public metadata/original-link expansion on 2026-11-09, under the explicit public catalog scope recorded in docs/LAUNCH.md. Public API access is technical evidence, not a licence to redistribute full descriptions. Original advertisements and applications remain at the employer.",
+    "evidenceUrls": [
+      "https://job-boards.greenhouse.io/artefactlinkedin",
+      "https://docs.greenhouse.io/job-board.html",
+      "https://boards-api.greenhouse.io/v1/boards/artefactlinkedin/jobs?content=true"
+    ],
+    "checkedAt": "2026-11-09T21:15:02.142Z",
+    "moroccoCount": 7,
+    "distinctJobs": 7,
+    "recentCount": 0,
+    "paginationComplete": true,
+    "apiRequests": 1,
+    "endpoint": "https://boards-api.greenhouse.io/v1/boards/artefactlinkedin/jobs?content=true"
+  },
+  {
+    "id": "arcsen",
+    "name": "Arcsen",
+    "company": "Arcsen",
+    "provider": "workable",
+    "identifier": "arcsen",
+    "website": "https://apply.workable.com/arcsen/",
+    "enabled": true,
+    "publicationStatus": "pending",
+    "permissionNote": "Owner-requested public metadata/original-link expansion on 2026-11-09, under the explicit public catalog scope recorded in docs/LAUNCH.md. Public API access is technical evidence, not a licence to redistribute full descriptions. Original advertisements and applications remain at the employer.",
+    "evidenceUrls": [
+      "https://apply.workable.com/arcsen/",
+      "https://help.workable.com/hc/en-us/articles/115012771647-Using-the-Workable-API-to-create-a-careers-page",
+      "https://apply.workable.com/api/v1/widget/accounts/arcsen"
+    ],
+    "checkedAt": "2026-11-09T21:15:02.378Z",
+    "moroccoCount": 1,
+    "distinctJobs": 1,
+    "recentCount": 1,
+    "paginationComplete": true,
+    "apiRequests": 1,
+    "endpoint": "https://apply.workable.com/api/v1/widget/accounts/arcsen"
+  },
+  {
+    "id": "harmattan-ai",
+    "name": "Harmattan AI",
+    "company": "Harmattan AI",
+    "provider": "ashby",
+    "identifier": "harmattan-ai",
+    "website": "https://jobs.ashbyhq.com/harmattan-ai",
+    "enabled": true,
+    "publicationStatus": "pending",
+    "permissionNote": "Owner-requested public metadata/original-link expansion on 2026-11-09, under the explicit public catalog scope recorded in docs/LAUNCH.md. Public API access is technical evidence, not a licence to redistribute full descriptions. Original advertisements and applications remain at the employer.",
+    "evidenceUrls": [
+      "https://jobs.ashbyhq.com/harmattan-ai",
+      "https://developers.ashbyhq.com/docs/public-job-posting-api",
+      "https://api.ashbyhq.com/posting-api/job-board/harmattan-ai"
+    ],
+    "checkedAt": "2026-11-09T21:15:02.604Z",
+    "moroccoCount": 28,
+    "distinctJobs": 28,
+    "recentCount": 6,
+    "paginationComplete": true,
+    "apiRequests": 1,
+    "endpoint": "https://api.ashbyhq.com/posting-api/job-board/harmattan-ai"
+  },
+  {
+    "id": "the-flex",
+    "name": "The Flex",
+    "company": "The Flex",
+    "provider": "ashby",
+    "identifier": "the-flex",
+    "website": "https://jobs.ashbyhq.com/the-flex",
+    "enabled": true,
+    "publicationStatus": "pending",
+    "permissionNote": "Owner-requested public metadata/original-link expansion on 2026-11-09, under the explicit public catalog scope recorded in docs/LAUNCH.md. Public API access is technical evidence, not a licence to redistribute full descriptions. Original advertisements and applications remain at the employer.",
+    "evidenceUrls": [
+      "https://jobs.ashbyhq.com/the-flex",
+      "https://developers.ashbyhq.com/docs/public-job-posting-api",
+      "https://api.ashbyhq.com/posting-api/job-board/the-flex"
+    ],
+    "checkedAt": "2026-11-09T21:15:02.633Z",
+    "moroccoCount": 7,
+    "distinctJobs": 7,
+    "recentCount": 2,
+    "paginationComplete": true,
+    "apiRequests": 1,
+    "endpoint": "https://api.ashbyhq.com/posting-api/job-board/the-flex"
+  },
+  {
+    "id": "supportyourapp",
+    "name": "SupportYourApp",
+    "company": "SupportYourApp",
+    "provider": "workable",
+    "identifier": "supportyourapp",
+    "website": "https://apply.workable.com/supportyourapp/",
+    "enabled": true,
+    "publicationStatus": "pending",
+    "permissionNote": "Owner-requested public metadata/original-link expansion on 2026-11-09, under the explicit public catalog scope recorded in docs/LAUNCH.md. Public API access is technical evidence, not a licence to redistribute full descriptions. Original advertisements and applications remain at the employer.",
+    "evidenceUrls": [
+      "https://apply.workable.com/supportyourapp/",
+      "https://help.workable.com/hc/en-us/articles/115012771647-Using-the-Workable-API-to-create-a-careers-page",
+      "https://apply.workable.com/api/v1/widget/accounts/supportyourapp"
+    ],
+    "checkedAt": "2026-11-09T21:15:02.818Z",
+    "moroccoCount": 2,
+    "distinctJobs": 2,
+    "recentCount": 2,
+    "paginationComplete": true,
+    "apiRequests": 1,
+    "endpoint": "https://apply.workable.com/api/v1/widget/accounts/supportyourapp"
   }
 ]

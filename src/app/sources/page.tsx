@@ -15,6 +15,7 @@ export default async function SourcesPage() {
     lever: "Lever",
     wadifa: "API Wadifa Info",
     workable: "Workable",
+    ashby: "Ashby",
   };
   return (
     <>

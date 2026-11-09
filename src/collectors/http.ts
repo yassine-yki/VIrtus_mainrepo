@@ -4,6 +4,7 @@ const hosts = new Set([
   "api.lever.co",
   "www.wadifa-info.com",
   "apply.workable.com",
+  "api.ashbyhq.com",
 ]);
 
 export type FetchJson = (url: string) => Promise<unknown>;

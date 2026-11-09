@@ -105,6 +105,29 @@ test("Lever rejects malformed responses instead of treating them as zero jobs", 
     /Invalid Lever/,
   );
 });
+
+test("Greenhouse uses first_published, keeps update time separate and refuses partial feeds", async () => {
+  const item = {
+    id: 1,
+    title: "Data Engineer",
+    location: { name: "Casablanca" },
+    absolute_url: "https://example.com/job/1",
+    first_published: "2026-11-01T12:00:00Z",
+    updated_at: "2026-11-08T12:00:00Z",
+  };
+  const jobs = await collectGreenhouse(sources[5], async () => ({
+    jobs: [item],
+    meta: { total: 1 },
+  }));
+  assert.equal(jobs[0].published_at, "2026-11-01T12:00:00.000Z");
+  await assert.rejects(
+    collectGreenhouse(sources[5], async () => ({
+      jobs: [item],
+      meta: { total: 2 },
+    })),
+    /Incomplete/,
+  );
+});
 test("SmartRecruiters rejects partial pagination and untrusted detail refs", async () => {
   const calls: string[] = [];
   await assert.rejects(

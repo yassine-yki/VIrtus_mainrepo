@@ -2,6 +2,7 @@ import { normalizeListing, fold } from "../lib/normalize";
 import type { Listing, Source } from "../lib/types";
 import { fetchJson, record, str, type FetchJson } from "./http";
 import { dateOnly } from "../lib/deadline";
+import { collectAshby } from "./ashby";
 
 export async function collectSmartRecruiters(
   source: Source,
@@ -91,6 +92,13 @@ export async function collectGreenhouse(
     ),
   );
   if (!Array.isArray(data.jobs)) throw new Error("Invalid Greenhouse response");
+  if (
+    (data.meta != null && record(data.meta).total !== data.jobs.length) ||
+    data.next ||
+    data.next_page ||
+    data.has_more
+  )
+    throw new Error("Incomplete Greenhouse feed");
   const jobs: Listing[] = [];
   for (const raw of data.jobs) {
     const item = record(raw);
@@ -102,6 +110,7 @@ export async function collectGreenhouse(
       url: str(item.absolute_url),
       description: str(item.content),
       // Greenhouse updated_at is not a publication timestamp.
+      publishedAt: item.first_published,
       workplace: /\bremote\b|teletravail/i.test(str(location.name))
         ? "remote"
         : "unknown",
@@ -291,6 +300,7 @@ export function collectSource(
   if (source.provider === "greenhouse") return collectGreenhouse(source, get);
   if (source.provider === "lever") return collectLever(source, get);
   if (source.provider === "workable") return collectWorkable(source, get);
+  if (source.provider === "ashby") return collectAshby(source, get);
   if (source.provider === "wadifa") return collectWadifa(source, get);
   throw new Error(
     "HTML source requires an individually reviewed collector; no scraper is enabled",
