@@ -21,16 +21,18 @@ export function Brand() {
 }
 export function Header() {
   return (
-    <header className="site-header shell">
-      <Brand />
-      <nav aria-label="Navigation principale">
-        <a href="/#offres">Les offres</a>
-        <Link href="/sources">Nos sources</Link>
-      </nav>
-      <a className="header-cta" href="/#offres">
-        Explorer les offres <ArrowRight size={17} />
-      </a>
-    </header>
+    <div className="site-header-wrap">
+      <header className="site-header shell">
+        <Brand />
+        <nav aria-label="Navigation principale">
+          <a href="/#offres">Les offres</a>
+          <Link href="/sources">Nos sources</Link>
+        </nav>
+        <a className="header-cta" href="/#offres">
+          Explorer les offres <ArrowRight size={17} />
+        </a>
+      </header>
+    </div>
   );
 }
 export function Footer() {

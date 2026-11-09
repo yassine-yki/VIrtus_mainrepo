@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowDown,
   ArrowRight,
@@ -65,27 +66,24 @@ export default async function Home({
       <Header />
       <main id="main">
         <div className="hero-surface">
+          <Image
+            className="hero-photo"
+            src="/images/virtus-search-hero.webp"
+            fill
+            sizes="100vw"
+            alt=""
+            preload
+          />
           <section className="hero shell" aria-labelledby="hero-heading">
             <div className="hero-copy">
               <p className="eyebrow">
                 <Globe2 size={15} /> VOTRE AVENIR S'ÉCRIT AU MAROC
               </p>
-              <h1 id="hero-heading">
-                Moins de recherches.
-                <br />
-                <span>Plus de possibilités.</span>
-              </h1>
+              <h1 id="hero-heading">Trouvons votre prochain emploi.</h1>
               <p className="hero-description">
-                Les offres d'emploi et les concours publics, réunis au même
-                endroit.
-                <br className="desktop-break" /> Trouvez votre prochaine étape.
-                Postulez directement à la source.
+                Des emplois, des stages et des concours publics.
+                <br className="mobile-break" /> Partout au Maroc.
               </p>
-            </div>
-            <div className="hero-decoration" aria-hidden="true">
-              <span />
-              <span />
-              <span />
             </div>
           </section>
           <section
