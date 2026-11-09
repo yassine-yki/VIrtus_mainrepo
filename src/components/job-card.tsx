@@ -1,5 +1,11 @@
 import Link from "next/link";
-import { ArrowUpRight, MapPin, Clock3, BriefcaseBusiness } from "lucide-react";
+import {
+  ArrowRight,
+  ArrowUpRight,
+  MapPin,
+  Clock3,
+  BriefcaseBusiness,
+} from "lucide-react";
 import {
   publicationLabel,
   shortDate,
@@ -37,8 +43,15 @@ export function CompanyMark({
   );
 }
 
-export function JobCard({ job }: { job: Job }) {
+export function JobCard({
+  job,
+  searchHref = "/#offres",
+}: {
+  job: Job;
+  searchHref?: string;
+}) {
   const date = publicationLabel(job.published_at);
+  const detailHref = `/offres/${job.group_key}?retour=${encodeURIComponent(searchHref)}`;
   return (
     <article className="job-card">
       <CompanyMark company={job.company} />
@@ -53,14 +66,18 @@ export function JobCard({ job }: { job: Job }) {
           </span>
         </div>
         <h3>
-          <Link href={`/offres/${job.group_key}`}>{job.title}</Link>
+          <Link href={detailHref}>{job.title}</Link>
         </h3>
         {job.kind === "competition" && (
           <div className="competition-meta">
             <strong className="competition-badge">Concours public</strong>
             <span>
-              {job.positions} poste{job.positions === 1 ? "" : "s"} · Date
-              limite : {deadlineLabel(job.deadline)}
+              {job.positions != null && (
+                <>
+                  {job.positions} poste{job.positions === 1 ? "" : "s"} ·{" "}
+                </>
+              )}
+              Date limite : {deadlineLabel(job.deadline)}
             </span>
           </div>
         )}
@@ -101,15 +118,24 @@ export function JobCard({ job }: { job: Job }) {
           <Clock3 size={12} />
           {date}
         </span>
-        <a
-          className="view-job"
-          href={job.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={`Voir l’offre ${job.title} chez ${job.company} sur le site d’origine`}
-        >
-          Voir l’offre <ArrowUpRight size={15} />
-        </a>
+        <div className="job-links">
+          <Link
+            className="job-detail-link"
+            href={detailHref}
+            aria-label={`Détails de l'offre ${job.title} chez ${job.company}`}
+          >
+            Détails <ArrowRight size={13} />
+          </Link>
+          <a
+            className="view-job"
+            href={job.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Voir l’offre ${job.title} chez ${job.company} sur le site d’origine`}
+          >
+            Site d'origine <ArrowUpRight size={15} />
+          </a>
+        </div>
       </div>
     </article>
   );

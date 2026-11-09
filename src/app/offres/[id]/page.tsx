@@ -11,29 +11,37 @@ import {
 import { Header, Footer } from "@/components/brand";
 import { CompanyMark } from "@/components/job-card";
 import { getJob } from "@/lib/catalog";
+import { catalogReturnUrl } from "@/lib/search";
 import { shortDate, workplaceLabels, deadlineLabel } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 export default async function JobPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { job } = await getJob((await params).id);
   if (!job) notFound();
+  const returnUrl = catalogReturnUrl((await searchParams).retour);
   return (
     <>
       <Header />
       <main id="main" className="detail-page shell">
-        <Link className="back-link" href="/#offres">
-          <ArrowLeft size={15} /> Toutes les offres
+        <Link className="back-link" href={returnUrl}>
+          <ArrowLeft size={15} /> Revenir aux résultats
         </Link>
         <div className="detail-grid">
           <article className="detail-main">
             <div className="detail-company">
               <CompanyMark company={job.company} large />
               <div>
-                <p className="eyebrow">VOTRE PROCHAINE ÉTAPE ?</p>
+                <p className="eyebrow">
+                  {job.kind === "competition"
+                    ? "CONCOURS PUBLIC AU MAROC"
+                    : "EMPLOI AU MAROC"}
+                </p>
                 <p>{job.company}</p>
               </div>
             </div>
@@ -42,8 +50,13 @@ export default async function JobPage({
               <div className="competition-meta">
                 <strong className="competition-badge">Concours public</strong>
                 <p>
-                  {job.positions} poste{job.positions === 1 ? "" : "s"} · Date
-                  limite : {deadlineLabel(job.deadline)} (heure du Maroc)
+                  {job.positions != null && (
+                    <>
+                      {job.positions} poste{job.positions === 1 ? "" : "s"}{" "}
+                      ·{" "}
+                    </>
+                  )}
+                  Date limite : {deadlineLabel(job.deadline)} (heure du Maroc)
                 </p>
               </div>
             )}
@@ -77,11 +90,11 @@ export default async function JobPage({
             </div>
           </article>
           <aside className="apply-panel">
-            <p className="eyebrow">ÇA VOUS PARLE ?</p>
+            <p className="eyebrow">ENVIE DE PASSER À LA SUITE ?</p>
             <h2>
               La suite se passe
               <br />
-              chez l’employeur.
+              sur le site d'origine.
             </h2>
             <p>
               Consultez les conditions complètes et envoyez votre candidature

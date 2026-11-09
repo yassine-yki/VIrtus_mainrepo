@@ -5,15 +5,17 @@ import {
   ArrowUpRight,
   Search,
   MapPin,
-  SlidersHorizontal,
   Check,
   Layers3,
+  X,
+  Globe2,
 } from "lucide-react";
 import { Header, Footer } from "@/components/brand";
+import { FilterDisclosure } from "@/components/filter-disclosure";
 import { JobCard } from "@/components/job-card";
 import { searchCatalog } from "@/lib/catalog";
 import { parseFilters, filtersUrl } from "@/lib/search";
-import { number, shortDate } from "@/lib/format";
+import { number, shortDate, workplaceLabels } from "@/lib/format";
 import type { Filters } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -24,139 +26,174 @@ export default async function Home({
 }) {
   const filters = parseFilters(await searchParams);
   const result = await searchCatalog(filters);
-  const activeFilters = [
-    filters.city,
-    filters.contract,
-    filters.workplace,
-    filters.source,
-    filters.days,
-    filters.kind,
-  ].filter(Boolean).length;
+  const selectedFilters = [
+    { key: "q", label: filters.q },
+    {
+      key: "city",
+      label:
+        result.cities.find((city) => city.key === filters.city)?.name ??
+        filters.city,
+    },
+    { key: "contract", label: filters.contract },
+    {
+      key: "workplace",
+      label: filters.workplace
+        ? workplaceLabels[filters.workplace as keyof typeof workplaceLabels]
+        : "",
+    },
+    {
+      key: "source",
+      label:
+        result.sources.find((source) => source.id === filters.source)?.name ??
+        filters.source,
+    },
+    {
+      key: "kind",
+      label:
+        filters.kind === "competition"
+          ? "Concours publics"
+          : filters.kind === "job"
+            ? "Emplois employeurs"
+            : "",
+    },
+  ].filter((filter) => filter.label);
+  const activeFilters =
+    selectedFilters.filter((filter) => filter.key !== "q").length +
+    (filters.days ? 1 : 0);
   return (
     <>
       <Header />
       <main id="main">
-        <section className="hero shell">
-          <div className="hero-copy">
-            <p className="eyebrow">
-              <span className="live-dot" /> DE NOUVELLES PERSPECTIVES, AU MAROC
-            </p>
-            <h1>
-              Le bon poste.
-              <br />
-              <span>Au même endroit.</span>
-            </h1>
-            <p className="hero-description">
-              Votre prochain chapitre mérite mieux que vingt onglets ouverts.
-              Les offres se rassemblent ici. À vous de choisir la suite.
-            </p>
+        <div className="hero-surface">
+          <section className="hero shell" aria-labelledby="hero-heading">
+            <div className="hero-copy">
+              <p className="eyebrow">
+                <Globe2 size={15} /> VOTRE AVENIR S'ÉCRIT AU MAROC
+              </p>
+              <h1 id="hero-heading">
+                Moins de recherches.
+                <br />
+                <span>Plus de possibilités.</span>
+              </h1>
+              <p className="hero-description">
+                Les offres d'emploi et les concours publics, réunis au même
+                endroit.
+                <br className="desktop-break" /> Trouvez votre prochaine étape.
+                Postulez directement à la source.
+              </p>
+            </div>
+            <div className="hero-decoration" aria-hidden="true">
+              <span />
+              <span />
+              <span />
+            </div>
+          </section>
+          <section
+            className="search-section shell"
+            aria-label="Rechercher un emploi"
+          >
+            <form
+              key={filtersUrl(filters)}
+              action="/#offres"
+              className="search-form"
+            >
+              <label className="keyword-field">
+                <Search size={21} />
+                <span className="sr-only">
+                  Métier, compétence ou entreprise
+                </span>
+                <input
+                  name="q"
+                  type="search"
+                  defaultValue={filters.q}
+                  placeholder="Métier, compétence ou entreprise"
+                  maxLength={120}
+                />
+              </label>
+              <label className="location-field">
+                <MapPin size={19} />
+                <span className="sr-only">Ville</span>
+                <select
+                  name="city"
+                  aria-label="Ville de recherche"
+                  defaultValue={filters.city}
+                >
+                  <option value="">Tout le Maroc</option>
+                  {result.cities.map((city) => (
+                    <option key={city.key} value={city.key}>
+                      {city.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              {(
+                [
+                  "contract",
+                  "workplace",
+                  "source",
+                  "days",
+                  "sort",
+                  "kind",
+                ] as const
+              ).map((name) =>
+                filters[name] || name === "days" ? (
+                  <input
+                    key={name}
+                    type="hidden"
+                    name={name}
+                    value={filters[name]}
+                  />
+                ) : null,
+              )}
+              <button className="search-button" type="submit">
+                Rechercher <ArrowRight size={18} />
+              </button>
+            </form>
+            <div className="quick-searches" aria-label="Idées de recherche">
+              <span>À explorer</span>
+              {[
+                {
+                  label: "Développeur",
+                  changes: { q: "développeur", kind: "job" as const },
+                },
+                { label: "Data", changes: { q: "data", kind: "job" as const } },
+                {
+                  label: "Stages",
+                  changes: { q: "", contract: "Stage", kind: "job" as const },
+                },
+                {
+                  label: "Télétravail",
+                  changes: { workplace: "remote", kind: "job" as const },
+                },
+              ].map((item) => (
+                <Link
+                  key={item.label}
+                  href={filtersUrl(parseFilters({}), item.changes)}
+                >
+                  {item.label}
+                  <ArrowUpRight size={13} />
+                </Link>
+              ))}
+            </div>
             <div className="hero-benefits">
               <span>
-                <Check size={14} /> Sans compte
+                <Check size={15} /> Sans compte
               </span>
               <span>
-                <Check size={14} /> Liens directs
+                <Check size={15} /> Candidature à la source
               </span>
               <span>
-                <Check size={14} /> Sources transparentes
+                <Check size={15} /> Accès gratuit
               </span>
             </div>
-          </div>
-          <div className="hero-art" aria-hidden="true">
-            <div className="orbit orbit-one" />
-            <div className="orbit orbit-two" />
-            <span className="art-coordinate">33°35′ N · 7°37′ W</span>
-            <div className="art-stamp">
-              MA
-              <span>
-                VOTRE PROCHAINE
-                <br />
-                DESTINATION
-              </span>
-            </div>
-            <div className="art-note note-one">
-              <span className="note-icon">↗</span>
-              <span>
-                De nouvelles portes
-                <br />
-                <strong>s’ouvrent ici.</strong>
-              </span>
-            </div>
-            <div className="art-note note-two">
-              <span className="note-dot" /> Casablanca · Rabat · et au-delà
-            </div>
-            <span className="art-star">✳</span>
-          </div>
-        </section>
-        <section
-          className="search-section shell"
-          aria-label="Rechercher un emploi"
-        >
-          <form action="/#offres" className="search-form">
-            <label className="keyword-field">
-              <Search size={21} />
-              <span className="sr-only">Métier, compétence ou entreprise</span>
-              <input
-                name="q"
-                defaultValue={filters.q}
-                placeholder="Un métier, une compétence, une entreprise…"
-                maxLength={120}
-              />
-            </label>
-            <label className="location-field">
-              <MapPin size={19} />
-              <span className="sr-only">Ville</span>
-              <select
-                name="city"
-                aria-label="Ville de recherche"
-                defaultValue={filters.city}
-              >
-                <option value="">Tout le Maroc</option>
-                {result.cities.map((city) => (
-                  <option key={city.key} value={city.key}>
-                    {city.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            {(
-              [
-                "contract",
-                "workplace",
-                "source",
-                "days",
-                "sort",
-                "kind",
-              ] as const
-            ).map((name) =>
-              filters[name] || name === "days" ? (
-                <input
-                  key={name}
-                  type="hidden"
-                  name={name}
-                  value={filters[name]}
-                />
-              ) : null,
-            )}
-            <button className="search-button" type="submit">
-              Explorer les offres <ArrowRight size={18} />
-            </button>
-          </form>
-          <div className="search-bottom">
-            <p>
-              Un seul point de départ. Des opportunités de plusieurs sources.
-            </p>
-            <a href="#offres">
-              Découvrir <ArrowDown size={13} />
-            </a>
-          </div>
-        </section>
+          </section>
+        </div>
         <div className="source-strip">
           <div className="shell source-strip-inner">
             <span>
-              DIRECTEMENT DEPUIS
+              À RETROUVER SUR VIRTUS
               <br />
-              <strong>LES SOURCES CONNECTÉES</strong>
+              <strong>Des sources identifiées</strong>
             </span>
             <div>
               {result.sources
@@ -181,14 +218,15 @@ export default async function Home({
         >
           <div className="catalog-top">
             <div>
-              <p className="eyebrow">LA SUITE SE TROUVE PEUT-ÊTRE ICI</p>
-              <h2 id="results-heading">
-                À chaque ambition,
-                <br className="mobile-break" /> une opportunité
-                <span className="coral">.</span>
-              </h2>
+              <p className="eyebrow">VOTRE PROCHAINE ÉTAPE</p>
+              <h2 id="results-heading">Une opportunité à votre image.</h2>
+              <p className="catalog-intro">
+                Explorez les annonces. Affinez vos critères. Trouvez votre voie.
+              </p>
             </div>
-            <span className="catalog-edition">MAROC / ÉDITION 01</span>
+            <Link className="catalog-method" href="/sources">
+              Comment ça marche <ArrowUpRight size={16} />
+            </Link>
           </div>
           {result.mode === "snapshot" && (
             <div className="notice">
@@ -204,18 +242,30 @@ export default async function Home({
               {result.error}
             </div>
           )}
+          <nav className="opportunity-tabs" aria-label="Types d'opportunités">
+            {[
+              { value: "", label: "Toutes les opportunités" },
+              { value: "job", label: "Emplois employeurs" },
+              { value: "competition", label: "Concours publics" },
+            ].map((item) => (
+              <Link
+                key={item.value}
+                href={filtersUrl(filters, {
+                  kind: item.value as Filters["kind"],
+                  page: 1,
+                })}
+                aria-current={
+                  (filters.kind ?? "") === item.value ? "page" : undefined
+                }
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
           <div className="catalog-grid">
             <aside className="filters">
-              <details open>
-                <summary>
-                  <span>
-                    <SlidersHorizontal size={16} /> Affiner la recherche
-                  </span>
-                  {activeFilters > 0 && (
-                    <span className="filter-counter">{activeFilters}</span>
-                  )}
-                </summary>
-                <form action="/#offres">
+              <FilterDisclosure count={activeFilters}>
+                <form key={filtersUrl(filters)} action="/#offres">
                   <input type="hidden" name="q" value={filters.q} />
                   <input type="hidden" name="sort" value={filters.sort} />
                   <label>
@@ -316,9 +366,9 @@ export default async function Home({
                     </Link>
                   )}
                 </form>
-              </details>
+              </FilterDisclosure>
               <div className="sidebar-note">
-                <span className="small-star">✳</span>
+                <ArrowUpRight size={24} />
                 <h3>
                   Votre recherche,
                   <br />
@@ -334,6 +384,45 @@ export default async function Home({
               </div>
             </aside>
             <div className="results">
+              <div
+                className="active-filters"
+                aria-label="Critères de recherche actifs"
+              >
+                <Link
+                  className="date-context"
+                  href={filtersUrl(filters, {
+                    days: filters.days ? 0 : 30,
+                    page: 1,
+                  })}
+                  aria-label={
+                    filters.days
+                      ? "Afficher toutes les dates"
+                      : "Afficher les 30 derniers jours"
+                  }
+                >
+                  {filters.days
+                    ? filters.days === 1
+                      ? "Dernières 24 heures"
+                      : filters.days + " derniers jours"
+                    : "Toutes les dates"}
+                  {filters.days > 0 && <X size={13} />}
+                </Link>
+                {selectedFilters.map((filter) => (
+                  <Link
+                    key={filter.key}
+                    href={filtersUrl(filters, { [filter.key]: "", page: 1 })}
+                    aria-label={"Retirer le filtre " + filter.label}
+                  >
+                    {filter.label}
+                    <X size={13} />
+                  </Link>
+                ))}
+                {selectedFilters.length > 0 && (
+                  <Link className="clear-filters" href="/#offres">
+                    Tout effacer
+                  </Link>
+                )}
+              </div>
               <div className="results-toolbar">
                 <p>
                   <strong>{number(result.total)}</strong>{" "}
@@ -347,7 +436,11 @@ export default async function Home({
                     " à explorer"
                   )}
                 </p>
-                <form action="/#offres" className="sort-form">
+                <form
+                  key={filtersUrl(filters)}
+                  action="/#offres"
+                  className="sort-form"
+                >
                   {Object.entries(filters)
                     .filter(
                       ([name, value]) =>
@@ -377,7 +470,11 @@ export default async function Home({
               {result.jobs.length ? (
                 <div className="job-list">
                   {result.jobs.map((job) => (
-                    <JobCard key={job.group_key} job={job} />
+                    <JobCard
+                      key={job.group_key}
+                      job={job}
+                      searchHref={filtersUrl(filters, { page: result.page })}
+                    />
                   ))}
                 </div>
               ) : (
@@ -386,16 +483,14 @@ export default async function Home({
                   <h3>
                     {result.error
                       ? "La recherche fait une pause."
-                      : result.mode === "snapshot"
-                        ? "Aucune offre avec ces critères."
-                        : "Les premières opportunités arrivent."}
+                      : "Aucune offre avec ces critères."}
                   </h3>
                   <p>
                     {result.error
                       ? "Vos critères sont conservés. Vous pouvez réessayer."
                       : filters.q || activeFilters
                         ? "Essayez un autre mot-clé ou élargissez vos filtres."
-                        : "Le catalogue sera disponible dès la validation des premières sources. Notre méthode reste consultable en attendant."}
+                        : "Essayez un autre mot-clé ou consultez toutes les dates."}
                   </p>
                   <Link
                     className="text-link"
@@ -439,13 +534,13 @@ export default async function Home({
           <div>
             <p className="eyebrow">UNE RECHERCHE PLUS CLAIRE</p>
             <h2>
-              Votre temps est précieux.
+              Votre prochain chapitre
               <br />
-              <em>Gardez-le pour la suite.</em>
+              <em>commence par une rencontre.</em>
             </h2>
           </div>
           <Link href="/sources">
-            Les sources derrière les offres <ArrowUpRight size={19} />
+            Découvrir notre méthode <ArrowUpRight size={19} />
           </Link>
         </section>
       </main>

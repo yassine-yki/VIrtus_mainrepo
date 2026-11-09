@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 export function Brand() {
   return (
     <Link className="brand" href="/" aria-label="Virtus, accueil">
@@ -10,7 +11,7 @@ export function Brand() {
         aria-hidden="true"
       >
         <path d="M2 5h7l6 15 6-15h6L17 27h-5L2 5Z" fill="currentColor" />
-        <path d="M19 2h8v8" stroke="#ed6d45" strokeWidth="3" />
+        <path d="M19 2h8v8" stroke="#f29a43" strokeWidth="3" />
       </svg>
       <span>
         virtus<span className="brand-dot">.</span>
@@ -27,7 +28,7 @@ export function Header() {
         <Link href="/sources">Nos sources</Link>
       </nav>
       <a className="header-cta" href="/#offres">
-        Trouver ma prochaine étape <span aria-hidden="true">↗</span>
+        Explorer les offres <ArrowRight size={17} />
       </a>
     </header>
   );
@@ -46,7 +47,7 @@ export function Footer() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Le projet ↗
+          Le projet <ArrowUpRight size={14} />
         </a>
       </div>
       <p className="footer-note">

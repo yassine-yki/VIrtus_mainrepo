@@ -69,6 +69,13 @@ export function filtersUrl(
   return `/?${params.toString()}#offres`;
 }
 
+/** Keep the detail-page return link inside the catalog and normalize its filters. */
+export function catalogReturnUrl(value: string | string[] | undefined): string {
+  if (typeof value !== "string" || !value.startsWith("/?")) return "/#offres";
+  const url = new URL(value, "https://virtus.invalid");
+  return filtersUrl(parseFilters(Object.fromEntries(url.searchParams)));
+}
+
 export function groupListings(
   listings: Listing[],
   sourceNames: Map<string, string>,

@@ -2,9 +2,41 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { normalizeListing } from "../src/lib/normalize";
 import { sources } from "../src/lib/sources";
-import { parseFilters, searchSnapshot, filtersUrl } from "../src/lib/search";
+import {
+  parseFilters,
+  searchSnapshot,
+  filtersUrl,
+  catalogReturnUrl,
+} from "../src/lib/search";
 import type { CatalogSnapshot, Listing } from "../src/lib/types";
 const now = new Date().toISOString();
+test("detail return keeps the search, all-dates selection, sorting and page", () => {
+  const filters = parseFilters({
+    q: "développeur",
+    days: "0",
+    city: "rabat",
+    kind: "job",
+    page: "3",
+    sort: "relevance",
+  });
+  assert.equal(catalogReturnUrl(filtersUrl(filters)), filtersUrl(filters));
+});
+test("detail return rejects external paths and strips unsupported parameters", () => {
+  for (const value of [
+    undefined,
+    ["/?q=test"],
+    "https://example.com/",
+    "//example.com/",
+    "/sources",
+    "javascript:alert(1)",
+  ]) {
+    assert.equal(catalogReturnUrl(value), "/#offres");
+  }
+  const returned = catalogReturnUrl(
+    "/?q=data&days=0&page=-1&redirect=https://example.com",
+  );
+  assert.equal(returned, "/?q=data&days=0#offres");
+});
 const source = { ...sources[2], publicationStatus: "approved" as const };
 const job = (id: string, title = "Ingénieur développeur"): Listing =>
   normalizeListing(
