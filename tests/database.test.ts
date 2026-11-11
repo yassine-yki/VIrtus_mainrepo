@@ -467,6 +467,48 @@ test("Postgres migrations, full catalog search, RLS and safe reconciliation", as
       "approved",
       "collectors cannot overwrite operator publication state",
     );
+    await db.query(
+      "insert into public.sources(id,name,company,provider,website,enabled,publication_status) values('capgemini','Capgemini','Capgemini','html','https://www.capgemini.com/ma-en/job-search/',false,'blocked')",
+    );
+    await db.exec(
+      await readFile(
+        new URL(
+          "../supabase/migrations/202611110001_major_tech_employers.sql",
+          import.meta.url,
+        ),
+        "utf8",
+      ),
+    );
+    const majorSources = await db.query<{
+      id: string;
+      enabled: boolean;
+      publication_status: string;
+    }>(
+      "select id,enabled,publication_status from public.sources where id in ('capgemini','cgi','cegedim') order by id",
+    );
+    assert.deepEqual(majorSources.rows, [
+      { id: "capgemini", enabled: false, publication_status: "blocked" },
+      { id: "cegedim", enabled: true, publication_status: "approved" },
+      { id: "cgi", enabled: true, publication_status: "approved" },
+    ]);
+    assert.equal(
+      (await db.query("select id from public.sources where id='orange'")).rows
+        .length,
+      0,
+      "incomplete Orange feed is not approved",
+    );
+    const cgiSource = sources.find((source) => source.id === "cgi")!;
+    await db.query("select public.register_source($1::jsonb)", [
+      JSON.stringify({ ...cgiSource, publicationStatus: "blocked" }),
+    ]);
+    assert.equal(
+      (
+        await db.query<{ publication_status: string }>(
+          "select publication_status from public.sources where id='cgi'",
+        )
+      ).rows[0].publication_status,
+      "approved",
+    );
     const states = await db.query<{
       id: string;
       enabled: boolean;

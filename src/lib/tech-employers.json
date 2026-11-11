@@ -225,5 +225,95 @@
     "paginationComplete": true,
     "apiRequests": 1,
     "endpoint": "https://apply.workable.com/api/v1/widget/accounts/supportyourapp"
+  },
+  {
+    "id": "capgemini",
+    "name": "Capgemini",
+    "company": "Capgemini",
+    "provider": "html",
+    "identifier": "capgemini-ma",
+    "website": "https://www.capgemini.com/ma-en/job-search/",
+    "enabled": true,
+    "publicationStatus": "pending",
+    "permissionNote": "Owner requested major Moroccan tech-employer expansion on 2026-11-11 within the public job-facts and original-link catalog scope. Original advertisements stay at the employer; no full-description redistribution licence is asserted.",
+    "evidenceUrls": [
+      "https://www.capgemini.com/ma-en/job-search/",
+      "https://cg-jobstream-api.azurewebsites.net/api/job-search?country_code=ma-en&page=1&size=100"
+    ],
+    "endpoint": "https://cg-jobstream-api.azurewebsites.net/api/job-search?country_code=ma-en&page=1&size=100",
+    "checkedAt": "2026-11-11T08:37:48.833Z",
+    "moroccoCount": 181,
+    "distinctJobs": 181,
+    "recentCount": 181,
+    "paginationComplete": true,
+    "apiRequests": 183
+  },
+  {
+    "id": "orange",
+    "name": "Orange",
+    "company": "Orange",
+    "provider": "html",
+    "identifier": "orange-ma",
+    "website": "https://orange.jobs/fr/fr/orange-business/maroc",
+    "enabled": false,
+    "publicationStatus": "pending",
+    "permissionNote": "Owner requested major Moroccan tech-employer expansion on 2026-11-11 within the public job-facts and original-link catalog scope. Original advertisements stay at the employer; no full-description redistribution licence is asserted.",
+    "evidenceUrls": [
+      "https://orange.jobs/fr/fr/orange-business/maroc",
+      "https://orange.jobs/fr/fr/morocco-search-results"
+    ],
+    "endpoint": "https://orange.jobs/fr/fr/morocco-search-results",
+    "checkedAt": "2026-11-11T08:40:47.445Z",
+    "moroccoCount": 0,
+    "distinctJobs": 0,
+    "recentCount": 0,
+    "paginationComplete": false,
+    "apiRequests": 0,
+    "auditStatus": "blocked-incomplete-pagination",
+    "auditNote": "Public Morocco search reports 62 rows; relevance paging returned duplicates and only 57 unique IDs in one traversal. No reconciliation or publication permitted until complete results can be verified."
+  },
+  {
+    "id": "cgi",
+    "name": "CGI",
+    "company": "CGI",
+    "provider": "html",
+    "identifier": "cgi-ma",
+    "website": "https://www.cgi.com/maroc/fr/carrieres",
+    "enabled": true,
+    "publicationStatus": "pending",
+    "permissionNote": "Owner requested major Moroccan tech-employer expansion on 2026-11-11 within the public job-facts and original-link catalog scope. Original advertisements stay at the employer; no full-description redistribution licence is asserted.",
+    "evidenceUrls": [
+      "https://www.cgi.com/maroc/fr/carrieres",
+      "https://cgi.njoyn.com/corp/xweb/xweb.asp?CLID=21001&page=joblisting&CountryID=MA&lang=2"
+    ],
+    "endpoint": "https://cgi.njoyn.com/corp/xweb/xweb.asp?CLID=21001&page=joblisting&CountryID=MA&lang=2",
+    "checkedAt": "2026-11-11T08:38:00.648Z",
+    "moroccoCount": 18,
+    "distinctJobs": 18,
+    "recentCount": 14,
+    "paginationComplete": true,
+    "apiRequests": 19
+  },
+  {
+    "id": "cegedim",
+    "name": "Cegedim",
+    "company": "Cegedim",
+    "provider": "html",
+    "identifier": "cegedim-ma",
+    "website": "https://careers.cegedim.com/fr",
+    "enabled": true,
+    "publicationStatus": "pending",
+    "permissionNote": "Owner requested major Moroccan tech-employer expansion on 2026-11-11 within the public job-facts and original-link catalog scope. Original advertisements stay at the employer; no full-description redistribution licence is asserted.",
+    "evidenceUrls": [
+      "https://careers.cegedim.com/fr/annonces",
+      "https://api.digitalrecruiters.com/public/v1/careers-site/job-ads"
+    ],
+    "endpoint": "https://api.digitalrecruiters.com/public/v1/careers-site/job-ads",
+    "checkedAt": "2026-11-11T08:39:54.852Z",
+    "moroccoCount": 3,
+    "distinctJobs": 3,
+    "recentCount": 1,
+    "paginationComplete": true,
+    "apiRequests": 4
   }
 ]

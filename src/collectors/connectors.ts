@@ -1,8 +1,23 @@
 import { normalizeListing, fold } from "../lib/normalize";
 import type { Listing, Source } from "../lib/types";
-import { fetchJson, record, str, type FetchJson } from "./http";
+import {
+  fetchJson,
+  fetchText,
+  postJson,
+  record,
+  str,
+  type FetchJson,
+  type FetchText,
+  type PostJson,
+} from "./http";
 import { dateOnly } from "../lib/deadline";
 import { collectAshby } from "./ashby";
+import {
+  collectCapgemini,
+  collectOrange,
+  collectCgi,
+  collectCegedim,
+} from "./employer-sites";
 
 export async function collectSmartRecruiters(
   source: Source,
@@ -294,6 +309,8 @@ export async function collectWorkable(
 export function collectSource(
   source: Source,
   get: FetchJson = fetchJson,
+  html: FetchText = fetchText,
+  post: PostJson = postJson,
 ): Promise<Listing[]> {
   if (source.provider === "smartrecruiters")
     return collectSmartRecruiters(source, get);
@@ -302,6 +319,16 @@ export function collectSource(
   if (source.provider === "workable") return collectWorkable(source, get);
   if (source.provider === "ashby") return collectAshby(source, get);
   if (source.provider === "wadifa") return collectWadifa(source, get);
+  if (source.provider === "html") {
+    if (source.id === "capgemini" && source.identifier === "capgemini-ma")
+      return collectCapgemini(source, get, html);
+    if (source.id === "orange" && source.identifier === "orange-ma")
+      return collectOrange(source, html);
+    if (source.id === "cgi" && source.identifier === "cgi-ma")
+      return collectCgi(source, html);
+    if (source.id === "cegedim" && source.identifier === "cegedim-ma")
+      return collectCegedim(source, get, post);
+  }
   throw new Error(
     "HTML source requires an individually reviewed collector; no scraper is enabled",
   );

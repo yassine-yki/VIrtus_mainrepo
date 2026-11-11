@@ -16,6 +16,7 @@ export default async function SourcesPage() {
     wadifa: "API Wadifa Info",
     workable: "Workable",
     ashby: "Ashby",
+    html: "Site carrières employeur",
   };
   return (
     <>

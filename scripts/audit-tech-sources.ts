@@ -1,6 +1,6 @@
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { collectSource } from "../src/collectors/connectors";
-import { fetchJson } from "../src/collectors/http";
+import { fetchJson, fetchText, postJson } from "../src/collectors/http";
 import { sources } from "../src/lib/sources";
 import definitions from "../src/lib/tech-employers.json";
 
@@ -17,10 +17,21 @@ for (const definition of definitions) {
   if (selected && !selected.includes(definition.id)) continue;
   const source = sources.find((item) => item.id === definition.id)!;
   let requests = 0;
-  const jobs = await collectSource(source, async (url) => {
-    requests++;
-    return fetchJson(url);
-  });
+  const jobs = await collectSource(
+    source,
+    async (url) => {
+      requests++;
+      return fetchJson(url);
+    },
+    async (url) => {
+      requests++;
+      return fetchText(url);
+    },
+    async (url, body) => {
+      requests++;
+      return postJson(url, body);
+    },
+  );
   const distinct = new Set(jobs.map((job) => job.group_key));
   const recent = jobs.filter(
     (job) =>
