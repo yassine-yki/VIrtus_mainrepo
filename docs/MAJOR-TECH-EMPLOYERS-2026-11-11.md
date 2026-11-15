@@ -30,4 +30,25 @@ Typecheck, all 45 tests including PostgreSQL/PGlite, production build and diff c
 
 Migration `202611110001_major_tech_employers` adds only Capgemini, CGI and Cegedim under the already-supported `html` provider. Existing rows are preserved with `ON CONFLICT DO NOTHING`; collectors cannot change publication approval. The database write secret remains in GitHub's protected collection environment. The six-hour schedule, two-source concurrency limit, drop protection and failed-run retention remain in effect.
 
-Production migration, deployment, collection and public-flow verification are pending. Suspend an affected source by setting `enabled=false` in Supabase; revert the application commit if required. Never bypass a suspicious-drop rejection merely to make a workflow green.
+Suspend an affected source by setting `enabled=false` in Supabase; revert the application commit if required. Never bypass a suspicious-drop rejection merely to make a workflow green.
+
+## Production verification - 2026-11-15
+
+Migration registration was verified in production: all three sources are enabled and approved. Implementation commit `767029ec911ee34d8f92b8e91e790ca4de152ae2` was fast-forwarded to `main`. [Main CI passed](https://github.com/yassine-yki/VIrtus_mainrepo/actions/runs/43705948697), and [Vercel deployment succeeded](https://vercel.com/yassines-projects-25fc69a3/virtus-jobs/ABBpScQLkenHvyLG6tLNpZsi9vxw).
+
+The [manual production collection](https://github.com/yassine-yki/VIrtus_mainrepo/actions/runs/43705965875) completed with 29 of 30 source jobs successful. All three new collectors succeeded. Source execution intervals, measured from actual step start times rather than queued job timestamps, showed a maximum concurrency of two.
+
+| Source | Distinct public jobs, all dates | Published within 30 days | Supabase successful sync, UTC |
+| --- | ---: | ---: | --- |
+| Capgemini | 182 | 182 | 2026-11-15 10:58:18.041075 |
+| CGI | 18 | 13 | 2026-11-15 10:57:29.904419 |
+| Cegedim | 0 | 0 | 2026-11-15 10:57:48.480209 |
+| **Added public coverage** | **200** | **195** | |
+
+Each source's `last_success_at` exactly matched its successful `sync_runs.finished_at`, within its GitHub job interval. Cegedim changed since the November 11 audit: an independent complete read returned 69 global rows, none with a Morocco location. It remains configured for subsequent refreshes, but contributes no current public coverage. Orange remains disabled; DXC and HPS remain deferred.
+
+The 200 listings are newly added to Virtus, not necessarily newly created vacancies, and include industrial engineering and other roles alongside software/data/cloud jobs. Public API pagination was traversed completely, with distinct grouping, Morocco country, empty descriptions and HTTPS original links checked. Search, source/date filters, detail pages, and original employer links were verified for Capgemini and CGI. The browser flow found CGI's Senior AI Engineer / Java Spring Boot role and opened the matching original CGI vacancy. Public access required no review key.
+
+The post-import public smoke check passed: 410 employer jobs and 364 competitions under the default 30-day filter (774 opportunities), and 1,332 opportunities with all dates selected. Attribution, original links, indexing, and date-filter preservation passed. These are point-in-time catalog counts, not a promise of permanent inventory.
+
+**Existing refresh issue:** Veolia alone failed with database code `P0001`. An independent complete feed read returned 3 current jobs against 10 retained active rows, meeting the existing greater-than-50-percent drop rejection. Its last successful sync remained `2026-11-09 06:40:51.405988+00`; the failed attempt was recorded at `2026-11-15 10:54:18.648326+00`. No retention or drop protection was bypassed. The aggregate workflow is therefore red despite all new collectors succeeding; Veolia requires a separate reviewed reconciliation of the missing listings.
