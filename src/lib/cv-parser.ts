@@ -1,7 +1,6 @@
 import { spawn } from "node:child_process";
-import { createRequire } from "node:module";
 import { pathToFileURL } from "node:url";
-import { dirname, join } from "node:path";
+import { join } from "node:path";
 export const MAX_CV_BYTES = 4_000_000;
 export const MAX_CV_CHARS = 30_000;
 export function boundedCvText(value: unknown): string {
@@ -69,12 +68,9 @@ export async function parseCv(
       : bytes[0] !== 0x50 || bytes[1] !== 0x4b
   )
     throw new Error("Le contenu ne correspond pas au format du fichier.");
-  const require = createRequire(import.meta.url);
   return new Promise((resolve, reject) => {
-    const pdfPath = join(
-      dirname(require.resolve("pdfjs-dist/package.json")),
-      "legacy/build/pdf.mjs",
-    );
+    const runtime = join(process.cwd(), ".cv-runtime");
+    const pdfPath = join(runtime, "pdfjs/pdf.mjs");
     // A native PDF dependency can crash a worker thread's entire host process.
     // A child process confines malformed-document and native-library failures.
     const child = spawn(
@@ -95,7 +91,7 @@ export async function parseCv(
         bytes: Buffer.from(bytes).toString("base64"),
         format: ext,
         pdfUrl: pathToFileURL(pdfPath).href,
-        zipPath: require.resolve("fflate"),
+        zipPath: join(runtime, "fflate/node.cjs"),
       }),
     );
     const fail = () =>

@@ -1,12 +1,8 @@
 import type { NextConfig } from "next";
 
 const config: NextConfig = {
-  serverExternalPackages: ["pdfjs-dist", "fflate"],
   outputFileTracingIncludes: {
-    "/api/profile/extract": [
-      "./node_modules/pdfjs-dist/legacy/build/**/*",
-      "./node_modules/fflate/**/*",
-    ],
+    "/api/profile/extract": ["./.cv-runtime/**/*"],
   },
   poweredByHeader: false,
   async headers() {
