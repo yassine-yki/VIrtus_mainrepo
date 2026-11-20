@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import { load } from "cheerio";
+import { classifyTech } from "./tech";
 import type {
   Contract,
   Listing,
@@ -149,6 +150,7 @@ interface Input {
   title: string;
   location: string;
   country?: string;
+  eligibleCountries?: string[];
   url: string;
   description?: string;
   employment?: string;
@@ -162,11 +164,17 @@ export function normalizeListing(
   input: Input,
   now = new Date().toISOString(),
 ): Listing | null {
-  if (!isMoroccoLocation(input.location, input.country)) return null;
+  const remoteEligible =
+    input.workplace === "remote" &&
+    input.eligibleCountries?.some((country) =>
+      ["ma", "morocco", "maroc"].includes(fold(country)),
+    );
+  const domestic = isMoroccoLocation(input.location, input.country);
+  if (!domestic && !remoteEligible) return null;
   if (!input.externalId || !input.title.trim() || !input.location.trim())
     throw new Error("Incomplete job record");
   const url = canonicalUrl(input.url);
-  const cities = citiesFor(input.location);
+  const cities = citiesFor(domestic ? input.location : "");
   const company = plainText(input.company ?? source.company).trim();
   if (!company) throw new Error("Missing employer");
   return {
@@ -185,8 +193,16 @@ export function normalizeListing(
       ? canonicalUrl(input.attributionUrl)
       : null,
     title: plainText(input.title).slice(0, 300),
+    tech: classifyTech(
+      plainText(input.title),
+      plainText(input.description),
+      input.kind,
+      !domestic && remoteEligible ? "remote-morocco" : "morocco",
+    ),
     description: plainText(input.description).slice(0, 30_000),
-    locations: cities.names.length ? cities.names : [input.location.trim()],
+    locations: cities.names.length
+      ? cities.names
+      : [domestic ? input.location.trim() : "Maroc"],
     city_keys: cities.keys,
     country: "MA",
     workplace: input.workplace ?? "unknown",

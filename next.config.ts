@@ -1,9 +1,19 @@
 import type { NextConfig } from "next";
 
 const config: NextConfig = {
+  outputFileTracingIncludes: {
+    "/api/profile/extract": ["./.cv-runtime/**/*"],
+  },
   poweredByHeader: false,
   async headers() {
     return [
+      {
+        source: "/profil",
+        headers: [
+          { key: "Cache-Control", value: "private, no-store, max-age=0" },
+          { key: "X-Robots-Tag", value: "noindex, nofollow" },
+        ],
+      },
       {
         source: "/(.*)",
         headers: [

@@ -4,7 +4,14 @@ import { resolve } from "node:path";
 import { createClient } from "@supabase/supabase-js";
 import { searchSnapshot, PAGE_SIZE, groupListings } from "./search";
 import { deadlineOpen } from "./deadline";
-import type { CatalogSnapshot, Filters, Job, SearchResult } from "./types";
+import type {
+  CatalogSnapshot,
+  Filters,
+  Job,
+  SearchResult,
+  Source,
+} from "./types";
+import { classifyTech } from "./tech";
 
 const empty = (error?: string): SearchResult => ({
   jobs: [],
@@ -57,6 +64,30 @@ export async function searchCatalog(filters: Filters): Promise<SearchResult> {
   }
   const supabase = client();
   if (!supabase) return empty();
+  if (
+    filters.tech ||
+    filters.family ||
+    filters.technology ||
+    filters.seniority ||
+    filters.language ||
+    filters.pfe
+  ) {
+    try {
+      const { jobs, sources } = await techCatalog();
+      const snapshot: CatalogSnapshot = {
+        version: 1,
+        collected_at:
+          jobs.map((j) => j.last_seen_at).sort()[0] || new Date().toISOString(),
+        sources,
+        listings: jobs,
+        runs: [],
+      };
+      const result = searchSnapshot(snapshot, filters, true);
+      return { ...result, mode: "supabase" };
+    } catch {
+      return empty("Le catalogue tech est momentanément indisponible.");
+    }
+  }
   const { data, error } = await supabase.rpc("search_catalog", {
     p_query: filters.q,
     p_city: filters.city,
@@ -75,6 +106,50 @@ export async function searchCatalog(filters: Filters): Promise<SearchResult> {
     );
   }
   return { ...data, mode: "supabase" } as SearchResult;
+}
+export async function techCatalog(): Promise<{
+  jobs: Job[];
+  sources: Source[];
+}> {
+  const local = await snapshot();
+  if (local) {
+    const names = new Map(local.sources.map((s) => [s.id, s.name]));
+    const permitted = new Set(
+      local.sources
+        .filter((s) => s.enabled && s.publicationStatus !== "blocked")
+        .map((s) => s.id),
+    );
+    return {
+      sources: local.sources,
+      jobs: groupListings(
+        local.listings
+          .filter(
+            (j) =>
+              permitted.has(j.source_id) &&
+              j.active &&
+              deadlineOpen(j.deadline) &&
+              Date.parse(j.last_seen_at) > Date.now() - 72 * 3600000,
+          )
+          .map((j) => ({
+            ...j,
+            tech: j.tech ?? classifyTech(j.title, j.description, j.kind),
+            description: "",
+          })),
+        names,
+      ).filter((j) => j.kind !== "competition" && j.tech?.families.length),
+    };
+  }
+  const supabase = client();
+  if (!supabase) throw new Error("Catalog unavailable");
+  const { data, error } = await supabase.rpc("get_tech_catalog");
+  if (
+    error ||
+    !data ||
+    !Array.isArray(data.jobs) ||
+    !Array.isArray(data.sources)
+  )
+    throw new Error("Catalog unavailable");
+  return data;
 }
 export async function catalogSources() {
   return searchCatalog({

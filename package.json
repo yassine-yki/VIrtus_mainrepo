@@ -4,11 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build --webpack",
+    "dev": "node scripts/prepare-cv-runtime.mjs && next dev",
+    "build": "node scripts/prepare-cv-runtime.mjs && next build --webpack",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test tests/*.test.ts",
+    "test": "node scripts/prepare-cv-runtime.mjs && tsx --test tests/*.test.ts",
     "collect": "tsx --env-file-if-exists=.env.local scripts/collect.ts",
     "db:migrate": "tsx --env-file-if-exists=.env.local scripts/migrate.ts",
     "format": "prettier --write src scripts tests docs *.json *.ts .github README.md"
@@ -19,8 +19,10 @@
   "dependencies": {
     "@supabase/supabase-js": "2.118.0",
     "cheerio": "1.2.0",
+    "fflate": "0.8.3",
     "lucide-react": "0.468.0",
-    "next": "16.4.3",
+    "next": "16.4.5",
+    "pdfjs-dist": "5.4.296",
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "server-only": "0.0.1"

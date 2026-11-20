@@ -10,6 +10,8 @@ const hosts = new Set([
   "orange.jobs",
   "cgi.njoyn.com",
   "api.digitalrecruiters.com",
+  "jobs.inwi.ma",
+  "leytonglobal-morocco.teamtailor.com",
 ]);
 
 export type FetchJson = (url: string) => Promise<unknown>;
@@ -99,6 +101,15 @@ export async function fetchText(url: string): Promise<string> {
   const text = await response.text();
   if (text.length > 3_000_000)
     throw new Error("Employer page exceeds safety limit");
+  return text;
+}
+export async function fetchXml(url: string): Promise<string> {
+  const response = await fetchResponse(url, true);
+  if (!/xml|rss/.test(response.headers.get("content-type") ?? ""))
+    throw new Error("Expected employer XML response");
+  const text = await response.text();
+  if (text.length > 3_000_000 || /<!DOCTYPE|<!ENTITY/i.test(text))
+    throw new Error("Invalid or oversized employer XML");
   return text;
 }
 

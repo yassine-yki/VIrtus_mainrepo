@@ -1,10 +1,12 @@
 node_modules/
 .next/
+.cv-runtime/
 out/
 .env*
 !.env.example
 .vercel/
 data/*.json
+data/audits/
 *.tsbuildinfo
 coverage/
 test-results/

@@ -13,6 +13,7 @@ import {
   deadlineLabel,
 } from "@/lib/format";
 import type { Job } from "@/lib/types";
+import { families, seniorities } from "@/lib/tech";
 
 const companyColors: Record<string, string> = {
   ALTEN: "blue",
@@ -101,6 +102,23 @@ export function JobCard({
         <p className="job-checked">
           Présente dans le flux le {shortDate(job.last_seen_at)}.
         </p>
+        {job.tech?.families.length ? (
+          <div className="tech-tags">
+            {job.tech.families.map((f) => (
+              <span key={f}>{families[f]}</span>
+            ))}
+            {job.tech.technologies.slice(0, 5).map((t) => (
+              <span key={t}>{t}</span>
+            ))}
+            {job.tech.seniority !== "unknown" && (
+              <span>{seniorities[job.tech.seniority]}</span>
+            )}
+            {job.tech.pfe && <span>PFE</span>}
+            {job.tech.eligibility === "remote-morocco" && (
+              <span>À distance · accessible depuis le Maroc</span>
+            )}
+          </div>
+        ) : null}
         {job.salary && <p className="salary">{job.salary}</p>}
         {job.attribution_url && (
           <a

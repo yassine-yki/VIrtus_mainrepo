@@ -26,6 +26,10 @@ export function Header() {
         <Brand />
         <nav aria-label="Navigation principale">
           <a href="/#offres">Les offres</a>
+          <Link href="/tech">Tech</Link>
+          {process.env.CANDIDATE_PROFILES_ENABLED === "true" && (
+            <Link href="/profil">Mon profil</Link>
+          )}
           <Link href="/sources">Nos sources</Link>
         </nav>
         <a className="header-cta" href="/#offres">
