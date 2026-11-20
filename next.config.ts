@@ -1,9 +1,23 @@
 import type { NextConfig } from "next";
 
 const config: NextConfig = {
+  serverExternalPackages: ["pdfjs-dist", "fflate"],
+  outputFileTracingIncludes: {
+    "/api/profile/extract": [
+      "./node_modules/pdfjs-dist/legacy/build/**/*",
+      "./node_modules/fflate/**/*",
+    ],
+  },
   poweredByHeader: false,
   async headers() {
     return [
+      {
+        source: "/profil",
+        headers: [
+          { key: "Cache-Control", value: "private, no-store, max-age=0" },
+          { key: "X-Robots-Tag", value: "noindex, nofollow" },
+        ],
+      },
       {
         source: "/(.*)",
         headers: [

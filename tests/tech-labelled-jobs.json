@@ -1,0 +1,1007 @@
+{
+  "reviewedAt": "2026-11-18",
+  "reviewer": "agent manual title review",
+  "scope": "100 real catalog titles. Conservative title-only labels; ambiguous titles are unknown. Not a human-reviewed pilot or a description-extraction benchmark.",
+  "rows": [
+    {
+      "title": "Réceptionniste de nuit",
+      "url": "https://jobs.smartrecruiters.com/Accor/744000157415559-receptionniste-de-nuit",
+      "source": "accor",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Agent de Réservation",
+      "url": "https://jobs.smartrecruiters.com/Accor/744000156775215-agent-de-reservation",
+      "source": "accor",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Réceptionniste (H/F)",
+      "url": "https://jobs.smartrecruiters.com/Accor/744000154825889-receptionniste-h-f-",
+      "source": "accor",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "valet De Chambre",
+      "url": "https://jobs.smartrecruiters.com/Accor/744000154504799-valet-de-chambre-",
+      "source": "accor",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "SALES MANAGER",
+      "url": "https://jobs.smartrecruiters.com/Accor/744000154407194-sales-manager",
+      "source": "accor",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "technicien de maintenance",
+      "url": "https://jobs.smartrecruiters.com/Accor/744000152675089-technicien-de-maintenance",
+      "source": "accor",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Responsable débiteurs",
+      "url": "https://jobs.smartrecruiters.com/Accor/744000149555299-responsable-debiteurs",
+      "source": "accor",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Réceptionniste",
+      "url": "https://jobs.smartrecruiters.com/Accor/744000148969080-receptionniste",
+      "source": "accor",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Director of finance",
+      "url": "https://jobs.smartrecruiters.com/Accor/744000145952579-director-of-finance",
+      "source": "accor",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Assistant Housekeeping manager",
+      "url": "https://jobs.smartrecruiters.com/Accor/744000142370819-assistant-housekeeping-manager",
+      "source": "accor",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Caissier / Caissière",
+      "url": "https://jobs.smartrecruiters.com/Accor/744000141753372-caissier-caissiere",
+      "source": "accor",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "EN - Sales Manager",
+      "url": "https://jobs.smartrecruiters.com/Accor/744000141453319-en-sales-manager",
+      "source": "accor",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Agent Guest Experience",
+      "url": "https://jobs.smartrecruiters.com/Accor/744000140947033-agent-guest-experience",
+      "source": "accor",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Directeur Commercial",
+      "url": "https://jobs.smartrecruiters.com/Accor/744000140928903-directeur-commercial",
+      "source": "accor",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Sushi chef",
+      "url": "https://jobs.smartrecruiters.com/Accor/744000139822689-sushi-chef",
+      "source": "accor",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Agent Royal Service",
+      "url": "https://jobs.smartrecruiters.com/AccorHotel/744000157625329-agent-royal-service",
+      "source": "accorhotel",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Chef de Rang",
+      "url": "https://jobs.smartrecruiters.com/AccorHotel/744000157525648-chef-de-rang-",
+      "source": "accorhotel",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Réceptionniste Spa",
+      "url": "https://jobs.smartrecruiters.com/AccorHotel/744000157520209-receptionniste-spa",
+      "source": "accorhotel",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Butler",
+      "url": "https://jobs.smartrecruiters.com/AccorHotel/744000157173010-butler",
+      "source": "accorhotel",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Hôtesse d’accueil",
+      "url": "https://jobs.smartrecruiters.com/AccorHotel/744000156762950-hotesse-d-accueil-",
+      "source": "accorhotel",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Bagagiste",
+      "url": "https://jobs.smartrecruiters.com/AccorHotel/744000156761612-bagagiste",
+      "source": "accorhotel",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Hotel Manager",
+      "url": "https://jobs.smartrecruiters.com/AccorHotel/744000156303599-hotel-manager",
+      "source": "accorhotel",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Coordinatrice Administration People & Culture",
+      "url": "https://jobs.smartrecruiters.com/AccorHotel/744000156298905-coordinatrice-administration-people-culture-",
+      "source": "accorhotel",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Chef de partie sushi",
+      "url": "https://jobs.smartrecruiters.com/AccorHotel/744000156282289-chef-de-partie-sushi",
+      "source": "accorhotel",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Barman",
+      "url": "https://jobs.smartrecruiters.com/AccorHotel/744000156129519-barman-",
+      "source": "accorhotel",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Guest Relations Agent des Résidences",
+      "url": "https://jobs.smartrecruiters.com/AccorHotel/744000155975975-guest-relations-agent-des-residences-",
+      "source": "accorhotel",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Night Auditor",
+      "url": "https://jobs.smartrecruiters.com/AccorHotel/744000155514129-night-auditor",
+      "source": "accorhotel",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Income Auditor (H/F)",
+      "url": "https://jobs.smartrecruiters.com/AccorHotel/744000155016209-income-auditor-h-f-",
+      "source": "accorhotel",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Guest Relations Manager",
+      "url": "https://jobs.smartrecruiters.com/AccorHotel/744000155015919-guest-relations-manager-",
+      "source": "accorhotel",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Director of Sales - MICE",
+      "url": "https://jobs.smartrecruiters.com/AccorHotel/744000154676089-director-of-sales-mice",
+      "source": "accorhotel",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Responsable facturation Germanophone / Anglophone",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000157510179-responsable-facturation-germanophone-anglophone",
+      "source": "alten",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Process Quality Manager",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000157484756-process-quality-manager-",
+      "source": "alten",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Business développeur (secteur electrique, énergie)",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000157176443-business-developpeur-secteur-electrique-energie-",
+      "source": "alten",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "UAT – Stream Lead",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000157168134-uat-stream-lead",
+      "source": "alten",
+      "expected": {
+        "families": ["qa"],
+        "technologies": [],
+        "seniority": "lead"
+      }
+    },
+    {
+      "title": "Acheteur indirect",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000157108639-acheteur-indirect",
+      "source": "alten",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Prototype Launch Leader",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000156849219-prototype-launch-leader-",
+      "source": "alten",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Industrial PMO",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000156845499-industrial-pmo-",
+      "source": "alten",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Serial life quality manager",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000156766939-serial-life-quality-manager",
+      "source": "alten",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "chargé ADV anglophone",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000156621695-charge-adv-anglophone",
+      "source": "alten",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Demand Planner",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000156616610-demand-planner",
+      "source": "alten",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Order Scheduler",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000156585907-order-scheduler",
+      "source": "alten",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Product Owner – Salesforce",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000156582681-product-owner-salesforce",
+      "source": "alten",
+      "expected": {
+        "families": ["product", "erp"],
+        "technologies": ["salesforce"],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "INGENIEUR PROCESS",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000156553906-ingenieur-process-",
+      "source": "alten",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Ingénieur Montage et qualité",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000156299969-ingenieur-montage-et-qualite",
+      "source": "alten",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Senior Automation Test Engineer",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000156038919-senior-automation-test-engineer",
+      "source": "alten",
+      "expected": {
+        "families": ["qa"],
+        "technologies": [],
+        "seniority": "senior"
+      }
+    },
+    {
+      "title": "Support N2 Multimédia",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000155976352-support-n2-multimedia",
+      "source": "alten",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Electrical Design Engineer – Vehicle Accessories Development",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000155812444-electrical-design-engineer-vehicle-accessories-development",
+      "source": "alten",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Développeur Python IA",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000155741903-developpeur-python-ia",
+      "source": "alten",
+      "expected": {
+        "families": ["software", "data"],
+        "technologies": ["python"],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Pilote Cout Planning & Ordonnancement (PCPO)",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000155735489-pilote-cout-planning-ordonnancement-pcpo-",
+      "source": "alten",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Specification & Validation Plan Pilot",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000155728089-specification-validation-plan-pilot",
+      "source": "alten",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Concepteur CAO – Éclairage d'ambiance (CAD Designer Ambient Lighting",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000155717989-concepteur-cao-eclairage-d-ambiance-cad-designer-ambient-lighting",
+      "source": "alten",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "DRE – Éclairage d'ambiance (Design Release Engineer Ambient Lighting)",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000155699072-dre-eclairage-d-ambiance-design-release-engineer-ambient-lighting-",
+      "source": "alten",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Data Ops Sénior",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000155477970-data-ops-senior-",
+      "source": "alten",
+      "expected": {
+        "families": ["data"],
+        "technologies": [],
+        "seniority": "senior"
+      }
+    },
+    {
+      "title": "Développeur.NET",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000155316434-developpeur-net-",
+      "source": "alten",
+      "expected": {
+        "families": ["software"],
+        "technologies": ["dotnet"],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Pilote Moyens et Validation",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000155316726-pilote-moyens-et-validation",
+      "source": "alten",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Pilote technique - Automotive Project planning",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000155316510-pilote-technique-automotive-project-planning",
+      "source": "alten",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Pilote Echeancier des Livrables (PEDL)",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000155267929-pilote-echeancier-des-livrables-pedl-",
+      "source": "alten",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Approvisionneur",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000155266859-approvisionneur",
+      "source": "alten",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Devops GCP senior",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000155204769-devops-gcp-senior-",
+      "source": "alten",
+      "expected": {
+        "families": ["cloud"],
+        "technologies": ["gcp"],
+        "seniority": "senior"
+      }
+    },
+    {
+      "title": "Devops GCP expérimenté",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000155202326-devops-gcp-experimente-",
+      "source": "alten",
+      "expected": {
+        "families": ["cloud"],
+        "technologies": ["gcp"],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Pilote documentation Junior",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000154727925-pilote-documentation-junior",
+      "source": "alten",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Responsable d’affaire Junior",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000154723870-responsable-d-affaire-junior",
+      "source": "alten",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Business Development consultant",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000154706965--business-development-consultant-",
+      "source": "alten",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Project manager Pilot - PIV/BCI",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000154635650-project-manager-pilot-piv-bci",
+      "source": "alten",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Reporting Programmer (Clinical Data)",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000154495550-reporting-programmer-clinical-data-",
+      "source": "alten",
+      "expected": {
+        "families": ["software"],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Access Management (Clinical Data)",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000154494834-access-management-clinical-data-",
+      "source": "alten",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "DBA Oracle avec Goldengate",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000154491669-dba-oracle-avec-goldengate",
+      "source": "alten",
+      "expected": {
+        "families": ["support"],
+        "technologies": ["oracle"],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Infographiste 3D Junior (concepteur mécanique) PLM / CATIA",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000154463609-infographiste-3d-junior-concepteur-mecanique-plm-catia",
+      "source": "alten",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Ingénieur Conception & Intégration Mécanique (H/F)",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000154395589-ingenieur-conception-integration-mecanique-h-f-",
+      "source": "alten",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Consolideur TPC (Automotive Cost consolidation)",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000153815774-consolideur-tpc-automotive-cost-consolidation-",
+      "source": "alten",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Développeur Java, spring, Angular",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000153719271-developpeur-java-spring-angular-",
+      "source": "alten",
+      "expected": {
+        "families": ["software"],
+        "technologies": ["java", "spring", "angular"],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Data scientist - OTA (Databricks / PySpark)",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000153547909-data-scientist-ota-databricks-pyspark-",
+      "source": "alten",
+      "expected": {
+        "families": ["data"],
+        "technologies": ["spark"],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Ingénieur validation et vérification (HIL/SIL,controldesk / Dspace)",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000153517523-ingenieur-validation-et-verification-hil-sil-controldesk-dspace-",
+      "source": "alten",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Vehicle functional manager",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000153443764-vehicle-functional-manager",
+      "source": "alten",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Issue manager",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000153426942-issue-manager",
+      "source": "alten",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Software Engineer.NET – Cloud & Microservices",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000153231276-software-engineer-net-cloud-microservices",
+      "source": "alten",
+      "expected": {
+        "families": ["software", "cloud"],
+        "technologies": ["dotnet"],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Change Management AMOA",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000153202943-change-management-amoa-",
+      "source": "alten",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "DevOps Administrateur / SRE Kubernetes GCP Junior",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000153145339-devops-administrateur-sre-kubernetes-gcp-junior",
+      "source": "alten",
+      "expected": {
+        "families": ["cloud", "support"],
+        "technologies": ["kubernetes", "gcp"],
+        "seniority": "junior"
+      }
+    },
+    {
+      "title": "Junior Hardware Engineer (Secteur Automobile)",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000153136024-junior-hardware-engineer-secteur-automobile-",
+      "source": "alten",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "CAD Design",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000152240269-cad-design",
+      "source": "alten",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Data Scientist Sénior – SQL / Python / GCP",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000123905739-data-scientist-senior-sql-python-gcp",
+      "source": "alten",
+      "expected": {
+        "families": ["data"],
+        "technologies": ["sql", "python", "gcp"],
+        "seniority": "senior"
+      }
+    },
+    {
+      "title": "Data Scientist confirmé – SQL / Python / GCP",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000123862200-data-scientist-confirme-sql-python-gcp",
+      "source": "alten",
+      "expected": {
+        "families": ["data"],
+        "technologies": ["sql", "python", "gcp"],
+        "seniority": "mid"
+      }
+    },
+    {
+      "title": "Business Intelligence Analyst (H/F)",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000119619511-business-intelligence-analyst-h-f-",
+      "source": "alten",
+      "expected": {
+        "families": ["data"],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Test and Validation Engineer",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000112947297-test-and-validation-engineer",
+      "source": "alten",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "INGENIEUR CHARGE D’AFFAIRES MOYENS INDUSTRIELS AUTOMOBILE (H/F) // PROCESS ENGINEER (Quality & Control Engineer)",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000112797437-ingenieur-charge-d-affaires-moyens-industriels-automobile-h-f-process-engineer-quality-control-engineer-",
+      "source": "alten",
+      "expected": {
+        "families": [],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Data Engineer Sénior (Data Platform)",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000109972618-data-engineer-senior-data-platform-",
+      "source": "alten",
+      "expected": {
+        "families": ["data"],
+        "technologies": [],
+        "seniority": "senior"
+      }
+    },
+    {
+      "title": "Data Engineer Expérimenté DBT / SQL / BigQuery",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000109973875-data-engineer-experimente-dbt-sql-bigquery",
+      "source": "alten",
+      "expected": {
+        "families": ["data"],
+        "technologies": ["sql"],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Data Scientist Sénior SQL/Python",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000109973725-data-scientist-senior-sql-python-",
+      "source": "alten",
+      "expected": {
+        "families": ["data"],
+        "technologies": ["sql", "python"],
+        "seniority": "senior"
+      }
+    },
+    {
+      "title": "DevOps senior",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000109902295-devops-senior",
+      "source": "alten",
+      "expected": {
+        "families": ["cloud"],
+        "technologies": [],
+        "seniority": "senior"
+      }
+    },
+    {
+      "title": "Identity Governance and Administration",
+      "url": "https://jobs.smartrecruiters.com/ALTEN/744000103099195-identity-governance-and-administration",
+      "source": "alten",
+      "expected": {
+        "families": ["security"],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Senior Data Scientist H/F",
+      "url": "https://jobs.smartrecruiters.com/Devoteam/744000157186614-senior-data-scientist-h-f",
+      "source": "devoteam",
+      "expected": {
+        "families": ["data"],
+        "technologies": [],
+        "seniority": "senior"
+      }
+    },
+    {
+      "title": "Consultant(e) Flexera",
+      "url": "https://jobs.smartrecruiters.com/Devoteam/744000157099308-consultant-e-flexera-",
+      "source": "devoteam",
+      "expected": {
+        "families": ["erp"],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Senior Cloud Engineer",
+      "url": "https://jobs.smartrecruiters.com/Devoteam/744000157095615-senior-cloud-engineer-",
+      "source": "devoteam",
+      "expected": {
+        "families": ["cloud"],
+        "technologies": [],
+        "seniority": "senior"
+      }
+    },
+    {
+      "title": "Senior Consultant Devops (H/F)",
+      "url": "https://jobs.smartrecruiters.com/Devoteam/744000156281279-senior-consultant-devops-h-f-",
+      "source": "devoteam",
+      "expected": {
+        "families": ["cloud"],
+        "technologies": [],
+        "seniority": "senior"
+      }
+    },
+    {
+      "title": "Développeur Full Stack Java Vue JS",
+      "url": "https://jobs.smartrecruiters.com/Devoteam/744000156020474-developpeur-full-stack-java-vue-js",
+      "source": "devoteam",
+      "expected": {
+        "families": ["software"],
+        "technologies": ["java", "vue", "javascript"],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "QA Automation Back JAVA Spring Boot Sénior (H/F) Nearshore",
+      "url": "https://jobs.smartrecruiters.com/Devoteam/744000156010959-qa-automation-back-java-spring-boot-senior-h-f-nearshore",
+      "source": "devoteam",
+      "expected": {
+        "families": ["qa", "software"],
+        "technologies": ["java", "spring"],
+        "seniority": "senior"
+      }
+    },
+    {
+      "title": "Consultant Senior SRE Coordinator",
+      "url": "https://jobs.smartrecruiters.com/Devoteam/744000155995330-consultant-senior-sre-coordinator",
+      "source": "devoteam",
+      "expected": {
+        "families": ["cloud"],
+        "technologies": [],
+        "seniority": "senior"
+      }
+    },
+    {
+      "title": "Ingénieur Devops Cloud API Observabilité(H/F) (Nearshore)",
+      "url": "https://jobs.smartrecruiters.com/Devoteam/744000155778353-ingenieur-devops-cloud-api-observabilite-h-f-nearshore-",
+      "source": "devoteam",
+      "expected": {
+        "families": ["cloud"],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Ingénieur Cloud AWS Anglophone (H/F) Nearshore",
+      "url": "https://jobs.smartrecruiters.com/Devoteam/744000155563244-ingenieur-cloud-aws-anglophone-h-f-nearshore",
+      "source": "devoteam",
+      "expected": {
+        "families": ["cloud"],
+        "technologies": ["aws"],
+        "seniority": "unknown"
+      }
+    },
+    {
+      "title": "Architecte Data & IA (H/F)",
+      "url": "https://jobs.smartrecruiters.com/Devoteam/744000155498039-architecte-data-ia-h-f-",
+      "source": "devoteam",
+      "expected": {
+        "families": ["data"],
+        "technologies": [],
+        "seniority": "unknown"
+      }
+    }
+  ]
+}

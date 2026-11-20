@@ -24,6 +24,7 @@ try {
     "202611090001_ashby",
     "202611090002_technology_metadata_sources",
     "202611110001_major_tech_employers",
+    "20261117205938_virtus_tech_profiles",
   ]) {
     const { rowCount } = await client.query(
       "select 1 from public.virtus_migrations where name=$1",

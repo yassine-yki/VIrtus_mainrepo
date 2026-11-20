@@ -92,6 +92,7 @@ export async function collectAshby(
     const job = normalizeListing(source, {
       externalId: id,
       title: str(item.title),
+      description: str(item.descriptionPlain || item.descriptionHtml),
       location: [...new Set(locations)].join("; "),
       country: "MA",
       url: url.href,
@@ -99,7 +100,7 @@ export async function collectAshby(
       workplace,
       publishedAt: item.publishedAt,
     });
-    if (job) jobs.push(job);
+    if (job) jobs.push({ ...job, description: "" });
   }
   return jobs;
 }

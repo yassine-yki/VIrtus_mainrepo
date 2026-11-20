@@ -1,0 +1,22 @@
+[
+  {
+    "id": "inwi",
+    "name": "inwi",
+    "company": "inwi",
+    "provider": "teamtailor",
+    "identifier": "jobs.inwi.ma",
+    "website": "https://jobs.inwi.ma/jobs",
+    "enabled": true,
+    "permissionNote": "Public job facts and original links, per owner-approved 2026-11-17 expansion. RSS and sitemap consistency checked; no full-ad redistribution licence asserted."
+  },
+  {
+    "id": "leyton-morocco",
+    "name": "Leyton Maroc",
+    "company": "Leyton",
+    "provider": "teamtailor",
+    "identifier": "leytonglobal-morocco.teamtailor.com",
+    "website": "https://leytonglobal-morocco.teamtailor.com/jobs",
+    "enabled": true,
+    "permissionNote": "Public job facts and original links, per owner-approved 2026-11-17 expansion. Linked by Leyton Morocco careers; RSS and sitemap consistency checked; no full-ad redistribution licence asserted."
+  }
+]

@@ -126,11 +126,12 @@ export async function collectCapgemini(
         country: "MA",
         url: url.href,
         contract: str(item.contract_type),
+        description: posting.find('[itemprop="description"]').html() || "",
         publishedAt: publication(
           posting.find('[itemprop="datePosted"]').attr("content"),
         ),
       });
-      if (job) result.push(job);
+      if (job) result.push({ ...job, description: "" });
     }
     if (seen.size === total) return result;
     if (seen.size > total || data.data.length < 100)
@@ -300,10 +301,11 @@ export async function collectCgi(
       country: "MA",
       url: url.href,
       publishedAt: publication(detail.datePosted),
+      description: str(detail.description),
       employment: str(detail.employmentType),
       contract: /\b(stage|pfe)\b/i.test(title) ? "Stage" : "",
     });
-    if (job) result.push(job);
+    if (job) result.push({ ...job, description: "" });
   }
   return result;
 }
@@ -385,8 +387,9 @@ export async function collectCegedim(
         url: `https://careers.cegedim.com/fr/annonce/${slug}`,
         contract: str(item.contract),
         publishedAt: publication(meta.datePosted),
+        description: str(meta.description),
       });
-      if (job) result.push(job);
+      if (job) result.push({ ...job, description: "" });
     }
     if (seen.size === total) return result;
     if (seen.size > total || data.items.length < 100)

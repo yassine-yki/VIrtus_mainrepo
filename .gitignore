@@ -5,6 +5,7 @@ out/
 !.env.example
 .vercel/
 data/*.json
+data/audits/
 *.tsbuildinfo
 coverage/
 test-results/

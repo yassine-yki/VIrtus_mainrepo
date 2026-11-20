@@ -4,6 +4,7 @@ export type Provider =
   | "lever"
   | "workable"
   | "ashby"
+  | "teamtailor"
   | "wadifa"
   | "html";
 export type OpportunityKind = "job" | "competition";
@@ -27,9 +28,11 @@ export interface Source {
   enabled: boolean;
   publicationStatus: PublicationStatus;
   permissionNote: string;
+  lastSuccessAt?: string | null;
 }
 
 export interface Listing {
+  tech?: import("./tech").TechMetadata;
   kind?: OpportunityKind;
   deadline?: string | null;
   positions?: number | null;
@@ -79,6 +82,12 @@ export interface CatalogSnapshot {
 }
 
 export interface Filters {
+  tech?: string;
+  family?: string;
+  technology?: string;
+  seniority?: string;
+  pfe?: string;
+  language?: string;
   kind?: OpportunityKind | "";
   q: string;
   city: string;

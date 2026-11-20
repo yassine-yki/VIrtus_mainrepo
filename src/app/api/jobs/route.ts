@@ -3,7 +3,12 @@ import { parseFilters } from "@/lib/search";
 import { searchCatalog } from "@/lib/catalog";
 export async function GET(request: NextRequest) {
   const filters = parseFilters(
-    Object.fromEntries(request.nextUrl.searchParams.entries()),
+    Object.fromEntries(
+      [...new Set(request.nextUrl.searchParams.keys())].map((k) => [
+        k,
+        request.nextUrl.searchParams.getAll(k),
+      ]),
+    ),
   );
   const result = await searchCatalog(filters);
   return NextResponse.json(result, {

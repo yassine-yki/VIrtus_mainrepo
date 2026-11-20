@@ -13,6 +13,174 @@
   --font-sans: "DM Sans", Arial, sans-serif;
   --font-heading: "Manrope", Arial, sans-serif;
 }
+.tech-filters {
+  border: 0;
+  padding: 0;
+  margin: 0 0 20px;
+}
+.tech-filters legend {
+  font-weight: 700;
+}
+.filter-help {
+  color: var(--muted);
+  font-size: 12px;
+}
+.tech-filters select[multiple] {
+  height: auto;
+  padding: 6px;
+}
+.tech-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 10px 0;
+}
+.tech-tags span {
+  border: 1px solid var(--line);
+  background: var(--cream);
+  border-radius: 6px;
+  padding: 2px 7px;
+  font-size: 11px;
+}
+.profile-page {
+  padding-block: 48px;
+  max-width: 1080px;
+}
+.profile-page h1 {
+  font-family: var(--font-heading);
+  font-size: clamp(30px, 4vw, 48px);
+  line-height: 1.15;
+  max-width: 750px;
+}
+.profile-panel {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: clamp(20px, 4vw, 36px);
+  margin-block: 24px;
+  background: white;
+}
+.profile-panel label {
+  display: grid;
+  gap: 7px;
+  margin-block: 14px;
+  font-weight: 500;
+}
+.profile-panel input,
+.profile-panel textarea {
+  font: inherit;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 11px;
+  width: 100%;
+  color: var(--ink);
+  background: white;
+}
+.profile-panel textarea {
+  resize: vertical;
+}
+.profile-panel fieldset {
+  border: 1px solid var(--line);
+  padding: 18px;
+  border-radius: 10px;
+  margin-block: 22px;
+  min-width: 0;
+}
+.profile-panel legend {
+  font-weight: 700;
+  padding-inline: 6px;
+}
+.profile-panel .check-row,
+.check-row {
+  display: flex;
+  gap: 9px;
+  align-items: flex-start;
+  font-weight: 400;
+}
+.profile-panel input[type="checkbox"],
+.check-row input {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  margin-top: 4px;
+}
+.candidate-workspace button,
+.profile-panel button {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px 14px;
+  background: white;
+  color: var(--ink);
+}
+.candidate-workspace .primary-button,
+.profile-panel .primary-button {
+  background: var(--blue);
+  color: white;
+  border-color: var(--blue);
+}
+.candidate-workspace button:disabled,
+.profile-panel button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.profile-toolbar,
+.profile-actions {
+  display: flex;
+  gap: 14px;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.profile-steps {
+  display: flex;
+  list-style: none;
+  padding: 18px 0;
+  gap: 14px;
+  flex-wrap: wrap;
+  color: var(--green);
+  font-weight: 600;
+}
+.preference-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 0 12px;
+}
+.preference-mandatory {
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+  font-size: 13px;
+}
+.experience-row {
+  background: var(--cream);
+  padding: 16px;
+  margin-bottom: 14px;
+  border-radius: 10px;
+}
+.match-card {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.match-card .job-card {
+  border: 0;
+  border-radius: 0;
+}
+.match-explanations {
+  padding: 10px 24px 24px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+  gap: 18px;
+  background: var(--cream);
+}
+.match-explanations h3 {
+  font-size: 14px;
+  margin: 12px 0 6px;
+}
+.match-explanations ul {
+  padding-left: 18px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
 * {
   box-sizing: border-box;
 }

@@ -1,5 +1,6 @@
 import { fold, key } from "./normalize";
 import { deadlineOpen } from "./deadline";
+import { classifyTech, families, seniorities, technologies } from "./tech";
 import type {
   CatalogSnapshot,
   Filters,
@@ -17,7 +18,27 @@ export function parseFilters(
       ? params[name][0]
       : (params[name] ?? "")
     ).trim();
+  const list = (name: string) =>
+    Array.isArray(params[name]) ? params[name].join(",") : single(name);
   return {
+    tech: single("tech") === "1" ? "1" : "",
+    family: list("family")
+      .split(",")
+      .filter((v) => v in families)
+      .join(","),
+    technology: list("technology")
+      .split(",")
+      .filter((v) => technologies.includes(v))
+      .join(","),
+    seniority: list("seniority")
+      .split(",")
+      .filter((v) => v in seniorities)
+      .join(","),
+    language: list("language")
+      .split(",")
+      .filter((v) => ["fr", "en", "ar"].includes(v))
+      .join(","),
+    pfe: single("pfe") === "1" ? "1" : "",
     kind: ["job", "competition"].includes(single("kind"))
       ? (single("kind") as "job" | "competition")
       : "",
@@ -66,14 +87,20 @@ export function filtersUrl(
     )
       params.set(name, String(value));
   }
-  return `/?${params.toString()}#offres`;
+  return `${merged.tech === "1" ? "/tech" : "/"}?${params.toString()}#offres`;
 }
 
 /** Keep the detail-page return link inside the catalog and normalize its filters. */
 export function catalogReturnUrl(value: string | string[] | undefined): string {
-  if (typeof value !== "string" || !value.startsWith("/?")) return "/#offres";
+  if (typeof value !== "string" || !/^\/(?:tech)?\?/.test(value))
+    return "/#offres";
   const url = new URL(value, "https://virtus.invalid");
-  return filtersUrl(parseFilters(Object.fromEntries(url.searchParams)));
+  return filtersUrl(
+    parseFilters({
+      ...Object.fromEntries(url.searchParams),
+      ...(url.pathname === "/tech" ? { tech: "1" } : {}),
+    }),
+  );
 }
 
 export function groupListings(
@@ -95,7 +122,13 @@ export function groupListings(
         )
       )
         existing.sources.push(source);
-    } else groups.set(listing.group_key, { ...listing, sources: [source] });
+    } else
+      groups.set(listing.group_key, {
+        ...listing,
+        sources: Array.isArray((listing as Job).sources)
+          ? [...(listing as Job).sources]
+          : [source],
+      });
   }
   return [...groups.values()];
 }
@@ -132,22 +165,41 @@ export function searchSnapshot(
         (fold(job.company).includes(term) ? 2 : 0),
       0,
     );
-  const matches = all.filter((job) => {
+  const matchesFilter = (job: Job, omit?: "city" | "source") => {
+    const tech = job.tech ?? classifyTech(job.title, job.description, job.kind);
+    const overlaps = (filter: string | undefined, values: string[]) =>
+      !filter || filter.split(",").some((v) => values.includes(v));
     const text = fold(`${job.title} ${job.company} ${job.description}`);
     return (
+      (!filters.tech ||
+        (job.kind !== "competition" && tech.families.length > 0)) &&
+      overlaps(filters.family, tech.families) &&
+      overlaps(filters.technology, tech.technologies) &&
+      overlaps(filters.seniority, [tech.seniority]) &&
+      overlaps(filters.language, tech.requiredLanguages) &&
+      (!filters.pfe || tech.pfe) &&
       terms.every((term) => text.includes(term)) &&
       (!filters.kind || (job.kind ?? "job") === filters.kind) &&
-      (!filters.city || job.city_keys.includes(filters.city)) &&
+      (omit === "city" ||
+        !filters.city ||
+        job.city_keys.includes(filters.city)) &&
       (!filters.contract || job.contract === filters.contract) &&
       (!filters.workplace || job.workplace === filters.workplace) &&
-      (!filters.source ||
+      (omit === "source" ||
+        !filters.source ||
         job.sources.some((source) => source.id === filters.source)) &&
       (!filters.days ||
         (job.published_at &&
           new Date(job.published_at).getTime() >=
             now - filters.days * 86_400_000))
     );
-  });
+  };
+  const matches = all
+    .filter((job) => matchesFilter(job))
+    .map((job) => ({
+      ...job,
+      tech: job.tech ?? classifyTech(job.title, job.description, job.kind),
+    }));
   matches.sort(
     (a, b) =>
       (filters.sort === "relevance" && terms.length
@@ -161,7 +213,7 @@ export function searchSnapshot(
     string,
     { key: string; name: string; count: number }
   >();
-  for (const job of all)
+  for (const job of all.filter((job) => matchesFilter(job, "city")))
     for (const city of job.locations) {
       const cityKey = key(city);
       if (job.city_keys.includes(cityKey)) {
@@ -185,17 +237,21 @@ export function searchSnapshot(
     page,
     pageSize: PAGE_SIZE,
     cities: [...cities.values()].sort((a, b) => b.count - a.count),
-    companies: new Set(all.map((job) => job.company)).size,
+    companies: new Set(matches.map((job) => job.company)).size,
     sources: permitted.map((source) => ({
       id: source.id,
       name: source.name,
-      count: all.filter((job) =>
-        job.sources.some((item) => item.id === source.id),
+      count: all.filter(
+        (job) =>
+          matchesFilter(job, "source") &&
+          job.sources.some((item) => item.id === source.id),
       ).length,
       checked_at:
         snapshot.runs.find(
           (run) => run.source_id === source.id && run.status === "success",
-        )?.finished_at ?? null,
+        )?.finished_at ??
+        source.lastSuccessAt ??
+        null,
       website: source.website,
       provider: source.provider,
       publication_status: source.publicationStatus,

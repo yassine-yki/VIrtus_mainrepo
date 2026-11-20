@@ -12,6 +12,7 @@ import {
 } from "./http";
 import { dateOnly } from "../lib/deadline";
 import { collectAshby } from "./ashby";
+import { collectTeamtailor } from "./teamtailor";
 import {
   collectCapgemini,
   collectOrange,
@@ -318,6 +319,7 @@ export function collectSource(
   if (source.provider === "lever") return collectLever(source, get);
   if (source.provider === "workable") return collectWorkable(source, get);
   if (source.provider === "ashby") return collectAshby(source, get);
+  if (source.provider === "teamtailor") return collectTeamtailor(source);
   if (source.provider === "wadifa") return collectWadifa(source, get);
   if (source.provider === "html") {
     if (source.id === "capgemini" && source.identifier === "capgemini-ma")
