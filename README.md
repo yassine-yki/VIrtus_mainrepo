@@ -1,17 +1,19 @@
 # Virtus — emploi au Maroc
 
-French-first public job-link aggregator using Next.js, TypeScript and Supabase, deployed on Vercel. Visitors see job facts and original application links. No candidate account, résumé upload or private website version.
+French-first public job-link aggregator using Next.js, TypeScript and Supabase, deployed on Vercel. Visitors browse job facts and original application links without an account. The `/tech` catalog adds specialized filters. Private candidate profiles and CV matching are implemented behind pilot feature flags; the public catalog has no review-key login.
 
 ## Implemented
 
 - Keyword, city, contract, workplace, source, date and opportunity-type filters; sorting and pagination across the indexed catalog.
-- SmartRecruiters, Greenhouse, Lever and the licensed Wadifa Info competition API.
-- Seven original employer feeds plus nine additional qualifying feeds from a [20-employer audit](docs/EMPLOYER-AUDIT.md); eleven zero-result candidates stay disabled.
+- SmartRecruiters, Greenhouse, Lever, Workable, Ashby, Teamtailor, audited employer sites and the licensed Wadifa Info competition API.
+- Employer audits document supported, empty and unverified sources. The [tech expansion audit](docs/TECH-EXPANSION-AUDIT-2026-11-17.json) adds complete inwi and Leyton Morocco feeds; unvalidated candidates remain disabled.
 - Public competition deadlines, position counts, original notices and visible Wadifa attribution.
 - Metadata-only public responses: title, company, location, contract and links. Imported full ad descriptions stay operator-only and are excluded from public search.
 - One public catalog. The old review key, access form and private RPC permissions are retired; /access redirects home.
 - Atomic source synchronization, failure preservation, suspicious-drop protection, source suspension and conservative expiry.
 - Six-hour collection matrix with at most two concurrent source jobs.
+- Role-level tech classification and filters for family, technologies, seniority, required languages and PFE. Last 30 days is the default; all dates remain available.
+- Flagged candidate profiles with email/password authentication, confirmed structured data, ownership RLS and deterministic matching across all eligible tech jobs, paginated by 12. No automatic applications or per-job LLM requests.
 
 Other Moroccan-board scrapers and LinkedIn are not connected. See [sources](docs/SOURCES.md), [operations](docs/OPERATIONS.md), and [release evidence](docs/LAUNCH.md).
 
@@ -62,7 +64,21 @@ Competitions additionally disappear after their deadline day ends in Africa/Casa
 
 ## API and checks
 
-GET /api/jobs accepts q, city, contract, workplace, source, days, page, sort and optional kind=job|competition. Omitting kind searches both. Responses include kind, deadline (YYYY-MM-DD), positions, official_notice_url and attribution_url when available. The description field remains present but empty.
+GET /api/jobs accepts q, city, contract, workplace, source, days, page, sort and optional kind=job|competition. Omitting kind searches both. Add `tech=1`, `family`, `technology`, `seniority`, `language` and `pfe=1` for tech filtering; multi-select fields accept repeated parameters or comma-separated values. Responses include optional tech metadata, kind, deadline (YYYY-MM-DD), positions, official_notice_url and attribution_url. The description field remains present but empty.
+
+## Candidate pilot configuration
+
+Keep `CANDIDATE_PROFILES_ENABLED=false` and `CV_EXTRACTION_ENABLED=false` until the relevant pilot gates are met. Set `CANDIDATE_PASSWORD_AUTH_READY=true` only after verifying Supabase email/password signup with Confirm email off. This flow deliberately does not verify email ownership; email addresses must not authorize organization access. No SMTP, magic links or email recovery are implemented.
+
+The server parses text PDF/DOCX inputs transiently (4 MB, 30,000 extracted characters, 30 PDF pages). The build materializes parser dependencies in ignored `.cv-runtime/` as real files for Vercel packaging. Only confirmed structured profiles/preferences are saved; original files and complete extracted text are not stored. Manual profiles and matching work without Hugging Face.
+
+Before enabling extraction, select the Llama model and explicit HTTPS Hugging Face endpoint, review the actual processing/retention terms, and configure `HF_TOKEN`, token prices, `HF_PRICING_VERSION`, `HF_PRIVACY_URL` and `HF_PRIVACY_REVIEWED=true`. Credentials are server-only. Use an endpoint with bounded token billing; fixed endpoint hosting charges are not covered by the token reservation ledger and require a separate provider billing cap.
+
+Using an operator database connection, set `virtus_private.cv_budget_config.config_version` to `llama-profile-v1:<HF_PRICING_VERSION>:<HF_MODEL>` and `reservation_usd` to at least `ceil(2 * (124000 * input_price + 4096 * output_price)) / 1000000`. Prices are USD per million tokens; the reservation covers the maximum input/output for both attempts. Keep `monthly_cap=10`. Enable the database configuration and `CV_EXTRACTION_ENABLED` only after verifying the prices and limits together. A mismatch, five attempts per user per UTC day or an exhausted monthly budget fails closed; reservations are not refunded. Disabling either switch stops extraction while preserving manual profiles.
+
+Private APIs validate Supabase users and use ownership RLS with publishable credentials, no-store caching and noindex headers. Candidate pages remain non-indexed. Complete the pilot with ten consenting candidates before wider release. See [implementation and rollout evidence](docs/TECH-IMPLEMENTATION-STATUS.md) for remaining gates, source suspension, refresh diagnosis and rollback.
+
+## Verification
 
 ```sh
 pnpm typecheck

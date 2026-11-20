@@ -59,6 +59,14 @@ test("extraction rejects unsupported facts, protects preferences and handles mal
     validateExtraction({ ...profile, skills: ["Python Rust"] }, cv),
   );
   assert.throws(() =>
+    validateExtraction({ ...profile, skills: ["Expert Python, 10 years"] }, cv),
+  );
+  assert.deepEqual(
+    validateExtraction({ ...profile, skills: ["nodejs"] }, `${cv} Node.js`)
+      .skills,
+    ["nodejs"],
+  );
+  assert.throws(() =>
     validateExtraction({ ...profile, languages: ["ar"] }, cv),
   );
   const fetcher: typeof fetch = async (_url, options) => {

@@ -84,7 +84,11 @@ export function validateExtraction(
       const aliases = canonicalSkills(s);
       return (
         !contains(s) &&
-        (!aliases.length || !aliases.every((v) => known.includes(v)))
+        // An alias may normalize a skill name, never justify extra claims
+        // such as "expert Python" or "Python with ten years of experience".
+        (aliases.length !== 1 ||
+          normalized(s) !== aliases[0] ||
+          !known.includes(aliases[0]))
       );
     }) ||
     p.history.some(
