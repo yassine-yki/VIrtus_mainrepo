@@ -1,5 +1,5 @@
 /** Versioned, deterministic role classification. No employer-industry inference. */
-export const TECH_VERSION = 1;
+export const TECH_VERSION = 2;
 export const families = {
   software: "Développement logiciel",
   data: "Data & IA",
@@ -72,6 +72,13 @@ export function canonicalSkills(text: string): string[] {
   return technologies.filter((t) => technologyPatterns[t].test(n));
 }
 export interface TechMetadata {
+  remoteEvidence?: {
+    country: "MA";
+    url: string;
+    note: string;
+    workAuthorization: boolean;
+    timezoneNote: string | null;
+  };
   version: number;
   families: Family[];
   technologies: string[];
@@ -88,7 +95,7 @@ const rolePatterns: Record<Family, RegExp> = {
     /\b(developpeur|developer|developpement logiciel|software|full[ -]?stack|front[ -]?end|back[ -]?end|programmeur|programmer|architecte logiciel|architecte applicatif|embedded software|ingenieur logiciel|mobile engineer)\b/,
   data: /\b(data (engineer|scientist|analyst|architect|science)|ingenieur (data|donnees|ia)|analyste (data|donnees)|machine learning|intelligence artificielle|ai engineer|business intelligence|big data|ml engineer)\b/,
   cloud:
-    /\b(devops|devsecops|sre|cloud (engineer|architect)|ingenieur cloud|architecte cloud|platform engineer|infrastructure (engineer|cloud))\b/,
+    /\b(devops|devsecops|sre|site reliability engineer|cloud (engineer|architect)|ingenieur cloud|architecte cloud|platform engineer|infrastructure (engineer|cloud))\b/,
   security:
     /\b(cybersecurity|cybersecurite|cyber security|securite (informatique|reseau|si)|information security|security (engineer|analyst|architect)|soc analyst|pentester|penetration tester)\b/,
   qa: /\b(qa|sdet|software test|test (automation|logiciel)|testeur logiciel|quality assurance engineer|ingenieur (test|validation) logiciel|automaticien test)\b/,
@@ -96,7 +103,7 @@ const rolePatterns: Record<Family, RegExp> = {
     /\b(it support|support (informatique|it|technique logiciel)|helpdesk|service desk|network engineer|ingenieur (reseau|systeme)|administrateur (systeme|reseau)|system administrator|it technician|technicien informatique)\b/,
   erp: /\b(sap|erp|salesforce|servicenow|dynamics 365|consultant oracle|oracle consultant)\b/,
   product:
-    /\b(technical product|product (owner|manager).*\b(software|tech|digital|it)|chef de (projet|produit).*\b(informatique|digital|logiciel)|it (project|business)|business analyst.*\b(it|digital|software))\b/,
+    /\b(technical product|product (owner|manager).*\b(software|tech|digital|it|data platforms|mobile apps)|chef de (projet|produit).*\b(informatique|digital|logiciel)|it (project|business)|business analyst.*\b(it|digital|software))\b/,
 };
 export function classifyTech(
   title: string,

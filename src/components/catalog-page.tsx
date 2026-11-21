@@ -197,7 +197,9 @@ export default async function Home({
                   changes: { q: "", contract: "Stage", kind: "job" as const },
                 },
                 {
-                  label: "Télétravail",
+                  label: techMode
+                    ? "Télétravail depuis le Maroc"
+                    : "Télétravail",
                   changes: { workplace: "remote", kind: "job" as const },
                 },
               ].map((item) => (
@@ -257,9 +259,15 @@ export default async function Home({
           <div className="catalog-top">
             <div>
               <p className="eyebrow">VOTRE PROCHAINE ÉTAPE</p>
-              <h2 id="results-heading">Une opportunité à votre image.</h2>
+              <h2 id="results-heading">
+                {techMode && filters.workplace === "remote"
+                  ? "Télétravail depuis le Maroc."
+                  : "Une opportunité à votre image."}
+              </h2>
               <p className="catalog-intro">
-                Explorez les annonces. Affinez vos critères. Trouvez votre voie.
+                {techMode && filters.workplace === "remote"
+                  ? "Des offres tech à distance avec une localisation au Maroc ou une éligibilité explicite. Vérifiez les horaires et conditions auprès de l’employeur."
+                  : "Explorez les annonces. Affinez vos critères. Trouvez votre voie."}
               </p>
             </div>
             <Link className="catalog-method" href="/sources">

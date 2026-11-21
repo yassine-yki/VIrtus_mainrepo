@@ -11,6 +11,7 @@ import {
   type PostJson,
 } from "./http";
 import { dateOnly } from "../lib/deadline";
+import { collectWikimedia } from "./remote-employers";
 import { collectAshby } from "./ashby";
 import { collectTeamtailor } from "./teamtailor";
 import {
@@ -315,6 +316,7 @@ export function collectSource(
 ): Promise<Listing[]> {
   if (source.provider === "smartrecruiters")
     return collectSmartRecruiters(source, get);
+  if (source.id === "wikimedia") return collectWikimedia(source, get);
   if (source.provider === "greenhouse") return collectGreenhouse(source, get);
   if (source.provider === "lever") return collectLever(source, get);
   if (source.provider === "workable") return collectWorkable(source, get);

@@ -98,6 +98,19 @@ export const sources: Source[] = [
     permissionNote:
       "CC BY 4.0, usage commercial autorisé. Source : Wadifa Info et lien par élément obligatoires. Licence vérifiée le 25/10/2026 : https://www.wadifa-info.com/developpeurs. Approbation opérateur en base requise.",
   },
+  {
+    id: "wikimedia",
+    name: "Wikimedia Foundation",
+    company: "Wikimedia Foundation",
+    provider: "greenhouse",
+    identifier: "wikimedia",
+    website: "https://wikimediafoundation.org/jobs/",
+    enabled: true,
+    publicationStatus: "pending",
+    permissionNote:
+      "Owner-approved job facts and original links. Complete Greenhouse feed and per-job explicit Morocco hiring list audited 2026-11-21. Full ads are not retained; US-only roles excluded. https://wikimediafoundation.org/jobs/",
+  },
+
   ...[...auditedEmployers, ...techEmployers, ...expandedEmployers].map(
     (entry): Source => ({
       id: entry.id,
