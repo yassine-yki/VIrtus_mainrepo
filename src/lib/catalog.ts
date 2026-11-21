@@ -189,5 +189,12 @@ export async function getJob(id: string): Promise<{ job: Job | null }> {
   if (!supabase) return { job: null };
   const { data, error } = await supabase.rpc("get_catalog_job", { p_id: id });
   if (error) console.error("Job lookup failed", { code: error.code });
-  return { job: error ? null : (data as Job | null) };
+  if (error || !data) return { job: null };
+  // Public column access and RLS apply to the same representative listing.
+  const { data: metadata } = await supabase
+    .from("listings")
+    .select("tech")
+    .eq("id", data.id)
+    .maybeSingle();
+  return { job: { ...data, tech: metadata?.tech ?? undefined } as Job };
 }

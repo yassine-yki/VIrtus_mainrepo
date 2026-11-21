@@ -119,6 +119,17 @@ export function JobCard({
             )}
           </div>
         ) : null}
+        {job.tech?.remoteEvidence && (
+          <p className="job-checked">
+            <a
+              href={job.tech.remoteEvidence.url}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Maroc inclus dans les pays de recrutement
+            </a>
+          </p>
+        )}
         {job.salary && <p className="salary">{job.salary}</p>}
         {job.attribution_url && (
           <a

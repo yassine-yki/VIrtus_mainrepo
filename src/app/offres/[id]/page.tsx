@@ -80,6 +80,33 @@ export default async function JobPage({
                   : "Date de publication non précisée"}
               </span>
             </div>
+            {job.tech?.remoteEvidence && (
+              <section
+                className="description"
+                aria-label="Éligibilité au télétravail"
+              >
+                <h2>Travailler depuis le Maroc</h2>
+                <p>
+                  <a
+                    href={job.tech.remoteEvidence.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {job.tech.remoteEvidence.note}
+                  </a>
+                </p>
+                {job.tech.remoteEvidence.workAuthorization && (
+                  <p>
+                    Une autorisation de travail dans votre pays de résidence est
+                    requise.
+                  </p>
+                )}
+                <p>
+                  {job.tech.remoteEvidence.timezoneNote ??
+                    "Horaires : consultez les conditions de l’offre originale."}
+                </p>
+              </section>
+            )}
             <div className="description">
               <h2>À propos de cette opportunité</h2>
               <p>
