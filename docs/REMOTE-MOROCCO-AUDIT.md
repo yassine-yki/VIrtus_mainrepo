@@ -49,4 +49,11 @@ Himalayas API terms (https://himalayas.app/terms, clause 113) allow commercial d
 
 Typecheck, 65 tests including PostgreSQL/PGlite, and production build pass locally. The existing 100-job title fixture retains 100% inclusion precision and 100% emitted-tag precision at 78.125% recall; it is an agent-reviewed title fixture, not a human candidate pilot. New cases cover country evidence, foreign-role restrictions, missing dates, malformed/partial feeds, unsafe URLs, pagination, source suspension and persisted remote evidence.
 
-Production verification is recorded after rollout below.
+## Production verification
+
+- PR https://github.com/yassine-yki/VIrtus_mainrepo/pull/3 merged as 8e7e940736fb8d8f58a785bbd4742e2a70f9ff4b. Main CI https://github.com/yassine-yki/VIrtus_mainrepo/actions/runs/44959150929 passed; Vercel production deployment 5X11HRZ9JeakzuKewvWiuGWfwCS9 completed successfully.
+- Protected manual collection https://github.com/yassine-yki/VIrtus_mainrepo/actions/runs/44959161614 succeeded for its single Wikimedia job. This is manual evidence, not a scheduled run. The regular schedule now includes 33 enabled sources and remains capped at two concurrent source jobs.
+- Supabase imported 10 distinct jobs with zero full-ad descriptions and zero city keys. The successful sync finished at 2026-11-21T22:55:32.888980Z, exactly matching the source last_success_at.
+- Public API checks at 2026-11-21T22:56:07Z confirmed 10 added employer jobs (4 recent), including 5 tech jobs (3 recent). Overall public tech coverage increased from 325/115 recent to 330/118 recent. Counts are timestamped observations.
+- Browser verification followed public remote search to the Android role detail and its original employer page. The detail showed Morocco evidence, work authorization and the four-hour UTC-overlap condition. No application was submitted. Foreign-only exclusions, no city inference, date windows and disabled candidate endpoints were verified.
+- The slower Himalayas traversal ended on page 63 with 1,249 unique records against 1,265 reported. No reconciliation or source registration occurred for that board.
