@@ -1,13 +1,5 @@
 import { extractionConfig, extractProfile } from "../src/lib/cv-extraction";
 // Explicit operator smoke: synthetic text only, no files, accounts, database writes or raw response logs.
-if (
-  process.argv.includes("--build") &&
-  !(
-    process.env.VERCEL_ENV === "production" &&
-    process.env.CLOUDFLARE_SMOKE_ON_BUILD === "true"
-  )
-)
-  process.exit(0);
 const config = extractionConfig({
   ...process.env,
   CV_EXTRACTION_PROVIDER: "cloudflare",

@@ -26,7 +26,6 @@ CLOUDFLARE_PRIVACY_REVIEWED=true
 CLOUDFLARE_PRICING_VERSION=2026-11-22
 CLOUDFLARE_INPUT_USD_PER_MILLION=0.293
 CLOUDFLARE_OUTPUT_USD_PER_MILLION=2.253
-CLOUDFLARE_SMOKE_ON_BUILD=false
 CV_EXTRACTION_ENABLED=false
 CANDIDATE_PROFILES_ENABLED=false
 CANDIDATE_PASSWORD_AUTH_READY=false
@@ -44,12 +43,12 @@ Reviewed https://developers.cloudflare.com/workers-ai/platform/data-usage/ on 20
 
 Run pnpm check:cloudflare in a trusted server environment with the credentials and settings above. The script temporarily enables only its local configuration object, sends two invented English/French CV snippets, validates the existing profile schema and factual evidence, and logs only a pass count, model ID and timestamp. It does not create candidate accounts, store CV text or write to the database.
 
-For verification using Vercel's non-retrievable production secrets, temporarily set CLOUDFLARE_SMOKE_ON_BUILD=true for one deployment. The build hook runs only for VERCEL_ENV=production with that explicit switch. It fails the deployment if either synthetic extraction fails. Reset the switch to false after verifying the pass entry. Preview and normal CI builds make no provider calls.
+Production verification succeeded in Vercel deployment 9Zdq3fFgTiBMYJMevE73A4j27H8x on 2026-11-22 at 12:11:38.120Z: two English/French synthetic CVs passed using the owner's production secrets. The one-time build hook was removed immediately afterward; ordinary builds make no inference requests. The old CLOUDFLARE_SMOKE_ON_BUILD variable, if still present in Vercel, is ignored. The owner can remove that obsolete variable during normal settings maintenance. Use the manual check command in a trusted server environment for future credential checks. Preview and normal CI builds make no provider calls.
 
 Before a candidate pilot, use an operator database connection to prepare virtus_private.cv_budget_config with:
 
 - config_version: llama-profile-v1:cloudflare:2026-11-22:@cf/meta/llama-3.3-70b-instruct-fp8-fast
-- reservation_usd: at least ceil(2 _ (19904 _ 0.293 + 4096 \* 2.253)) / 1000000
+- reservation*usd: at least ceil(2 * (19904 \_ 0.293 + 4096 \* 2.253)) / 1000000
 - monthly_cap: 10
 - enabled: false until the authenticated pilot rollout is ready.
 
