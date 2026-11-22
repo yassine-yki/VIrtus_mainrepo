@@ -1,3 +1,4 @@
+import { listingVisible } from "./source-policy";
 import { fold, key } from "./normalize";
 import { deadlineOpen } from "./deadline";
 import { classifyTech, families, seniorities, technologies } from "./tech";
@@ -149,10 +150,15 @@ export function searchSnapshot(
   const all = groupListings(
     snapshot.listings.filter(
       (job) =>
-        job.active &&
-        deadlineOpen(job.deadline, now) &&
         ids.has(job.source_id) &&
-        new Date(job.last_seen_at).getTime() >= now - 72 * 3600_000,
+        listingVisible(
+          job,
+          snapshot.runs.find(
+            (r) => r.source_id === job.source_id && r.status === "success",
+          )?.finished_at ??
+            permitted.find((s) => s.id === job.source_id)?.lastSuccessAt,
+          now,
+        ),
     ),
     new Map(permitted.map((source) => [source.id, source.name])),
   );

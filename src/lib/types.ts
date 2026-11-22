@@ -5,6 +5,7 @@ export type Provider =
   | "workable"
   | "ashby"
   | "teamtailor"
+  | "himalayas"
   | "wadifa"
   | "html";
 export type OpportunityKind = "job" | "competition";
@@ -32,6 +33,7 @@ export interface Source {
 }
 
 export interface Listing {
+  expires_at?: string | null;
   tech?: import("./tech").TechMetadata;
   kind?: OpportunityKind;
   deadline?: string | null;

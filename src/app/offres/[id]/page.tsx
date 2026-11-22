@@ -101,6 +101,13 @@ export default async function JobPage({
                     requise.
                   </p>
                 )}
+                {job.tech.remoteEvidence.sourceUpdatedAt && (
+                  <p>
+                    Mise à jour sur Himalayas le{" "}
+                    {shortDate(job.tech.remoteEvidence.sourceUpdatedAt)}. La
+                    date de publication originale n’est pas disponible.
+                  </p>
+                )}
                 <p>
                   {job.tech.remoteEvidence.timezoneNote ??
                     "Horaires : consultez les conditions de l’offre originale."}
@@ -154,20 +161,23 @@ export default async function JobPage({
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Source : Wadifa Info
+                  Source :{" "}
+                  {job.source_id === "himalayas" ? "Himalayas" : "Wadifa Info"}
                 </a>
                 <br />
-                <small>
-                  Métadonnées adaptées sous licence{" "}
-                  <a
-                    href="https://creativecommons.org/licenses/by/4.0/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    CC BY 4.0
-                  </a>
-                  . L’avis officiel fait foi.
-                </small>
+                {job.source_id !== "himalayas" && (
+                  <small>
+                    Métadonnées adaptées sous licence{" "}
+                    <a
+                      href="https://creativecommons.org/licenses/by/4.0/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      CC BY 4.0
+                    </a>
+                    . L’avis officiel fait foi.
+                  </small>
+                )}
               </p>
             )}
             {job.official_notice_url && job.official_notice_url !== job.url && (

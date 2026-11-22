@@ -274,6 +274,18 @@ export default async function Home({
               Comment ça marche <ArrowUpRight size={16} />
             </Link>
           </div>
+          {techMode &&
+            filters.workplace === "remote" &&
+            filters.days > 0 &&
+            result.sources.some((s) => s.id === "himalayas") && (
+              <p className="notice">
+                Les offres Himalayas n’ont pas de date de publication originale
+                fiable.{" "}
+                <Link href={filtersUrl(filters, { days: 0, page: 1 })}>
+                  Afficher toutes les dates pour les explorer.
+                </Link>
+              </p>
+            )}
           {result.mode === "snapshot" && (
             <div className="notice">
               <Layers3 size={18} />

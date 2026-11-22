@@ -11,6 +11,8 @@ import {
   type PostJson,
 } from "./http";
 import { dateOnly } from "../lib/deadline";
+import { collectHimalayas } from "./himalayas";
+import type { CollectionBatch } from "./himalayas";
 import { collectWikimedia } from "./remote-employers";
 import { collectAshby } from "./ashby";
 import { collectTeamtailor } from "./teamtailor";
@@ -316,6 +318,8 @@ export function collectSource(
 ): Promise<Listing[]> {
   if (source.provider === "smartrecruiters")
     return collectSmartRecruiters(source, get);
+  if (source.provider === "himalayas")
+    return collectHimalayas(source, get).then((batch) => batch.jobs);
   if (source.id === "wikimedia") return collectWikimedia(source, get);
   if (source.provider === "greenhouse") return collectGreenhouse(source, get);
   if (source.provider === "lever") return collectLever(source, get);
@@ -411,4 +415,10 @@ export async function collectWadifa(
   if (data.items.length && !eligible.length)
     throw new Error("No publishable metadata in non-empty Wadifa feed");
   return uniqueIds(eligible);
+}
+
+export async function collectBatch(source: Source): Promise<CollectionBatch> {
+  return source.provider === "himalayas"
+    ? collectHimalayas(source)
+    : { jobs: await collectSource(source) };
 }
