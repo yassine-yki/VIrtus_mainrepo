@@ -180,3 +180,30 @@ test("provider response streaming stops at the output byte limit", async () => {
   );
   assert.equal(cancelled, true);
 });
+
+test("model language aliases normalize only supported, explicitly evidenced languages", () => {
+  assert.deepEqual(
+    validateExtraction({ ...profile, languages: ["French", "English"] }, cv)
+      .languages,
+    ["fr", "en"],
+  );
+  assert.deepEqual(
+    validateExtraction(
+      { ...profile, languages: ["Français", "Anglais", "Arabe"] },
+      cv + " Arabe.",
+    ).languages,
+    ["fr", "en", "ar"],
+  );
+  assert.throws(() =>
+    validateExtraction({ ...profile, languages: ["Arabic"] }, cv),
+  );
+  assert.throws(() =>
+    validateExtraction({ ...profile, languages: ["German"] }, cv + " German."),
+  );
+  assert.throws(() =>
+    validateExtraction({ ...profile, languages: ["Expert English"] }, cv),
+  );
+  assert.throws(() =>
+    validateExtraction({ ...profile, languages: [null] }, cv),
+  );
+});
