@@ -17,12 +17,14 @@ export function CandidateWorkspace({
   publishableKey,
   extractionEnabled,
   privacyUrl,
+  providerName,
   passwordSignupReady,
 }: {
   url: string;
   publishableKey: string;
   extractionEnabled: boolean;
   privacyUrl: string;
+  providerName: string;
   passwordSignupReady: boolean;
 }) {
   const auth = useMemo(
@@ -311,7 +313,7 @@ export function CandidateWorkspace({
                     onChange={(e) => setConsent(e.target.checked)}
                   />{" "}
                   J'accepte la transmission du texte de mon CV au service Llama
-                  via Hugging Face pour préparer mon profil.
+                  via {providerName} pour préparer mon profil.
                 </label>
                 <p>
                   <a
