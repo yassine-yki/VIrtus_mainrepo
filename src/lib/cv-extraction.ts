@@ -122,7 +122,29 @@ export function validateExtraction(
   raw: unknown,
   text: string,
 ): CandidateProfile {
-  const p = validateProfile(raw),
+  // Exact language aliases preserve meaning; schema and evidence checks stay strict.
+  const languageAliases: Record<string, string> = {
+    french: "fr",
+    francais: "fr",
+    english: "en",
+    anglais: "en",
+    arabic: "ar",
+    arabe: "ar",
+  };
+  let candidate = raw;
+  if (raw && typeof raw === "object" && !Array.isArray(raw)) {
+    const value = raw as Record<string, unknown>;
+    if (Array.isArray(value.languages))
+      candidate = {
+        ...value,
+        languages: value.languages.map((language: unknown) =>
+          typeof language === "string"
+            ? (languageAliases[normalized(language)] ?? language)
+            : language,
+        ),
+      };
+  }
+  const p = validateProfile(candidate),
     cv = normalized(text),
     known = canonicalSkills(text);
   const contains = (v: string) => !v || cv.includes(normalized(v));
