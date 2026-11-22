@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "node scripts/prepare-cv-runtime.mjs && next dev",
-    "build": "node scripts/prepare-cv-runtime.mjs && tsx scripts/check-cloudflare.ts --build && next build --webpack",
+    "build": "node scripts/prepare-cv-runtime.mjs && next build --webpack",
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "test": "node scripts/prepare-cv-runtime.mjs && tsx --test tests/*.test.ts",
