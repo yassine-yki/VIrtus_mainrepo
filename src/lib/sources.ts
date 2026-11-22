@@ -111,6 +111,18 @@ export const sources: Source[] = [
       "Owner-approved job facts and original links. Complete Greenhouse feed and per-job explicit Morocco hiring list audited 2026-11-21. Full ads are not retained; US-only roles excluded. https://wikimediafoundation.org/jobs/",
   },
 
+  {
+    id: "himalayas",
+    name: "Himalayas",
+    company: "Himalayas",
+    provider: "himalayas",
+    identifier: "morocco-tech",
+    website: "https://himalayas.app",
+    enabled: true,
+    publicationStatus: "pending",
+    permissionNote:
+      "Public API terms clause 113 verified 2026-11-21: visible Himalayas attribution, supplied applicationLink, no downstream feeds or JobPosting redistribution. Owner-approved 95% discovery coverage; absent jobs are never treated as closed. https://himalayas.app/terms",
+  },
   ...[...auditedEmployers, ...techEmployers, ...expandedEmployers].map(
     (entry): Source => ({
       id: entry.id,

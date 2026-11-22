@@ -1,7 +1,7 @@
 import { readFile, mkdir, writeFile, rename } from "node:fs/promises";
 import { resolve, dirname } from "node:path";
 import { createClient } from "@supabase/supabase-js";
-import { collectSource } from "../src/collectors/connectors";
+import { collectBatch } from "../src/collectors/connectors";
 import { sources } from "../src/lib/sources";
 import type { CatalogSnapshot, Listing, SyncReport } from "../src/lib/types";
 
@@ -72,7 +72,34 @@ for (const source of sources.filter(
         continue;
       }
     }
-    const jobs = await collectSource(source);
+    if (supabase && source.provider === "himalayas") {
+      const { data: state, error } = await supabase
+        .from("sources")
+        .select("last_success_at")
+        .eq("id", source.id)
+        .single();
+      if (error) throw new Error("Source cadence check failed");
+      if (
+        state.last_success_at &&
+        Date.parse(state.last_success_at) > Date.now() - 24 * 3600000
+      ) {
+        const { error: skipError } = await supabase
+          .from("sync_runs")
+          .insert({
+            source_id: source.id,
+            status: "skipped",
+            count: 0,
+            started_at: startedAt,
+            error: "Daily source already collected",
+          });
+        if (skipError) throw new Error("Daily skip log unavailable");
+        console.log("  Skipped: daily Himalayas feed already collected");
+        continue;
+      }
+    }
+    const { jobs, evidence } = await collectBatch(source);
+    if (evidence)
+      console.log(JSON.stringify({ source: source.id, ...evidence }));
     const old = [...listings.values()].filter(
       (job) => job.source_id === source.id && job.active,
     );
@@ -80,7 +107,7 @@ for (const source of sources.filter(
       throw new Error("Suspicious source drop; preserving previous listings");
     if (supabase) {
       const { error } = await supabase.rpc("commit_source_sync", {
-        p_source: source,
+        p_source: { ...source, collectionEvidence: evidence },
         p_jobs: jobs,
         p_started_at: startedAt,
       });
@@ -88,7 +115,8 @@ for (const source of sources.filter(
     }
     // A local snapshot is a review export, not the authoritative expiry ledger.
     for (const [id, job] of listings)
-      if (job.source_id === source.id) listings.delete(id);
+      if (job.source_id === source.id && source.provider !== "himalayas")
+        listings.delete(id);
     for (const job of jobs)
       listings.set(job.id, {
         ...job,
@@ -96,6 +124,7 @@ for (const source of sources.filter(
           previous?.listings.find((oldJob) => oldJob.id === job.id)
             ?.first_seen_at ?? startedAt,
       });
+    source.lastSuccessAt = new Date().toISOString();
     reports.set(source.id, {
       source_id: source.id,
       source_name: source.name,
@@ -137,7 +166,13 @@ for (const source of sources.filter(
 const snapshot: CatalogSnapshot = {
   version: 1,
   collected_at: new Date().toISOString(),
-  sources,
+  sources: sources.map((source) => ({
+    ...source,
+    lastSuccessAt:
+      source.lastSuccessAt ??
+      previous?.sources.find((s) => s.id === source.id)?.lastSuccessAt ??
+      null,
+  })),
   listings: [...listings.values()],
   runs: [...reports.values()],
 };

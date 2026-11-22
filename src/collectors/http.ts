@@ -5,6 +5,7 @@ const hosts = new Set([
   "www.wadifa-info.com",
   "apply.workable.com",
   "api.ashbyhq.com",
+  "himalayas.app",
   "cg-jobstream-api.azurewebsites.net",
   "careers.capgemini.com",
   "orange.jobs",
@@ -31,7 +32,11 @@ export function retryDelay(
     : Math.max(0, Date.parse(retryAfter ?? "") - now) || 0;
   // A limit above this run's budget is a failure, not permission to retry early.
   return Math.max(
-    host === "www.wadifa-info.com" ? 61_000 : 1000 * 2 ** attempt,
+    host === "www.wadifa-info.com"
+      ? 61_000
+      : host === "himalayas.app"
+        ? 3100 * 2 ** attempt
+        : 1000 * 2 ** attempt,
     retryMs,
   );
 }

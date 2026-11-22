@@ -16,6 +16,7 @@ export default async function SourcesPage() {
     wadifa: "API Wadifa Info",
     workable: "Workable",
     ashby: "Ashby",
+    himalayas: "API Himalayas",
     html: "Site carrières employeur",
   };
   return (
@@ -94,9 +95,11 @@ export default async function SourcesPage() {
                 actuellement visible{source.count === 1 ? "" : "s"}.
               </p>
               <p>
-                {source.id === "wadifa"
-                  ? "Métadonnées sous licence CC BY 4.0 avec attribution et lien vers chaque avis."
-                  : "Offres du site de recrutement de l’employeur. Description complète à consulter à la source."}
+                {source.id === "himalayas"
+                  ? "Offres tech à distance avec Maroc explicitement indiqué par Himalayas. Attribution et candidatures sur Himalayas. Collecte quotidienne ; une offre absente n’est pas déclarée fermée."
+                  : source.id === "wadifa"
+                    ? "Métadonnées sous licence CC BY 4.0 avec attribution et lien vers chaque avis."
+                    : "Offres du site de recrutement de l’employeur. Description complète à consulter à la source."}
               </p>
               <p>Dernière collecte réussie : {shortDate(source.checked_at)}.</p>
               {sourceOverdue(source.checked_at) && (

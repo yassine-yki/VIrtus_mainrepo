@@ -126,8 +126,17 @@ export function JobCard({
               target="_blank"
               rel="noopener noreferrer"
             >
-              Maroc inclus dans les pays de recrutement
+              {job.source_id === "himalayas"
+                ? "Maroc indiqué par Himalayas"
+                : "Maroc inclus dans les pays de recrutement"}
             </a>
+          </p>
+        )}
+        {job.tech?.remoteEvidence?.sourceUpdatedAt && (
+          <p className="job-checked">
+            Mise à jour sur Himalayas le{" "}
+            {shortDate(job.tech.remoteEvidence.sourceUpdatedAt)} ; date de
+            publication inconnue.
           </p>
         )}
         {job.salary && <p className="salary">{job.salary}</p>}
@@ -138,7 +147,8 @@ export function JobCard({
             target="_blank"
             rel="noopener noreferrer"
           >
-            Source : Wadifa Info
+            Source :{" "}
+            {job.source_id === "himalayas" ? "Himalayas" : "Wadifa Info"}
           </a>
         )}
       </div>

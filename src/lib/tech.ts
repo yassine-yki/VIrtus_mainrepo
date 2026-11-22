@@ -78,6 +78,7 @@ export interface TechMetadata {
     note: string;
     workAuthorization: boolean;
     timezoneNote: string | null;
+    sourceUpdatedAt?: string;
   };
   version: number;
   families: Family[];

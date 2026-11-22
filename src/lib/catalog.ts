@@ -1,4 +1,5 @@
 import "server-only";
+import { listingVisible, canExportSource } from "./source-policy";
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { createClient } from "@supabase/supabase-js";
@@ -53,10 +54,25 @@ async function snapshot(): Promise<CatalogSnapshot | null> {
     return null;
   }
 }
-export async function searchCatalog(filters: Filters): Promise<SearchResult> {
+export async function searchCatalog(
+  filters: Filters,
+  exportOnly = false,
+): Promise<SearchResult> {
   const local = await snapshot();
   if (local) {
-    const result = searchSnapshot(local, filters, true);
+    const result = searchSnapshot(
+      exportOnly
+        ? {
+            ...local,
+            sources: local.sources.filter((s) => canExportSource(s.id)),
+            listings: local.listings.filter((j) =>
+              canExportSource(j.source_id),
+            ),
+          }
+        : local,
+      filters,
+      true,
+    );
     return {
       ...result,
       jobs: result.jobs.map((job) => ({ ...job, description: "" })),
@@ -73,7 +89,13 @@ export async function searchCatalog(filters: Filters): Promise<SearchResult> {
     filters.pfe
   ) {
     try {
-      const { jobs, sources } = await techCatalog();
+      const catalog = await techCatalog();
+      const jobs = exportOnly
+        ? catalog.jobs.filter((j) => canExportSource(j.source_id))
+        : catalog.jobs;
+      const sources = exportOnly
+        ? catalog.sources.filter((s) => canExportSource(s.id))
+        : catalog.sources;
       const snapshot: CatalogSnapshot = {
         version: 1,
         collected_at:
@@ -88,17 +110,20 @@ export async function searchCatalog(filters: Filters): Promise<SearchResult> {
       return empty("Le catalogue tech est momentanément indisponible.");
     }
   }
-  const { data, error } = await supabase.rpc("search_catalog", {
-    p_query: filters.q,
-    p_city: filters.city,
-    p_contract: filters.contract,
-    p_workplace: filters.workplace,
-    p_source: filters.source,
-    p_days: filters.days,
-    p_page: filters.page,
-    p_sort: filters.sort,
-    p_kind: filters.kind ?? "",
-  });
+  const { data, error } = await supabase.rpc(
+    exportOnly ? "search_catalog_export" : "search_catalog",
+    {
+      p_query: filters.q,
+      p_city: filters.city,
+      p_contract: filters.contract,
+      p_workplace: filters.workplace,
+      p_source: filters.source,
+      p_days: filters.days,
+      p_page: filters.page,
+      p_sort: filters.sort,
+      p_kind: filters.kind ?? "",
+    },
+  );
   if (error) {
     console.error("Catalog search failed", { code: error.code });
     return empty(
@@ -126,9 +151,14 @@ export async function techCatalog(): Promise<{
           .filter(
             (j) =>
               permitted.has(j.source_id) &&
-              j.active &&
-              deadlineOpen(j.deadline) &&
-              Date.parse(j.last_seen_at) > Date.now() - 72 * 3600000,
+              listingVisible(
+                j,
+                local.runs.find(
+                  (r) => r.source_id === j.source_id && r.status === "success",
+                )?.finished_at ??
+                  local.sources.find((s) => s.id === j.source_id)
+                    ?.lastSuccessAt,
+              ),
           )
           .map((j) => ({
             ...j,
@@ -175,10 +205,14 @@ export async function getJob(id: string): Promise<{ job: Job | null }> {
     const jobs = groupListings(
       local.listings.filter(
         (job) =>
-          job.active &&
           ids.has(job.source_id) &&
-          deadlineOpen(job.deadline) &&
-          Date.parse(job.last_seen_at) > Date.now() - 72 * 3600000,
+          listingVisible(
+            job,
+            local.runs.find(
+              (r) => r.source_id === job.source_id && r.status === "success",
+            )?.finished_at ??
+              local.sources.find((s) => s.id === job.source_id)?.lastSuccessAt,
+          ),
       ),
       new Map(permitted.map((source) => [source.id, source.name])),
     );

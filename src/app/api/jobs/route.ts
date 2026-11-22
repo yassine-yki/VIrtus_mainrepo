@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
       ]),
     ),
   );
-  const result = await searchCatalog(filters);
+  const result = await searchCatalog(filters, true);
   return NextResponse.json(result, {
     status: result.error ? 503 : 200,
     headers: { "Cache-Control": "no-store" },
