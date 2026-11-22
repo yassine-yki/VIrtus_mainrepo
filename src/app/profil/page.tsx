@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { Header, Footer } from "@/components/brand";
 import { CandidateWorkspace } from "@/components/candidate-workspace";
-import { extractionConfig } from "@/lib/cv-extraction";
+import { extractionConfig, extractionDisclosure } from "@/lib/cv-extraction";
 export const dynamic = "force-dynamic";
 export const metadata = {
   title: "Mon profil et mes correspondances",
@@ -9,6 +9,7 @@ export const metadata = {
 };
 export default function ProfilePage() {
   if (process.env.CANDIDATE_PROFILES_ENABLED !== "true") notFound();
+  const disclosure = extractionDisclosure();
   const url = process.env.SUPABASE_URL,
     publishableKey = process.env.SUPABASE_PUBLISHABLE_KEY;
   return (
@@ -29,9 +30,8 @@ export default function ProfilePage() {
               process.env.CANDIDATE_PASSWORD_AUTH_READY === "true"
             }
             extractionEnabled={Boolean(extractionConfig())}
-            privacyUrl={
-              process.env.HF_PRIVACY_URL || "https://huggingface.co/privacy"
-            }
+            providerName={disclosure.name}
+            privacyUrl={disclosure.privacyUrl}
           />
         ) : (
           <p role="status">

@@ -5,13 +5,14 @@
   "type": "module",
   "scripts": {
     "dev": "node scripts/prepare-cv-runtime.mjs && next dev",
-    "build": "node scripts/prepare-cv-runtime.mjs && next build --webpack",
+    "build": "node scripts/prepare-cv-runtime.mjs && tsx scripts/check-cloudflare.ts --build && next build --webpack",
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "test": "node scripts/prepare-cv-runtime.mjs && tsx --test tests/*.test.ts",
     "collect": "tsx --env-file-if-exists=.env.local scripts/collect.ts",
     "db:migrate": "tsx --env-file-if-exists=.env.local scripts/migrate.ts",
-    "format": "prettier --write src scripts tests docs *.json *.ts .github README.md"
+    "format": "prettier --write src scripts tests docs *.json *.ts .github README.md",
+    "check:cloudflare": "tsx --env-file-if-exists=.env.local scripts/check-cloudflare.ts"
   },
   "engines": {
     "node": ">=22.14.0"

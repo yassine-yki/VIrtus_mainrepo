@@ -11,6 +11,8 @@ import {
   extractionConfig,
   maximumExtractionCost,
   EXTRACTION_VERSION,
+  extractionDisclosure,
+  validateExtractionInput,
 } from "@/lib/cv-extraction";
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -25,18 +27,11 @@ export async function POST(request: Request) {
       );
     if (request.headers.get("x-cv-consent") !== "accepted")
       throw new CandidateError(
-        "Votre accord est nécessaire pour transmettre le texte à Hugging Face.",
+        "Votre accord est nécessaire pour transmettre le texte à " +
+          extractionDisclosure().name +
+          ".",
       );
     const bytes = await boundedBody(request, 4_100_000);
-    const { error } = await db.rpc("reserve_cv_extraction", {
-      p_config_version: config.version,
-      p_max_cost: maximumExtractionCost(config),
-    });
-    if (error)
-      throw new CandidateError(
-        "Import indisponible : quota atteint ou configuration en attente. La saisie manuelle reste disponible.",
-        429,
-      );
     let text: string;
     try {
       if (
@@ -62,6 +57,23 @@ export async function POST(request: Request) {
         "CV illisible ou trop long. Utilisez un PDF texte ou DOCX de moins de 4 Mo / 30 000 caractères, ou la saisie manuelle.",
       );
     }
+    try {
+      validateExtractionInput(text, config);
+    } catch (error) {
+      throw new CandidateError(
+        error instanceof Error ? error.message : "CV trop long pour le modèle.",
+        422,
+      );
+    }
+    const { error } = await db.rpc("reserve_cv_extraction", {
+      p_config_version: config.version,
+      p_max_cost: maximumExtractionCost(config),
+    });
+    if (error)
+      throw new CandidateError(
+        "Import indisponible : quota atteint ou configuration en attente. La saisie manuelle reste disponible.",
+        429,
+      );
     try {
       const profile = await extractProfile(text, config);
       return Response.json(
