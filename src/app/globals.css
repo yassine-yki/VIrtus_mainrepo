@@ -364,12 +364,6 @@ select {
   color: var(--coral);
   font-size: 24px;
 }
-.intro-backdrop {
-  pointer-events: none;
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-}
 .intro-compact .intro-grid {
   gap: 20px;
   padding-block: 24px;
@@ -1677,21 +1671,32 @@ select {
     flex-basis: auto;
   }
 }
+
+.category-backdrops {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+}
+.category-backdrop {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 400ms ease;
+}
+.category-backdrop.is-active {
+  opacity: 1;
+}
+.category-backdrops::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #08080866, #08080838);
+}
 @media (hover: hover) and (pointer: fine) and (min-width: 1024px) {
-  .intro-stage:not(.intro-compact) .intro-backdrop {
-    background:
-      linear-gradient(90deg, #080808cc, #08080866),
-      url("/images/virtus-search-hero.webp") center 42% / cover;
-    opacity: 0;
-    transition: opacity 0.4s;
-  }
-  .intro-stage:not(.intro-compact):has(
-      .category-list a:hover,
-      .category-list a:focus-visible
-    )
-    .intro-backdrop {
-    opacity: 0.45;
-  }
   .category-list a:hover .category-label {
     -webkit-text-stroke: 1px #fafaf7;
     color: transparent;
@@ -1741,9 +1746,8 @@ select {
     animation: none !important;
     scroll-behavior: auto !important;
   }
-  .intro-backdrop {
-    background: none !important;
-    opacity: 0 !important;
+  .category-backdrops {
+    display: none;
   }
 }
 .source-detail-link {
@@ -1761,4 +1765,9 @@ select {
 .apply-panel small {
   font-size: 12px;
   line-height: 1.6;
+}
+@starting-style {
+  .category-backdrop.is-active {
+    opacity: 0;
+  }
 }

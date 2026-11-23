@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { CategoryNavigation } from "./category-navigation";
 import {
   catalogCategories,
   categoryUrl,
@@ -22,7 +22,6 @@ export function CatalogIntro({
       className={"intro-stage" + (compact ? " intro-compact" : "")}
       aria-labelledby="hero-heading"
     >
-      <div className="intro-backdrop" aria-hidden="true" />
       <div className="intro-grid shell">
         <div className="intro-heading">
           <p className="eyebrow">DES POSSIBILITÉS. PRÈS DE VOUS.</p>
@@ -86,20 +85,14 @@ export function CatalogIntro({
             Sans compte. Candidature sur le site d’origine.
           </p>
         </div>
-        <nav className="category-list" aria-label="Explorer par catégorie">
-          {catalogCategories.map((category) => (
-            <Link
-              key={category.id}
-              href={categoryUrl(filters, category.id)}
-              aria-current={
-                activeCategory(filters) === category.id ? "page" : undefined
-              }
-            >
-              <span className="category-label">{category.label}</span>
-              <span className="category-hint">{category.hint}</span>
-            </Link>
-          ))}
-        </nav>
+        <CategoryNavigation
+          compact={compact}
+          links={catalogCategories.map((category) => ({
+            id: category.id,
+            href: categoryUrl(filters, category.id),
+            current: activeCategory(filters) === category.id,
+          }))}
+        />
         <a className="intro-explore" href="#offres">
           Explorer les offres <span aria-hidden="true">↓</span>
         </a>
