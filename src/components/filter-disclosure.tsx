@@ -12,7 +12,7 @@ export function FilterDisclosure({
 }) {
   const details = useRef<HTMLDetailsElement>(null);
   useEffect(() => {
-    const desktop = window.matchMedia("(min-width: 901px)");
+    const desktop = window.matchMedia("(min-width: 1024px)");
     const sync = () => {
       if (details.current) details.current.open = desktop.matches;
     };

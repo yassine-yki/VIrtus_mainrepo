@@ -1,15 +1,13 @@
 import Link from "next/link";
-import Image from "next/image";
+import { CatalogIntro } from "./catalog-intro";
+import { hasCatalogContext } from "@/lib/catalog-navigation";
 import {
   ArrowDown,
   ArrowRight,
   ArrowUpRight,
   Search,
-  MapPin,
-  Check,
   Layers3,
   X,
-  Globe2,
 } from "lucide-react";
 import { Header, Footer } from "@/components/brand";
 import { FilterDisclosure } from "@/components/filter-disclosure";
@@ -28,8 +26,10 @@ export default async function Home({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
   techMode?: boolean;
 }) {
+  const params = await searchParams;
+  const compactIntro = hasCatalogContext(params);
   const filters = parseFilters({
-    ...(await searchParams),
+    ...params,
     ...(techMode ? { tech: "1", kind: "job" } : {}),
   });
   const action = techMode ? "/tech#offres" : "/#offres";
@@ -90,144 +90,12 @@ export default async function Home({
     <>
       <Header />
       <main id="main">
-        <div className="hero-surface">
-          <Image
-            className="hero-photo"
-            src="/images/virtus-search-hero.webp"
-            fill
-            sizes="100vw"
-            alt=""
-            preload
-          />
-          <section className="hero shell" aria-labelledby="hero-heading">
-            <div className="hero-copy">
-              <p className="eyebrow">
-                <Globe2 size={15} /> VOTRE AVENIR S'ÉCRIT AU MAROC
-              </p>
-              <h1 id="hero-heading">
-                {techMode
-                  ? "Votre prochain défi tech, au Maroc."
-                  : "Trouvons votre prochain emploi."}
-              </h1>
-              <p className="hero-description">
-                {techMode
-                  ? "Logiciel, data, cloud et métiers IT."
-                  : "Des emplois, des stages et des concours publics."}
-                <br className="mobile-break" /> Partout au Maroc.
-              </p>
-            </div>
-          </section>
-          <section
-            className="search-section shell"
-            aria-label="Rechercher un emploi"
-          >
-            <form
-              key={filtersUrl(filters)}
-              action={action}
-              className="search-form"
-            >
-              <label className="keyword-field">
-                <Search size={21} />
-                <span className="sr-only">
-                  Métier, compétence ou entreprise
-                </span>
-                <input
-                  name="q"
-                  type="search"
-                  defaultValue={filters.q}
-                  placeholder="Métier, compétence ou entreprise"
-                  maxLength={120}
-                />
-              </label>
-              <label className="location-field">
-                <MapPin size={19} />
-                <span className="sr-only">Ville</span>
-                <select
-                  name="city"
-                  aria-label="Ville de recherche"
-                  defaultValue={filters.city}
-                >
-                  <option value="">Tout le Maroc</option>
-                  {result.cities.map((city) => (
-                    <option key={city.key} value={city.key}>
-                      {city.name}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              {(
-                [
-                  "contract",
-                  "workplace",
-                  "source",
-                  "days",
-                  "sort",
-                  "kind",
-                  "tech",
-                  "family",
-                  "technology",
-                  "seniority",
-                  "pfe",
-                  "language",
-                ] as const
-              ).map((name) =>
-                filters[name] || name === "days" ? (
-                  <input
-                    key={name}
-                    type="hidden"
-                    name={name}
-                    value={filters[name]}
-                  />
-                ) : null,
-              )}
-              <button className="search-button" type="submit">
-                Rechercher <ArrowRight size={18} />
-              </button>
-            </form>
-            <div className="quick-searches" aria-label="Idées de recherche">
-              <span>À explorer</span>
-              {[
-                {
-                  label: "Développeur",
-                  changes: { q: "développeur", kind: "job" as const },
-                },
-                { label: "Data", changes: { q: "data", kind: "job" as const } },
-                {
-                  label: "Stages",
-                  changes: { q: "", contract: "Stage", kind: "job" as const },
-                },
-                {
-                  label: techMode
-                    ? "Télétravail depuis le Maroc"
-                    : "Télétravail",
-                  changes: { workplace: "remote", kind: "job" as const },
-                },
-              ].map((item) => (
-                <Link
-                  key={item.label}
-                  href={filtersUrl(
-                    parseFilters(techMode ? { tech: "1" } : {}),
-                    item.changes,
-                  )}
-                >
-                  {item.label}
-                  <ArrowUpRight size={13} />
-                </Link>
-              ))}
-            </div>
-            <div className="hero-benefits">
-              <span>
-                <Check size={15} /> Sans compte
-              </span>
-              <span>
-                <Check size={15} /> Candidature à la source
-              </span>
-              <span>
-                <Check size={15} /> Accès gratuit
-              </span>
-            </div>
-          </section>
-        </div>
+        <CatalogIntro
+          filters={filters}
+          cities={result.cities}
+          compact={compactIntro}
+          techMode={techMode}
+        />
         <div className="source-strip">
           <div className="shell source-strip-inner">
             <span>
@@ -252,6 +120,7 @@ export default async function Home({
           </div>
         </div>
         <section
+          tabIndex={-1}
           id="offres"
           className="catalog shell"
           aria-labelledby="results-heading"
@@ -262,7 +131,7 @@ export default async function Home({
               <h2 id="results-heading">
                 {techMode && filters.workplace === "remote"
                   ? "Télétravail depuis le Maroc."
-                  : "Une opportunité à votre image."}
+                  : "Les offres. Votre prochaine étape."}
               </h2>
               <p className="catalog-intro">
                 {techMode && filters.workplace === "remote"
@@ -660,7 +529,10 @@ function Pagination({
       ) : (
         <span />
       )}
-      <div>
+      <span className="pagination-context">
+        Page {page} / {pages}
+      </span>
+      <div className="pagination-numbers">
         {visible.map((value, index) => (
           <span key={value}>
             {index > 0 && value - visible[index - 1] > 1 && (

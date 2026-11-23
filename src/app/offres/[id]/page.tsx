@@ -80,6 +80,93 @@ export default async function JobPage({
                   : "Date de publication non précisée"}
               </span>
             </div>
+            <aside className="apply-panel">
+              <p className="eyebrow">ENVIE DE PASSER À LA SUITE ?</p>
+              <h2>
+                La suite se passe
+                <br />
+                sur le site d'origine.
+              </h2>
+              <p>
+                Consultez les conditions complètes et envoyez votre candidature
+                sur le site d’origine.
+              </p>
+              <a
+                className="search-button"
+                href={job.url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {job.kind === "competition"
+                  ? "Voir l’avis officiel"
+                  : "Voir l’offre originale"}{" "}
+                <ArrowUpRight size={17} />
+              </a>
+              <dl>
+                <dt>Entreprise</dt>
+                <dd>{job.company}</dd>
+                <dt>Rémunération</dt>
+                <dd>{job.salary ?? "Non communiquée"}</dd>
+                <dt>Dernière collecte</dt>
+                <dd>{shortDate(job.last_seen_at)}</dd>
+              </dl>
+              {job.attribution_url && (
+                <p>
+                  <a
+                    className="attribution"
+                    href={job.attribution_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Source :{" "}
+                    {job.source_id === "himalayas"
+                      ? "Himalayas"
+                      : "Wadifa Info"}
+                  </a>
+                  <br />
+                  {job.source_id !== "himalayas" && (
+                    <small>
+                      Métadonnées adaptées sous licence{" "}
+                      <a
+                        href="https://creativecommons.org/licenses/by/4.0/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        CC BY 4.0
+                      </a>
+                      . L’avis officiel fait foi.
+                    </small>
+                  )}
+                </p>
+              )}
+              {job.official_notice_url &&
+                job.official_notice_url !== job.url && (
+                  <a
+                    href={job.official_notice_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Avis officiel
+                  </a>
+                )}
+              <h3>Source{job.sources.length > 1 ? "s" : ""}</h3>
+              {job.sources.map((source) => (
+                <a
+                  className="source-detail-link"
+                  key={source.id}
+                  href={source.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {source.name}
+                  <ArrowUpRight size={14} />
+                </a>
+              ))}
+              <p className="fine-print">
+                Virtus ne reçoit pas votre candidature. Les informations et la
+                disponibilité peuvent changer.
+              </p>
+            </aside>
             {job.tech?.remoteEvidence && (
               <section
                 className="description"
@@ -123,90 +210,6 @@ export default async function JobPage({
               </p>
             </div>
           </article>
-          <aside className="apply-panel">
-            <p className="eyebrow">ENVIE DE PASSER À LA SUITE ?</p>
-            <h2>
-              La suite se passe
-              <br />
-              sur le site d'origine.
-            </h2>
-            <p>
-              Consultez les conditions complètes et envoyez votre candidature
-              sur le site d’origine.
-            </p>
-            <a
-              className="search-button"
-              href={job.url}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {job.kind === "competition"
-                ? "Voir l’avis officiel"
-                : "Voir l’offre originale"}{" "}
-              <ArrowUpRight size={17} />
-            </a>
-            <dl>
-              <dt>Entreprise</dt>
-              <dd>{job.company}</dd>
-              <dt>Rémunération</dt>
-              <dd>{job.salary ?? "Non communiquée"}</dd>
-              <dt>Dernière collecte</dt>
-              <dd>{shortDate(job.last_seen_at)}</dd>
-            </dl>
-            {job.attribution_url && (
-              <p>
-                <a
-                  className="attribution"
-                  href={job.attribution_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Source :{" "}
-                  {job.source_id === "himalayas" ? "Himalayas" : "Wadifa Info"}
-                </a>
-                <br />
-                {job.source_id !== "himalayas" && (
-                  <small>
-                    Métadonnées adaptées sous licence{" "}
-                    <a
-                      href="https://creativecommons.org/licenses/by/4.0/"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      CC BY 4.0
-                    </a>
-                    . L’avis officiel fait foi.
-                  </small>
-                )}
-              </p>
-            )}
-            {job.official_notice_url && job.official_notice_url !== job.url && (
-              <a
-                href={job.official_notice_url}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Avis officiel
-              </a>
-            )}
-            <h3>Source{job.sources.length > 1 ? "s" : ""}</h3>
-            {job.sources.map((source) => (
-              <a
-                className="source-detail-link"
-                key={source.id}
-                href={source.url}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {source.name}
-                <ArrowUpRight size={14} />
-              </a>
-            ))}
-            <p className="fine-print">
-              Virtus ne reçoit pas votre candidature. Les informations et la
-              disponibilité peuvent changer.
-            </p>
-          </aside>
         </div>
       </main>
       <Footer />
