@@ -29,15 +29,13 @@ export function CategoryNavigation({
   useEffect(() => {
     mounted.current = true;
     const desktop = window.matchMedia("(min-width: 1024px)");
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
     const sync = () => {
-      const allow = !compact && desktop.matches && !reduced.matches;
+      const allow = !compact && desktop.matches;
       setEnabled(allow);
       if (!allow) stop();
     };
     sync();
     desktop.addEventListener("change", sync);
-    reduced.addEventListener("change", sync);
     const observer = new IntersectionObserver(([entry]) => {
       if (!entry.isIntersecting) stop();
     });
@@ -48,7 +46,6 @@ export function CategoryNavigation({
       requested.current = null;
       observer.disconnect();
       desktop.removeEventListener("change", sync);
-      reduced.removeEventListener("change", sync);
     };
   }, [compact]);
   function activate(id: CatalogCategory) {

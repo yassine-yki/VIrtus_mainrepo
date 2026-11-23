@@ -1746,9 +1746,6 @@ select {
     animation: none !important;
     scroll-behavior: auto !important;
   }
-  .category-backdrops {
-    display: none;
-  }
 }
 .source-detail-link {
   display: flex;
