@@ -37,7 +37,7 @@ test("category navigation carries common context and resets incompatible destina
     const href = categoryUrl(previous, category.id),
       url = new URL(href, "https://virtus.invalid");
     const next = parseFilters(Object.fromEntries(url.searchParams));
-    assert.equal(url.pathname, category.id === "tech" ? "/tech" : "/");
+    assert.equal(url.pathname, category.id === "tech" ? "/tech" : "/offres");
     assert.equal(url.hash, "#offres");
     assert.deepEqual(next, {
       ...parseFilters({
@@ -119,4 +119,22 @@ test("repeated checkbox values round-trip through parsing, pagination and detail
     Object.fromEntries(new URL(href, "https://virtus.invalid").searchParams),
   );
   assert.deepEqual(restored, { ...parsed, page: 3 });
+});
+
+test("catalog return migrates old bookmarks and accepts only the two catalog routes", () => {
+  assert.equal(
+    catalogReturnUrl("/?q=python&days=0&page=2"),
+    "/offres?q=python&days=0&page=2#offres",
+  );
+  assert.equal(
+    catalogReturnUrl("/offres?q=python&days=0&page=2"),
+    "/offres?q=python&days=0&page=2#offres",
+  );
+  for (const path of [
+    "/offres/../?q=python",
+    "/offres.example?q=python",
+    "/offres//evil?q=python",
+    "/%2Fexample.com?q=python",
+  ])
+    assert.equal(catalogReturnUrl(path), "/offres#offres");
 });

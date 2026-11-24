@@ -145,7 +145,7 @@ test("tech filters preserve multi-select, all dates and safe return links", () =
   assert.equal(filters.family, "software,data");
   assert.match(filtersUrl(filters), /^\/tech\?/);
   assert.equal(catalogReturnUrl(filtersUrl(filters)), filtersUrl(filters));
-  assert.equal(catalogReturnUrl("//evil.example/tech"), "/#offres");
+  assert.equal(catalogReturnUrl("//evil.example/tech"), "/offres#offres");
   const listing = job();
   const snapshot: CatalogSnapshot = {
     version: 1,

@@ -135,7 +135,7 @@ export default async function SourcesPage() {
             connecté.
           </p>
         </div>
-        <Link className="text-link" href="/#offres">
+        <Link className="text-link" href="/offres#offres">
           Explorer les offres <ArrowRight size={16} />
         </Link>
       </main>

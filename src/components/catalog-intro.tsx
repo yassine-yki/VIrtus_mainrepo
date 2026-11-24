@@ -40,7 +40,7 @@ export function CatalogIntro({
           <h2>Qu’allez-vous faire ensuite ?</h2>
           <form
             key={filtersUrl(filters)}
-            action={techMode ? "/tech#offres" : "/#offres"}
+            action={techMode ? "/tech#offres" : "/offres#offres"}
             className="intro-search-form"
           >
             <label>

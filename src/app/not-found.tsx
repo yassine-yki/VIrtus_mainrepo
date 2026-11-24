@@ -12,7 +12,7 @@ export default function NotFound() {
           plus disponible.
         </h1>
         <p>Elle a peut-être été retirée, ou son lien a changé.</p>
-        <Link className="search-button" href="/#offres">
+        <Link className="search-button" href="/offres#offres">
           Revenir aux opportunités ↗
         </Link>
       </main>

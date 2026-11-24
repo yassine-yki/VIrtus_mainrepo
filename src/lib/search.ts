@@ -88,13 +88,13 @@ export function filtersUrl(
     )
       params.set(name, String(value));
   }
-  return `${merged.tech === "1" ? "/tech" : "/"}?${params.toString()}#offres`;
+  return `${merged.tech === "1" ? "/tech" : "/offres"}?${params.toString()}#offres`;
 }
 
 /** Keep the detail-page return link inside the catalog and normalize its filters. */
 export function catalogReturnUrl(value: string | string[] | undefined): string {
-  if (typeof value !== "string" || !/^\/(?:tech)?\?/.test(value))
-    return "/#offres";
+  if (typeof value !== "string" || !/^\/(?:tech|offres)?\?/.test(value))
+    return "/offres#offres";
   const url = new URL(value, "https://virtus.invalid");
   return filtersUrl(
     parseFilters({

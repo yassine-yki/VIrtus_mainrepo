@@ -1,4 +1,25 @@
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;550;600;650;700&family=Manrope:wght@400;500;600;650;700;750;800&display=swap");
+@font-face {
+  font-family: "DM Sans";
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url(/fonts/dm-sans-latin-variable.woff2) format("woff2");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Manrope";
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url(/fonts/manrope-latin-variable.woff2) format("woff2");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
 :root {
   --paper: #fafaf7;
   --ink: #161616;
@@ -1766,5 +1787,163 @@ select {
 @starting-style {
   .category-backdrop.is-active {
     opacity: 0;
+  }
+}
+
+/* The entry screen is a destination chooser, never a scrollable catalog. */
+.landing-screen {
+  width: 100%;
+  height: 100svh;
+  height: 100dvh;
+  overflow: clip;
+  display: flex;
+  flex-direction: column;
+  padding: max(16px, env(safe-area-inset-top))
+    max(24px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom))
+    max(24px, env(safe-area-inset-left));
+}
+.landing-header,
+.landing-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-shrink: 0;
+}
+.landing-header nav {
+  display: flex;
+  gap: 24px;
+}
+.landing-header nav a,
+.landing-footer a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 13px;
+}
+.landing-content {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(12px, 2dvh, 24px);
+}
+.landing-heading .eyebrow {
+  margin-bottom: 8px;
+  font-size: 10px;
+  color: #e3e3dc;
+}
+.landing-heading h1 {
+  margin: 0;
+  font-size: clamp(17px, 2vw, 26px);
+  font-weight: 500;
+  line-height: 1.25;
+}
+.landing-screen .category-list {
+  padding: 0;
+  gap: 0;
+}
+.landing-screen .category-list > a {
+  min-height: 44px;
+  padding: 0;
+  width: fit-content;
+  max-width: 100%;
+}
+.landing-screen .category-label {
+  font-size: clamp(32px, min(7vw, 8.6dvh), 100px);
+  line-height: 1.1;
+}
+.landing-screen .category-hint {
+  max-width: 140px;
+}
+.landing-footer > span {
+  font-size: 9px;
+  letter-spacing: 0.12em;
+}
+.landing-footer a {
+  gap: 20px;
+}
+.landing-footer a span {
+  color: var(--coral);
+  font-size: 24px;
+}
+.category-backdrop {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+.catalog-loading {
+  padding-block: 64px;
+}
+.catalog-loading h1 {
+  font-size: clamp(28px, 5vw, 48px);
+  line-height: 1.2;
+}
+.loading-rows > div {
+  padding-block: 28px;
+  border-top: 1px solid var(--line);
+}
+.loading-rows span {
+  display: block;
+  height: 12px;
+  width: 70%;
+  background: #e7e7e0;
+  margin: 12px 0;
+}
+.loading-rows span:first-child {
+  width: 30%;
+}
+.loading-rows span:nth-child(2) {
+  height: 24px;
+}
+@media (min-width: 768px) {
+  .landing-screen {
+    padding: 28px 5vw;
+  }
+}
+@media (max-width: 480px) {
+  .landing-header nav {
+    gap: 16px;
+  }
+  .landing-header nav a {
+    font-size: 12px;
+  }
+  .landing-footer {
+    align-items: flex-end;
+  }
+  .landing-footer > span {
+    max-width: 110px;
+  }
+  .landing-footer a {
+    gap: 10px;
+    font-size: 12px;
+  }
+}
+@media (max-height: 480px) and (orientation: landscape) {
+  .landing-screen {
+    padding-block: 10px;
+  }
+  .landing-content {
+    gap: 8px;
+  }
+  .landing-heading .eyebrow {
+    display: none;
+  }
+  .landing-heading h1 {
+    font-size: 16px;
+  }
+  .landing-screen .category-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2px 24px;
+  }
+  .landing-screen .category-label {
+    font-size: clamp(20px, 3.7vw, 42px);
+  }
+  .landing-screen .category-hint {
+    display: none;
   }
 }

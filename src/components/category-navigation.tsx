@@ -11,35 +11,45 @@ type CategoryLink = { id: CatalogCategory; href: string; current: boolean };
 export function CategoryNavigation({
   links,
   compact,
+  landing = false,
 }: {
   links: CategoryLink[];
   compact: boolean;
+  landing?: boolean;
 }) {
   const nav = useRef<HTMLElement>(null);
   const requested = useRef<CatalogCategory | null>(null);
   const pending = useRef(new Map<CatalogCategory, Promise<void>>());
   const mounted = useRef(false);
   const [enabled, setEnabled] = useState(false);
-  const [loaded, setLoaded] = useState<CatalogCategory[]>([]);
-  const [active, setActive] = useState<CatalogCategory | null>(null);
+  const [loaded, setLoaded] = useState<CatalogCategory[]>(
+    landing ? ["jobs"] : [],
+  );
+  const [active, setActive] = useState<CatalogCategory | null>(
+    landing ? "jobs" : null,
+  );
   const stop = () => {
     requested.current = null;
     setActive(null);
   };
   useEffect(() => {
     mounted.current = true;
+    if (compact)
+      return () => {
+        mounted.current = false;
+      };
     const desktop = window.matchMedia("(min-width: 1024px)");
     const sync = () => {
       const allow = !compact && desktop.matches;
       setEnabled(allow);
-      if (!allow) stop();
+      if (!allow && !landing) stop();
     };
     sync();
     desktop.addEventListener("change", sync);
     const observer = new IntersectionObserver(([entry]) => {
       if (!entry.isIntersecting) stop();
     });
-    const stage = nav.current?.closest(".intro-stage");
+    const stage = !landing && nav.current?.closest(".intro-stage");
     if (stage) observer.observe(stage);
     return () => {
       mounted.current = false;
@@ -47,7 +57,7 @@ export function CategoryNavigation({
       observer.disconnect();
       desktop.removeEventListener("change", sync);
     };
-  }, [compact]);
+  }, [compact, landing]);
   function activate(id: CatalogCategory) {
     if (!enabled || compact) return;
     requested.current = id;
@@ -65,9 +75,9 @@ export function CategoryNavigation({
     }
     void ready
       .then(() => {
-        if (!mounted.current) return;
+        if (!mounted.current || requested.current !== id) return;
         setLoaded((previous) =>
-          previous.includes(id) ? previous : [...previous, id],
+          previous.includes(id) ? previous : [...previous.slice(-1), id],
         );
         if (requested.current === id) setActive(id);
       })
@@ -83,19 +93,24 @@ export function CategoryNavigation({
         className="category-backdrops"
         aria-hidden="true"
         data-active-category={
-          enabled && !compact ? (active ?? undefined) : undefined
+          (landing || enabled) && !compact ? (active ?? undefined) : undefined
         }
       >
-        {enabled &&
+        {(landing || enabled) &&
           !compact &&
           loaded.map((id) => (
-            <div
+            <img
               key={id}
               className={
                 "category-backdrop" + (active === id ? " is-active" : "")
               }
               data-image-category={id}
-              style={{ backgroundImage: "url(" + categoryImages[id] + ")" }}
+              src={categoryImages[id]}
+              alt=""
+              width={1672}
+              height={941}
+              decoding="async"
+              fetchPriority={landing && id === "jobs" ? "high" : "auto"}
             />
           ))}
       </div>
@@ -108,10 +123,13 @@ export function CategoryNavigation({
             nav.current?.querySelector<HTMLAnchorElement>("a:focus");
           const id = focused?.dataset.category as CatalogCategory | undefined;
           if (id) activate(id);
-          else stop();
+          else if (!landing) stop();
         }}
         onBlur={(event) => {
-          if (!event.currentTarget.contains(event.relatedTarget as Node | null))
+          if (
+            !landing &&
+            !event.currentTarget.contains(event.relatedTarget as Node | null)
+          )
             stop();
         }}
       >
@@ -121,7 +139,6 @@ export function CategoryNavigation({
             <Link
               key={category.id}
               href={link.href}
-              prefetch={false}
               data-category={category.id}
               aria-current={link.current ? "page" : undefined}
               onPointerEnter={(event) => {
