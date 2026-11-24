@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { CatalogIntro } from "./catalog-intro";
-import { hasCatalogContext } from "@/lib/catalog-navigation";
 import {
   ArrowDown,
   ArrowRight,
@@ -27,12 +26,12 @@ export default async function Home({
   techMode?: boolean;
 }) {
   const params = await searchParams;
-  const compactIntro = hasCatalogContext(params);
+  const compactIntro = true;
   const filters = parseFilters({
     ...params,
     ...(techMode ? { tech: "1", kind: "job" } : {}),
   });
-  const action = techMode ? "/tech#offres" : "/#offres";
+  const action = techMode ? "/tech#offres" : "/offres#offres";
   const result = await searchCatalog(filters);
   const selectedFilters = [
     ...["family", "technology", "seniority", "pfe", "language"].map((key) => ({

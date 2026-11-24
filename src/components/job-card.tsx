@@ -46,7 +46,7 @@ export function CompanyMark({
 
 export function JobCard({
   job,
-  searchHref = "/#offres",
+  searchHref = "/offres#offres",
 }: {
   job: Job;
   searchHref?: string;

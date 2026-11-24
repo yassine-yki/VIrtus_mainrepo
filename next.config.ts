@@ -5,6 +5,31 @@ const config: NextConfig = {
     "/api/profile/extract": ["./.cv-runtime/**/*"],
   },
   poweredByHeader: false,
+  async redirects() {
+    // Preserve old shared search links while keeping the entry page static.
+    return [
+      "q",
+      "city",
+      "contract",
+      "workplace",
+      "source",
+      "days",
+      "sort",
+      "kind",
+      "tech",
+      "family",
+      "technology",
+      "seniority",
+      "pfe",
+      "language",
+      "page",
+    ].map((key) => ({
+      source: "/",
+      has: [{ type: "query" as const, key }],
+      destination: "/offres#offres",
+      permanent: false,
+    }));
+  },
   async headers() {
     return [
       {

@@ -30,12 +30,12 @@ test("detail return rejects external paths and strips unsupported parameters", (
     "/sources",
     "javascript:alert(1)",
   ]) {
-    assert.equal(catalogReturnUrl(value), "/#offres");
+    assert.equal(catalogReturnUrl(value), "/offres#offres");
   }
   const returned = catalogReturnUrl(
     "/?q=data&days=0&page=-1&redirect=https://example.com",
   );
-  assert.equal(returned, "/?q=data&days=0#offres");
+  assert.equal(returned, "/offres?q=data&days=0#offres");
 });
 const source = { ...sources[2], publicationStatus: "approved" as const };
 const job = (id: string, title = "Ingénieur développeur"): Listing =>

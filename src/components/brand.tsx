@@ -27,7 +27,7 @@ export function Header() {
         <Brand />
         <HeaderNavigation>
           <nav aria-label="Navigation principale">
-            <a href="/#offres">Les offres</a>
+            <Link href="/offres#offres">Les offres</Link>
             <Link href="/tech">Tech</Link>
             {process.env.CANDIDATE_PROFILES_ENABLED === "true" && (
               <Link href="/profil">Mon profil</Link>
@@ -35,9 +35,9 @@ export function Header() {
             <Link href="/sources">Nos sources</Link>
           </nav>
         </HeaderNavigation>
-        <a className="header-cta" href="/#offres">
+        <Link className="header-cta" href="/offres#offres">
           Explorer les offres <ArrowRight size={17} />
-        </a>
+        </Link>
       </header>
     </div>
   );
