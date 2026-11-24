@@ -21,21 +21,36 @@ export function TechFilters({ filters }: { filters: Filters }) {
           ],
         ] as const
       ).map(([name, label, options]) => (
-        <label key={name}>
-          {label}
-          <select
-            multiple
-            name={name}
-            size={4}
-            defaultValue={(filters[name] || "").split(",")}
-          >
+        <details
+          className="tech-filter-group"
+          key={name}
+          open={!!filters[name]}
+        >
+          <summary>
+            {label}
+            <span>
+              {filters[name]
+                ? filters[name].split(",").length + " sélectionné(s)"
+                : "Tous"}
+            </span>
+          </summary>
+          <fieldset>
+            <legend className="sr-only">{label}</legend>
             {Object.entries(options).map(([value, text]) => (
-              <option key={value} value={value}>
+              <label className="check-row" key={value}>
+                <input
+                  type="checkbox"
+                  name={name}
+                  value={value}
+                  defaultChecked={(filters[name] || "")
+                    .split(",")
+                    .includes(value)}
+                />
                 {text}
-              </option>
+              </label>
             ))}
-          </select>
-        </label>
+          </fieldset>
+        </details>
       ))}
       <label className="check-row">
         <input

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { HeaderNavigation } from "./header-navigation";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 export function Brand() {
   return (
@@ -24,14 +25,16 @@ export function Header() {
     <div className="site-header-wrap">
       <header className="site-header shell">
         <Brand />
-        <nav aria-label="Navigation principale">
-          <a href="/#offres">Les offres</a>
-          <Link href="/tech">Tech</Link>
-          {process.env.CANDIDATE_PROFILES_ENABLED === "true" && (
-            <Link href="/profil">Mon profil</Link>
-          )}
-          <Link href="/sources">Nos sources</Link>
-        </nav>
+        <HeaderNavigation>
+          <nav aria-label="Navigation principale">
+            <a href="/#offres">Les offres</a>
+            <Link href="/tech">Tech</Link>
+            {process.env.CANDIDATE_PROFILES_ENABLED === "true" && (
+              <Link href="/profil">Mon profil</Link>
+            )}
+            <Link href="/sources">Nos sources</Link>
+          </nav>
+        </HeaderNavigation>
         <a className="header-cta" href="/#offres">
           Explorer les offres <ArrowRight size={17} />
         </a>

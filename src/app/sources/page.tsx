@@ -54,8 +54,9 @@ export default async function SourcesPage() {
           <article>
             <h2>03 / Vous laisser choisir</h2>
             <p>
-              Recherchez ici, puis consultez le site d’origine. Aucun compte ni
-              CV n’est demandé par Virtus.
+              Recherchez ici, puis consultez le site d’origine. La consultation
+              ne nécessite ni compte ni CV. Le profil et les correspondances
+              sont facultatifs.
             </p>
           </article>
         </div>
