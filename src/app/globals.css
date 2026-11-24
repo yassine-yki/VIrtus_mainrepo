@@ -1812,7 +1812,10 @@ select {
 }
 .landing-header nav {
   display: flex;
-  gap: 24px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  min-width: 0;
+  gap: 0 24px;
 }
 .landing-header nav a,
 .landing-footer a {
@@ -1905,8 +1908,11 @@ select {
   }
 }
 @media (max-width: 480px) {
+  .landing-header .brand {
+    font-size: 24px;
+  }
   .landing-header nav {
-    gap: 16px;
+    gap: 0 16px;
   }
   .landing-header nav a {
     font-size: 12px;
