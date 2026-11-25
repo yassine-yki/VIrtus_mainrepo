@@ -99,6 +99,18 @@ test("paginated SQL tech search matches snapshot filtering, facets, ranking and 
     await db.query(
       "update listings set active=false where source_id='perf-a' and external_id='job-34'",
     );
+    await db.exec(
+      "update listings set last_seen_at=now()-interval '5 days' where source_id='himalayas'",
+    );
+    await db.exec(
+      "update listings set kind='competition',deadline=current_date-1,positions=2,official_notice_url='https://example.com/notice',attribution_url='https://www.wadifa-info.com' where source_id='perf-a' and external_id='job-30'",
+    );
+    await db.exec(
+      "update listings set kind='competition',deadline=current_date+1,positions=2,official_notice_url='https://example.com/notice',attribution_url='https://www.wadifa-info.com' where source_id='perf-a' and external_id='job-31'",
+    );
+    await db.exec(
+      "update listings set tech=null where source_id='perf-a' and external_id='job-35'",
+    );
     await db.exec("set role anon");
     const original = (
       await db.query<{ d: { jobs: Job[]; sources: Source[] } }>(
