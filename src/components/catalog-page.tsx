@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ResultsAnchor } from "./results-anchor";
 import { SourceLogo } from "./source-logo";
 import { stripSources } from "@/lib/source-brands";
 import { CatalogIntro } from "./catalog-intro";
@@ -90,7 +91,7 @@ export default async function Home({
   return (
     <>
       <Header />
-      <main id="main">
+      <main id="main" className="catalog-page">
         <CatalogIntro
           filters={filters}
           cities={result.cities}
@@ -123,6 +124,9 @@ export default async function Home({
           className="catalog shell"
           aria-labelledby="results-heading"
         >
+          <ResultsAnchor
+            resultKey={filtersUrl(filters, { page: result.page })}
+          />
           <div className="catalog-top">
             <div>
               <h2 id="results-heading">
@@ -192,7 +196,7 @@ export default async function Home({
             </nav>
           )}
           {techMode && process.env.CANDIDATE_PROFILES_ENABLED === "true" && (
-            <p className="notice">
+            <p className="notice profile-invitation">
               <Link href="/profil">
                 Importer mon CV et découvrir mes correspondances →
               </Link>
