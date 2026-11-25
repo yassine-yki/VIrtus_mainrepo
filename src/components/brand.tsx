@@ -1,3 +1,4 @@
+import { ThemeToggle } from "./theme-toggle";
 import Link from "next/link";
 import { HeaderNavigation } from "./header-navigation";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
@@ -25,6 +26,7 @@ export function Header() {
     <div className="site-header-wrap">
       <header className="site-header shell">
         <Brand />
+        <ThemeToggle />
         <HeaderNavigation>
           <nav aria-label="Navigation principale">
             <Link href="/offres#offres">Les offres</Link>
