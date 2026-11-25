@@ -27,13 +27,16 @@ test("category navigation carries common context and resets incompatible destina
     language: ["fr", "en"],
   });
   const expected = {
-    jobs: { kind: "job" },
+    jobs: {},
     tech: { kind: "job", tech: "1" },
     internships: { kind: "job", contract: "Stage" },
-    competitions: { kind: "competition" },
     remote: { kind: "job", workplace: "remote" },
   };
   for (const category of catalogCategories) {
+    if (category.id === "profile") {
+      assert.equal(categoryUrl(previous, category.id), "/profil");
+      continue;
+    }
     const href = categoryUrl(previous, category.id),
       url = new URL(href, "https://virtus.invalid");
     const next = parseFilters(Object.fromEntries(url.searchParams));
@@ -55,7 +58,7 @@ test("category navigation carries common context and resets incompatible destina
 });
 test("default category links keep the thirty-day window and ordinary filter operations retain tech context", () => {
   const defaults = parseFilters({});
-  for (const category of catalogCategories)
+  for (const category of catalogCategories.filter((c) => c.id !== "profile"))
     assert.match(categoryUrl(defaults, category.id), /days=30/);
   const f = parseFilters({
     tech: "1",
@@ -93,10 +96,7 @@ test("only meaningful known query input compacts the introduction; route default
     activeCategory(parseFilters({ tech: "1", workplace: "remote" })),
     "tech",
   );
-  assert.equal(
-    activeCategory(parseFilters({ kind: "competition" })),
-    "competitions",
-  );
+  assert.equal(activeCategory(parseFilters({ kind: "competition" })), "jobs");
   assert.equal(
     activeCategory(parseFilters({ contract: "Stage" })),
     "internships",

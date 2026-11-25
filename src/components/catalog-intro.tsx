@@ -87,11 +87,17 @@ export function CatalogIntro({
         </div>
         <CategoryNavigation
           compact={compact}
-          links={catalogCategories.map((category) => ({
-            id: category.id,
-            href: categoryUrl(filters, category.id),
-            current: activeCategory(filters) === category.id,
-          }))}
+          links={catalogCategories
+            .filter(
+              (category) =>
+                category.id !== "profile" ||
+                process.env.CANDIDATE_PROFILES_ENABLED === "true",
+            )
+            .map((category) => ({
+              id: category.id,
+              href: categoryUrl(filters, category.id),
+              current: activeCategory(filters) === category.id,
+            }))}
         />
         <a className="intro-explore" href="#offres">
           Explorer les offres <span aria-hidden="true">↓</span>
