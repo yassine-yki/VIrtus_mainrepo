@@ -26,6 +26,7 @@ try {
     "202611110001_major_tech_employers",
     "20261117205938_virtus_tech_profiles",
     "20261121230612_himalayas_partial_collection",
+    "20261125172615_paginated_catalog_search",
   ]) {
     const { rowCount } = await client.query(
       "select 1 from public.virtus_migrations where name=$1",
