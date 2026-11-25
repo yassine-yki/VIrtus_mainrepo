@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { SourceLogo } from "./source-logo";
+import { stripSources } from "@/lib/source-brands";
 import { CatalogIntro } from "./catalog-intro";
 import {
   ArrowDown,
@@ -103,12 +105,9 @@ export default async function Home({
               <strong>Des sources identifiées</strong>
             </span>
             <div>
-              {result.sources
-                .filter((source) => source.count > 0)
-                .slice(0, 5)
-                .map((source) => (
-                  <span key={source.id}>{source.name}</span>
-                ))}
+              {stripSources(result.sources).map((source) => (
+                <SourceLogo key={source.id} source={source} />
+              ))}
               {!result.sources.some((source) => source.count > 0) && (
                 <span>Une sélection en préparation</span>
               )}
@@ -126,17 +125,18 @@ export default async function Home({
         >
           <div className="catalog-top">
             <div>
-              <p className="eyebrow">VOTRE PROCHAINE ÉTAPE</p>
               <h2 id="results-heading">
                 {techMode && filters.workplace === "remote"
                   ? "Télétravail depuis le Maroc."
                   : "Les offres. Votre prochaine étape."}
               </h2>
-              <p className="catalog-intro">
-                {techMode && filters.workplace === "remote"
-                  ? "Des offres tech à distance avec une localisation au Maroc ou une éligibilité explicite. Vérifiez les horaires et conditions auprès de l’employeur."
-                  : "Explorez les annonces. Affinez vos critères. Trouvez votre voie."}
-              </p>
+              {techMode && filters.workplace === "remote" && (
+                <p className="catalog-intro">
+                  Des offres tech à distance avec une localisation au Maroc ou
+                  une éligibilité explicite. Vérifiez les horaires et conditions
+                  auprès de l’employeur.
+                </p>
+              )}
             </div>
             <Link className="catalog-method" href="/sources">
               Comment ça marche <ArrowUpRight size={16} />

@@ -4,6 +4,6 @@ export const categoryImages: Record<CatalogCategory, string> = {
   jobs: "/images/virtus-search-hero.webp",
   tech: "/images/virtus-category-tech.webp",
   internships: "/images/virtus-category-internships.webp",
-  competitions: "/images/virtus-category-competitions.webp",
+  profile: "/images/virtus-category-competitions.webp",
   remote: "/images/virtus-category-remote.webp",
 };

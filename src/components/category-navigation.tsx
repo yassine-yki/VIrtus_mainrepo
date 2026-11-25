@@ -134,7 +134,8 @@ export function CategoryNavigation({
         }}
       >
         {catalogCategories.map((category) => {
-          const link = links.find((item) => item.id === category.id)!;
+          const link = links.find((item) => item.id === category.id);
+          if (!link) return null;
           return (
             <Link
               key={category.id}

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SourceLogo } from "@/components/source-logo";
 import { ArrowUpRight, ArrowRight } from "lucide-react";
 import { Header, Footer } from "@/components/brand";
 import { catalogSources } from "@/lib/catalog";
@@ -80,6 +81,7 @@ export default async function SourcesPage() {
         <div className="source-cards">
           {result.sources.map((source) => (
             <article key={source.id}>
+              <SourceLogo source={source} decorative />
               <div>
                 <span className="provider-tag">
                   {labels[source.provider ?? ""] ?? "Flux"}

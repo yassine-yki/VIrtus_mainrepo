@@ -30,11 +30,17 @@ export default function Home() {
         <CategoryNavigation
           landing
           compact={false}
-          links={catalogCategories.map((category) => ({
-            id: category.id,
-            href: categoryUrl(filters, category.id),
-            current: false,
-          }))}
+          links={catalogCategories
+            .filter(
+              (category) =>
+                category.id !== "profile" ||
+                process.env.CANDIDATE_PROFILES_ENABLED === "true",
+            )
+            .map((category) => ({
+              id: category.id,
+              href: categoryUrl(filters, category.id),
+              current: false,
+            }))}
         />
       </div>
       <footer className="landing-footer">
