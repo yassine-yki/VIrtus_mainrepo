@@ -88,27 +88,28 @@ export async function searchCatalog(
     filters.language ||
     filters.pfe
   ) {
-    try {
-      const catalog = await techCatalog();
-      const jobs = exportOnly
-        ? catalog.jobs.filter((j) => canExportSource(j.source_id))
-        : catalog.jobs;
-      const sources = exportOnly
-        ? catalog.sources.filter((s) => canExportSource(s.id))
-        : catalog.sources;
-      const snapshot: CatalogSnapshot = {
-        version: 1,
-        collected_at:
-          jobs.map((j) => j.last_seen_at).sort()[0] || new Date().toISOString(),
-        sources,
-        listings: jobs,
-        runs: [],
-      };
-      const result = searchSnapshot(snapshot, filters, true);
-      return { ...result, mode: "supabase" };
-    } catch {
+    const { data, error } = await supabase.rpc("search_tech_catalog", {
+      p_query: filters.q,
+      p_city: filters.city,
+      p_contract: filters.contract,
+      p_workplace: filters.workplace,
+      p_source: filters.source,
+      p_days: filters.days,
+      p_page: filters.page,
+      p_sort: filters.sort,
+      p_kind: filters.kind ?? "",
+      p_family: filters.family ?? "",
+      p_technology: filters.technology ?? "",
+      p_seniority: filters.seniority ?? "",
+      p_language: filters.language ?? "",
+      p_pfe: filters.pfe === "1",
+      p_export_only: exportOnly,
+    });
+    if (error || !data || !Array.isArray(data.jobs)) {
+      console.error("Tech catalog search failed", { code: error?.code });
       return empty("Le catalogue tech est momentanément indisponible.");
     }
+    return { ...data, mode: "supabase" } as SearchResult;
   }
   const { data, error } = await supabase.rpc(
     exportOnly ? "search_catalog_export" : "search_catalog",
@@ -181,18 +182,26 @@ export async function techCatalog(): Promise<{
     throw new Error("Catalog unavailable");
   return data;
 }
-export async function catalogSources() {
-  return searchCatalog({
-    q: "",
-    city: "",
-    contract: "",
-    workplace: "",
-    source: "",
-    days: 0,
-    page: 1,
-    sort: "recent",
-    kind: "",
-  });
+export async function catalogSources(): Promise<SearchResult> {
+  const local = await snapshot();
+  if (local)
+    return searchCatalog({
+      q: "",
+      city: "",
+      contract: "",
+      workplace: "",
+      source: "",
+      days: 0,
+      page: 1,
+      sort: "recent",
+      kind: "",
+    });
+  const supabase = client();
+  if (!supabase) return empty();
+  const { data, error } = await supabase.rpc("get_catalog_source_summary");
+  if (error || !data || !Array.isArray(data.sources))
+    return empty("Les sources sont momentanément indisponibles.");
+  return { ...data, mode: "supabase" } as SearchResult;
 }
 export async function getJob(id: string): Promise<{ job: Job | null }> {
   if (!/^[a-f0-9]{32}$/.test(id)) return { job: null };
