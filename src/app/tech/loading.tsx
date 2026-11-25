@@ -1,1 +1,4 @@
-export { CatalogLoading as default } from "@/components/catalog-loading";
+import { CatalogLoading } from "@/components/catalog-loading";
+export default function Loading() {
+  return <CatalogLoading techMode />;
+}

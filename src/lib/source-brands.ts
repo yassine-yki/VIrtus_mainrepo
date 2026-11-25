@@ -1,3 +1,15 @@
+const assetVersions: Record<string, string> = {
+  accor: "36417869571a",
+  alten: "62ee0118c632",
+  "alter-solutions": "7a1f387426c7",
+  arcsen: "4e0d621d69ed",
+  artefact: "8aac5079db79",
+  devoteam: "65931d708544",
+  scalian: "dfd556a384a2",
+  sgs: "4968ea586b3a",
+  sqli: "b9577c14aa44",
+  wavestone: "31df8366af1c",
+};
 type Brand = { id: string; src: string; dark?: boolean };
 const brands: Record<string, Brand> = Object.fromEntries(
   [
@@ -15,7 +27,8 @@ const brands: Record<string, Brand> = Object.fromEntries(
     id,
     {
       id,
-      src: "/images/sources/" + id + ".webp",
+      src:
+        "/images/sources/versioned/" + id + "." + assetVersions[id] + ".webp",
       ...(["artefact", "arcsen", "sgs"].includes(id) ? { dark: true } : {}),
     },
   ]),

@@ -1,11 +1,22 @@
 "use client";
 import Link from "next/link";
+import { getImageProps } from "next/image";
 import { useEffect, useRef, useState } from "react";
 import {
   catalogCategories,
   type CatalogCategory,
 } from "@/lib/catalog-categories";
 import { categoryImages } from "@/lib/category-imagery";
+
+const backdropProps = (id: CatalogCategory) =>
+  getImageProps({
+    src: categoryImages[id],
+    alt: "",
+    width: 1672,
+    height: 941,
+    sizes: "100vw",
+    quality: 75,
+  }).props;
 
 type CategoryLink = { id: CatalogCategory; href: string; current: boolean };
 export function CategoryNavigation({
@@ -69,7 +80,10 @@ export function CategoryNavigation({
           image.decode().then(resolve, reject);
         };
         image.onerror = () => reject(new Error("Decorative image unavailable"));
-        image.src = categoryImages[id];
+        const props = backdropProps(id);
+        if (props.sizes) image.sizes = props.sizes;
+        if (props.srcSet) image.srcset = props.srcSet;
+        image.src = props.src;
       });
       pending.current.set(id, ready);
     }
@@ -105,10 +119,11 @@ export function CategoryNavigation({
                 "category-backdrop" + (active === id ? " is-active" : "")
               }
               data-image-category={id}
-              src={categoryImages[id]}
-              alt=""
-              width={1672}
-              height={941}
+              {...backdropProps(id)}
+              loading={landing && id === "jobs" ? "eager" : "lazy"}
+              onError={() => {
+                if (active === id) setActive(null);
+              }}
               decoding="async"
               fetchPriority={landing && id === "jobs" ? "high" : "auto"}
             />
