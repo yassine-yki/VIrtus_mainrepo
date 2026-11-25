@@ -207,13 +207,13 @@ export function CandidateWorkspace({
             />
           </label>
           <label>
-            Mot de passe{creatingAccount ? " (12 caractères minimum)" : ""}
+            Mot de passe{creatingAccount ? " (8 caractères minimum)" : ""}
             <input
               type="password"
               autoComplete={
                 creatingAccount ? "new-password" : "current-password"
               }
-              minLength={creatingAccount ? 12 : undefined}
+              minLength={creatingAccount ? 8 : undefined}
               maxLength={128}
               required
               value={password}
@@ -236,7 +236,7 @@ export function CandidateWorkspace({
           >
             {creatingAccount
               ? "J'ai déjà un compte"
-              : "Créer un compte sans email de confirmation"}
+              : "Créer un compte"}
           </button>
         ) : (
           <p>Les nouvelles inscriptions sont en préparation.</p>
