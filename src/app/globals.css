@@ -2057,3 +2057,127 @@ select {
     gap: 12px;
   }
 }
+
+/* A single source strip moves after results on phones; desktop order is retained. */
+@media (max-width: 767px) {
+  html {
+    scroll-padding-top: 80px;
+  }
+  .catalog-page {
+    display: flex;
+    flex-direction: column;
+  }
+  .catalog-page > .intro-stage {
+    order: 0;
+  }
+  .catalog-page > .catalog {
+    order: 1;
+  }
+  .catalog-page > .source-strip {
+    order: 2;
+  }
+  .catalog-page > .closing {
+    order: 3;
+  }
+  .catalog {
+    padding-block: 24px 32px;
+    scroll-margin-top: 0;
+  }
+  .intro-compact .intro-grid {
+    padding-block: 16px;
+    gap: 12px;
+  }
+  .intro-compact .intro-heading h1 {
+    font-size: 24px;
+    line-height: 1.2;
+  }
+  .intro-compact .intro-search {
+    padding: 12px;
+  }
+  .intro-compact .intro-search h2 {
+    display: none;
+  }
+  .intro-compact .intro-search-form {
+    gap: 12px;
+  }
+  .intro-compact .intro-search-form label {
+    gap: 4px;
+    font-size: 13px;
+  }
+  .intro-compact .intro-search input,
+  .intro-compact .intro-search select {
+    min-height: 44px;
+    padding: 9px 12px;
+  }
+  .intro-compact .intro-search button {
+    min-height: 44px;
+    padding-block: 10px;
+  }
+  .intro-compact .intro-assurance {
+    margin-top: 8px;
+  }
+  .intro-compact .category-list {
+    gap: 0 16px;
+  }
+  .intro-compact .category-label {
+    font-size: 12px;
+  }
+  .intro-compact .category-list > a {
+    min-height: 44px;
+  }
+  .catalog-top {
+    margin-bottom: 18px;
+  }
+  .catalog h2 {
+    font-size: 28px;
+  }
+  .catalog-grid {
+    gap: 16px;
+  }
+  .opportunity-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    max-width: 100%;
+    gap: 18px;
+    scrollbar-width: thin;
+    margin-bottom: 18px;
+  }
+  .opportunity-tabs > a {
+    white-space: nowrap;
+    flex: 0 0 auto;
+  }
+  .profile-invitation {
+    background: transparent;
+    border: 0;
+    padding: 0;
+    margin-block: 0 16px;
+    font-size: 13px;
+  }
+  .active-filters {
+    margin-bottom: 12px;
+  }
+  .results-head {
+    margin-bottom: 16px;
+  }
+  .source-strip-inner {
+    padding-block: 18px;
+  }
+}
+@media (max-width: 767px) {
+  .intro-compact .intro-grid {
+    padding-block: 12px;
+    gap: 10px;
+  }
+  .intro-compact .intro-search {
+    padding: 10px;
+  }
+  .catalog-top {
+    margin-bottom: 12px;
+  }
+  .opportunity-tabs {
+    margin-bottom: 12px;
+  }
+  .active-filters {
+    margin-bottom: 8px;
+  }
+}
