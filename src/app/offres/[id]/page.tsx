@@ -87,10 +87,6 @@ export default async function JobPage({
                 <br />
                 sur le site d'origine.
               </h2>
-              <p>
-                Consultez les conditions complètes et envoyez votre candidature
-                sur le site d’origine.
-              </p>
               <a
                 className="search-button"
                 href={job.url}
@@ -102,6 +98,13 @@ export default async function JobPage({
                   : "Voir l’offre originale"}{" "}
                 <ArrowUpRight size={17} />
               </a>
+              <p className="apply-desktop-intro">
+                Consultez les conditions complètes et envoyez votre candidature
+                sur le site d’origine.
+              </p>
+              <p className="apply-mobile-intro">
+                Consultez l’annonce et postulez sur le site d’origine.
+              </p>
               <dl>
                 <dt>Entreprise</dt>
                 <dd>{job.company}</dd>

@@ -1,8 +1,6 @@
 "use client";
-
-import { useEffect, useRef, type ReactNode } from "react";
+import { useId, useState, type ReactNode } from "react";
 import { ChevronDown, SlidersHorizontal } from "lucide-react";
-
 export function FilterDisclosure({
   count,
   children,
@@ -10,26 +8,26 @@ export function FilterDisclosure({
   count: number;
   children: ReactNode;
 }) {
-  const details = useRef<HTMLDetailsElement>(null);
-  useEffect(() => {
-    const desktop = window.matchMedia("(min-width: 1024px)");
-    const sync = () => {
-      if (details.current) details.current.open = desktop.matches;
-    };
-    sync();
-    desktop.addEventListener("change", sync);
-    return () => desktop.removeEventListener("change", sync);
-  }, []);
+  const [open, setOpen] = useState(false);
+  const id = useId();
   return (
-    <details ref={details} className="filter-disclosure">
-      <summary>
+    <div className="filter-disclosure" data-open={open}>
+      <button
+        type="button"
+        className="filter-toggle"
+        aria-expanded={open}
+        aria-controls={id}
+        onClick={() => setOpen(!open)}
+      >
         <span>
-          <SlidersHorizontal size={18} /> Filtres{" "}
+          <SlidersHorizontal size={18} aria-hidden="true" /> Filtres{" "}
           <span className="filter-counter">{count}</span>
         </span>
-        <ChevronDown className="filter-chevron" size={18} />
-      </summary>
-      {children}
-    </details>
+        <ChevronDown className="filter-chevron" size={18} aria-hidden="true" />
+      </button>
+      <div className="filter-panel" id={id}>
+        {children}
+      </div>
+    </div>
   );
 }

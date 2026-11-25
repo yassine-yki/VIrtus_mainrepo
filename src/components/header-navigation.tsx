@@ -1,24 +1,41 @@
 "use client";
-import { useEffect, useRef, type ReactNode } from "react";
+import { useId, useRef, useState, type ReactNode } from "react";
 import { Menu, X } from "lucide-react";
 export function HeaderNavigation({ children }: { children: ReactNode }) {
-  const ref = useRef<HTMLDetailsElement>(null);
-  useEffect(() => {
-    const desktop = window.matchMedia("(min-width: 1024px)");
-    const sync = () => {
-      if (ref.current) ref.current.open = desktop.matches;
-    };
-    sync();
-    desktop.addEventListener("change", sync);
-    return () => desktop.removeEventListener("change", sync);
-  }, []);
+  const [open, setOpen] = useState(false);
+  const id = useId();
+  const button = useRef<HTMLButtonElement>(null);
   return (
-    <details ref={ref} className="site-menu" open>
-      <summary>
-        Menu <Menu className="menu-open" size={18} />
-        <X className="menu-close" size={18} />
-      </summary>
-      {children}
-    </details>
+    <div
+      className="site-menu"
+      data-open={open}
+      onKeyDown={(event) => {
+        if (event.key === "Escape" && open) {
+          setOpen(false);
+          button.current?.focus();
+        }
+      }}
+    >
+      <button
+        ref={button}
+        type="button"
+        className="site-menu-toggle"
+        aria-expanded={open}
+        aria-controls={id}
+        onClick={() => setOpen(!open)}
+      >
+        Menu <Menu className="menu-open" size={18} aria-hidden="true" />
+        <X className="menu-close" size={18} aria-hidden="true" />
+      </button>
+      <div
+        id={id}
+        className="site-menu-panel"
+        onClick={(event) => {
+          if ((event.target as HTMLElement).closest("a")) setOpen(false);
+        }}
+      >
+        {children}
+      </div>
+    </div>
   );
 }
