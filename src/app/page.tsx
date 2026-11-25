@@ -1,3 +1,4 @@
+import { ThemeToggle } from "@/components/theme-toggle";
 import Link from "next/link";
 import { Brand } from "@/components/brand";
 import { CategoryNavigation } from "@/components/category-navigation";
@@ -12,6 +13,7 @@ export default function Home() {
       <header className="landing-header">
         <Brand />
         <nav aria-label="Navigation principale">
+          <ThemeToggle />
           {process.env.CANDIDATE_PROFILES_ENABLED === "true" && (
             <Link href="/profil" prefetch={false}>
               Mon profil
